@@ -304,7 +304,7 @@ _anosecurekit_forbid_terms(
   "${_anosecurekit_roadmap_text}"
   "Public error/API shape review"
   "Public object-lifecycle review"
-  "OpenSSL provider/FIPS policy")
+  "OpenSSL provider policy")
 
 _anosecurekit_forbid_terms(
   "roadmap analysis dump"
@@ -554,7 +554,8 @@ _anosecurekit_require_terms(
   "does not create an"
   "`OSSL_LIB_CTX`"
   "does not set property queries"
-  "FIPS"
+  "Provider Responsibility"
+  "compliance approval claims"
   "`anosecurekit::error_code::backend_failure`"
   "`anosecurekit::error_code::authentication_failed`"
   "`anosecurekit::error_code::invalid_packet`"
@@ -1016,7 +1017,7 @@ _anosecurekit_require_terms(
   "negative fixture"
   "default library context"
   "provider configuration"
-  "FIPS providers"
+  "provider configurations"
   "Release assets are checksummed and provenance-attested by GitHub Actions"
   "Release assets include a generated SPDX SBOM")
 

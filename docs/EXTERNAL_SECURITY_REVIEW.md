@@ -66,4 +66,4 @@ Each accepted fix must add or name at least one focused regression check before
 
 Rollback is the smallest revert that removes the finding fix while preserving
 public C++ APIs, CLI command shape, and `SKT1`/`SKF1`/`SKP1` compatibility unless
-an approved gate explicitly changes them.
+an explicit gate changes them.

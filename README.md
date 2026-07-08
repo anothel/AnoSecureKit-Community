@@ -197,7 +197,7 @@ archive URL and checksum.
 | `ANOSECUREKIT_BUILD_FUZZ` | `OFF` | Build optional libFuzzer smoke targets. See [docs/FUZZING.md](docs/FUZZING.md). |
 | `ANOSECUREKIT_ENABLE_COVERAGE` | `OFF` | Add GCC/Clang coverage instrumentation for the non-blocking `coverage-report` target. See [docs/COVERAGE.md](docs/COVERAGE.md). |
 | `ANOSECUREKIT_WARNINGS_AS_ERRORS` | `OFF` | Treat AnoSecureKit compiler warnings as errors. |
-| `ANOSECUREKIT_CRYPTO_BACKEND` | `openssl` | Select the crypto backend. `openssl` is the only public production backend. The non-shipping private-boundary value intentionally fails at configure time and is not an AnoCrypto backend or scaffold. |
+| `ANOSECUREKIT_CRYPTO_BACKEND` | `openssl` | Select the crypto backend. `openssl` is the only Community production backend. |
 
 Release package check targets `package-check` and `release-preflight`
 require `ANOSECUREKIT_BUILD_CLI=ON` and `ANOSECUREKIT_INSTALL_CLI=ON` because they

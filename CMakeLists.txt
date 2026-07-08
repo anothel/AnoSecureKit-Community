@@ -12,20 +12,15 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 set(ANOSECUREKIT_CRYPTO_BACKEND "openssl" CACHE STRING
-  "Crypto backend for AnoSecureKit. Use openssl; crypto-core is a non-shipping private-boundary placeholder.")
-set_property(CACHE ANOSECUREKIT_CRYPTO_BACKEND PROPERTY STRINGS openssl crypto-core)
+  "Crypto backend for AnoSecureKit Community. Only openssl is supported.")
+set_property(CACHE ANOSECUREKIT_CRYPTO_BACKEND PROPERTY STRINGS openssl)
 
 if(ANOSECUREKIT_CRYPTO_BACKEND STREQUAL "openssl")
   find_package(OpenSSL 3.0 REQUIRED COMPONENTS Crypto)
-elseif(ANOSECUREKIT_CRYPTO_BACKEND STREQUAL "crypto-core")
-  message(FATAL_ERROR
-    "ANOSECUREKIT_CRYPTO_BACKEND=crypto-core is a private/commercial asset "
-    "boundary placeholder. It is not implemented or documented as a public "
-    "AnoSecureKit backend in this release. Use ANOSECUREKIT_CRYPTO_BACKEND=openssl.")
 else()
   message(FATAL_ERROR
     "Unsupported ANOSECUREKIT_CRYPTO_BACKEND='${ANOSECUREKIT_CRYPTO_BACKEND}'. "
-    "Expected 'openssl' or 'crypto-core'.")
+    "Expected 'openssl'.")
 endif()
 
 if(WIN32)
