@@ -26,6 +26,9 @@ ceremony without a written problem, regression check, and rollback plan.
 Do not expand AnoSecureKit into TLS, networking, web middleware, custom crypto,
 secure key storage, or framework-scale abstractions.
 
+Do not contribute AnoCrypto implementation code, AnoCrypto scaffolds, Enterprise
+license logic, or certification/approval claims to this Community repository.
+
 ## License And File Headers
 
 Contributions to AnoSecureKit are accepted under `MPL-2.0`. By contributing,

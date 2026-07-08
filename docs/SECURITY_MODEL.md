@@ -164,13 +164,11 @@ The public API shape policy is recorded in `docs/PUBLIC_API_POLICY.md`.
 
 AnoSecureKit uses OpenSSL's default library context and the provider configuration
 already active in the process. It does not load providers, create an
-`OSSL_LIB_CTX`, set property queries, or switch between default, legacy, and
-FIPS providers.
+`OSSL_LIB_CTX`, set property queries, or switch provider configurations.
 
-Applications that require FIPS mode or custom provider selection must configure
-OpenSSL before calling AnoSecureKit. AES-256-GCM, SHA-256, HMAC-SHA-256,
-HKDF-SHA-256, scrypt, and OpenSSL's random byte APIs must be available from
-that configuration.
+Applications that require custom provider selection must configure OpenSSL before
+calling AnoSecureKit. AES-256-GCM, SHA-256, HMAC-SHA-256, HKDF-SHA-256, scrypt,
+and OpenSSL's random byte APIs must be available from that configuration.
 
 OpenSSL allocation, initialization, cipher, digest, MAC, KDF, or
 random-generation failures are reported as
@@ -181,7 +179,7 @@ authentication failures are reported as
 or unsupported packet and file structure is reported as
 `anosecurekit::error_code::invalid_packet`.
 
-The provider and FIPS support policy is recorded in `docs/OPENSSL_POLICY.md`.
+The OpenSSL provider policy is recorded in `docs/OPENSSL_POLICY.md`.
 
 ## Known Limitations
 

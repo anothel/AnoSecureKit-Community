@@ -33,9 +33,9 @@ AnoSecureKit requires OpenSSL Crypto 3.0 or newer. CI uses system packages on
 Linux, Homebrew OpenSSL 3 on macOS, and vcpkg OpenSSL on Windows.
 
 OpenSSL version or provider policy changes must update README,
-`docs/SECURITY_MODEL.md`, and release checks when behavior changes. FIPS or
-provider-specific support is not implied by linking OpenSSL; it needs a
-separate support policy and tests before becoming a documented guarantee.
+`docs/SECURITY_MODEL.md`, and release checks when behavior changes. Provider
+configuration support is not implied by linking OpenSSL; it needs a separate
+support policy and tests before becoming a documented guarantee.
 
 ## Vendoring
 

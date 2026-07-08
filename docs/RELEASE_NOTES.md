@@ -25,7 +25,7 @@
 - Updated the pre-release `SKF1` HKDF context label to
   `anosecurekit file sealing v1` and refreshed the `SKF1` known-answer fixtures
   before a public AnoSecureKit compatibility promise is made.
-- Documented public API, OpenSSL provider/FIPS, KDF agility, license policy, and
+- Documented public API, OpenSSL provider, KDF agility, license policy, and
   internal split policies without adding new cryptographic algorithms or wire
   formats.
 - Removed obsolete historical implementation plans from public docs; detailed

@@ -2,7 +2,7 @@
 
 # AnoSecureKit OpenSSL Provider Policy
 
-This document records the OpenSSL provider and FIPS support policy.
+This document records the OpenSSL provider policy.
 
 ## Supported Backend
 
@@ -10,16 +10,16 @@ AnoSecureKit supports OpenSSL Crypto 3.0 or newer.
 
 AnoSecureKit uses OpenSSL's default library context and the provider configuration
 already active in the process. It does not load providers. It does not create an
-`OSSL_LIB_CTX`. It does not set property queries. It does not switch the
-process between default, legacy, and FIPS providers.
+`OSSL_LIB_CTX`. It does not set property queries. It does not switch provider
+configurations.
 
 No public API change and no format change are made by this policy.
 
-## FIPS Policy
+## Provider Responsibility
 
-AnoSecureKit does not claim FIPS support or validation. Applications that require
-FIPS mode or custom provider selection must configure OpenSSL before calling
-AnoSecureKit.
+Applications that require custom provider selection must configure OpenSSL before
+calling AnoSecureKit. Community makes no compliance approval claims for the
+active OpenSSL configuration.
 
 AnoSecureKit needs these operations from the active OpenSSL configuration:
 
@@ -51,8 +51,8 @@ coverage verifies AnoSecureKit against the OpenSSL provider configuration active
 the build and test process.
 
 The release checks exercise AES-256-GCM, SHA-256, HMAC-SHA-256, HKDF-SHA-256,
-scrypt, and random bytes. They do not prove FIPS validation.
+scrypt, and random bytes. They do not prove compliance approval.
 
-Before adding provider or FIPS helpers, update README.md,
-docs/SECURITY_MODEL.md, this policy, and release checks with provider-specific
-test coverage and a rollback path.
+Before adding provider helpers, update README.md, docs/SECURITY_MODEL.md, this
+policy, and release checks with provider-specific test coverage and a rollback
+path.

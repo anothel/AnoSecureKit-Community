@@ -30,12 +30,12 @@ script, CMake, test, example, benchmark, and public documentation files should
 carry a machine-readable SPDX identifier using the comment syntax appropriate for
 the file type.
 
-## Private Or Commercial Native Crypto Assets
+## External Proprietary Modules
 
-Separate private or commercial native crypto assets are not shipped as an
-AnoSecureKit backend in this release. Keep that boundary explicit in public
-docs, packaging, and release notes until a public backend proposal, compatibility
-fixture plan, security review plan, and licensing plan exist.
+AnoCrypto is an external proprietary cryptographic module managed outside this
+repository. It is not shipped in Community, and Community does not provide an
+AnoCrypto backend, scaffold, or Enterprise license logic. Community remains
+licensed under `MPL-2.0`.
 
 ## Not Legal Advice
 

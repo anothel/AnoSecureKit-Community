@@ -23,15 +23,15 @@ well-tested, documented, and useful without private assets.
 
 ## AnoSecureKit Enterprise
 
-AnoSecureKit Enterprise is a separate private/commercial codebase. It should use
-Community as a dependency, then add enterprise-only policy, packaging, support,
-deployment, and AnoCrypto integration code outside this repository.
+AnoSecureKit Enterprise is separate commercial software. It should use Community
+as a dependency, then add enterprise-only policy, packaging, support, deployment,
+and AnoCrypto integration code outside this repository.
 
 Enterprise-only source must not be committed to the Community repository.
 
-## AnoCrypto Core
+## External AnoCrypto Boundary
 
-AnoCrypto Core is a separate C99 cryptographic module intended to become the
-commercial and KCMVP-oriented cryptographic backend. It is not shipped as a
-Community backend until a real implementation, compatibility tests, release
-packaging, licensing, and security review gates exist.
+AnoCrypto is an external proprietary cryptographic module managed outside this
+repository. It is not included in Community, and Community does not provide an
+AnoCrypto backend, scaffold, Enterprise license logic, or compliance approval
+claim.

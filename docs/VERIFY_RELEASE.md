@@ -69,6 +69,6 @@ model match your deployment.
 
 Successful checksum and attestation verification only shows that the downloaded
 assets match the release workflow outputs for this repository. It does not
-prove that AnoSecureKit is externally audited, that OpenSSL is configured for FIPS
-mode, or that the software is appropriate for a high-risk system without your
-own review.
+prove that AnoSecureKit is externally audited, that OpenSSL is configured for
+your deployment policy, or that the software is appropriate for a high-risk
+system without your own review.

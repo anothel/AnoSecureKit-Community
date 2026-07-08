@@ -5,18 +5,17 @@
 Project site: https://anothel.github.io/anosecurekit-community/
 
 AnoSecureKit Community is the open-source edition of the AnoSecureKit product family.
-It is the public MPL-2.0 codebase and currently uses OpenSSL 3.x as its only
-public production cryptographic backend. The package name, include root, C++
+It is licensed under MPL-2.0 and uses OpenSSL 3.x as its default production
+cryptographic backend. The package name, include root, C++
 namespace, CLI, and CMake target intentionally remain `anosecurekit`.
 
-AnoSecureKit Enterprise and AnoCrypto Core are developed separately as private or
-commercial assets. They are not included in this Community repository.
+AnoSecureKit Enterprise is separate commercial software. AnoCrypto is an
+external proprietary cryptographic module managed outside this repository.
+AnoCrypto is not included in Community, and Community does not provide an
+AnoCrypto backend.
 
-AnoSecureKit currently uses OpenSSL 3.x as its only public production crypto
-backend. That is the starting point, not the final identity. The long-term
-direction is to keep AnoSecureKit's public API, CLI, and `SKT1` / `SKF1` /
-`SKP1` formats backend-neutral while keeping separate private or commercial
-native crypto assets outside the shipped public backend surface.
+AnoSecureKit Community makes no KCMVP, FIPS, certification, validation, or
+public-sector approval claims.
 
 AnoSecureKit does not aim to invent new cryptographic algorithms. Native
 cryptographic work, when used, must implement established algorithms behind
@@ -49,32 +48,24 @@ without pulling low-level provider calls through the whole codebase.
 The current identity is:
 
 - Practical C++20 security utility library.
-- OpenSSL 3.x backed by default today.
-- Backend-neutral public API, CLI, and file formats as the long-term direction.
-- Separate private or commercial native crypto assets are not shipped as an AnoSecureKit backend in this release.
+- OpenSSL 3.x backed by default.
+- Backend-neutral public API, CLI, and file formats.
+- No AnoCrypto source, scaffold, or backend.
 - No novel or unpublished cryptographic algorithms.
 - Free-function API first.
 - Distinct packet streaming objects where incremental AEAD is useful.
 
 ## Backend Strategy
 
-AnoSecureKit started as an OpenSSL 3.x backed utility library. OpenSSL remains the
-default and recommended backend until the native backend path has enough
-compatibility coverage, fuzzing, release evidence, and external review.
+AnoSecureKit Community uses OpenSSL 3.x as the default production backend.
+AnoCrypto is an external proprietary module and is not part of this repository.
 
-The long-term backend direction is:
+The Community backend boundary is:
 
 1. Keep AnoSecureKit's public API, CLI, and `SKT1` / `SKF1` / `SKP1` formats stable.
-2. Keep the OpenSSL backend as the reference and compatibility backend.
-3. Keep any separate private or commercial native crypto assets outside the
-   public AnoSecureKit backend surface until a public backend proposal exists.
-4. Require known-answer tests, differential tests, fuzzing, compatibility
-   fixtures, license review, and external security review before any native
-   backend can be documented as a shipped AnoSecureKit backend.
-
-Native implementations must be standards-based and protected by known-answer
-tests, differential tests, fuzzing, compatibility fixtures, and security review
-before they are exposed as a public backend.
+2. Keep OpenSSL 3.x as the only public production backend.
+3. Keep AnoCrypto source, scaffolding, and integration code outside Community.
+4. Keep Enterprise license, activation, packaging, and support logic outside Community.
 
 ## Features
 
@@ -141,8 +132,7 @@ For product-edition boundaries, see [`docs/EDITIONS.md`](docs/EDITIONS.md) and
 - C++20 compiler.
 - CMake 3.20 or newer.
 - OpenSSL 3.x, version 3.0 or newer, when using the current default OpenSSL backend.
-- No private or commercial native crypto asset is shipped as an AnoSecureKit
-  backend in this release.
+- No AnoCrypto source, scaffold, or backend is shipped in Community.
 
 ## Build
 
@@ -207,9 +197,9 @@ archive URL and checksum.
 | `ANOSECUREKIT_BUILD_FUZZ` | `OFF` | Build optional libFuzzer smoke targets. See [docs/FUZZING.md](docs/FUZZING.md). |
 | `ANOSECUREKIT_ENABLE_COVERAGE` | `OFF` | Add GCC/Clang coverage instrumentation for the non-blocking `coverage-report` target. See [docs/COVERAGE.md](docs/COVERAGE.md). |
 | `ANOSECUREKIT_WARNINGS_AS_ERRORS` | `OFF` | Treat AnoSecureKit compiler warnings as errors. |
-| `ANOSECUREKIT_CRYPTO_BACKEND` | `openssl` | Select the crypto backend. `openssl` is the only public production backend. `crypto-core` is a non-shipping private-boundary placeholder that intentionally fails at configure time and is not a public backend in this release. |
+| `ANOSECUREKIT_CRYPTO_BACKEND` | `openssl` | Select the crypto backend. `openssl` is the only public production backend. The non-shipping private-boundary value intentionally fails at configure time and is not an AnoCrypto backend or scaffold. |
 
-Release package validation targets `package-check` and `release-preflight`
+Release package check targets `package-check` and `release-preflight`
 require `ANOSECUREKIT_BUILD_CLI=ON` and `ANOSECUREKIT_INSTALL_CLI=ON` because they
 install and run the CLI. Library-only consumers can disable tests and the CLI:
 
@@ -630,8 +620,8 @@ The compatibility reference for serialized `SKT1`, `SKF1`, and `SKP1` data is
 [docs/FORMAT.md](docs/FORMAT.md). Security boundaries and operational limits are
 documented in [docs/SECURITY_MODEL.md](docs/SECURITY_MODEL.md).
 Public API shape decisions are documented in
-[docs/PUBLIC_API_POLICY.md](docs/PUBLIC_API_POLICY.md). OpenSSL provider and
-FIPS support policy is documented in
+[docs/PUBLIC_API_POLICY.md](docs/PUBLIC_API_POLICY.md). OpenSSL provider policy
+is documented in
 [docs/OPENSSL_POLICY.md](docs/OPENSSL_POLICY.md).
 Internal ownership boundaries and split gates are documented in
 [docs/INTERNALS.md](docs/INTERNALS.md).
@@ -803,13 +793,11 @@ fixture gates in `docs/KDF_AGILITY.md` before implementation.
 
 AnoSecureKit uses OpenSSL's default library context and the provider configuration
 already active in the process. It does not load providers, create an
-`OSSL_LIB_CTX`, set property queries, or switch between default, legacy, and FIPS
-providers.
+`OSSL_LIB_CTX`, set property queries, or switch provider selections.
 
-Applications that require FIPS mode or custom provider selection must configure
-OpenSSL before calling AnoSecureKit. AES-256-GCM, SHA-256, HMAC-SHA-256,
-HKDF-SHA-256, scrypt, and OpenSSL's random byte APIs must be available from
-that configuration.
+Applications that require custom provider selection must configure OpenSSL before
+calling AnoSecureKit. AES-256-GCM, SHA-256, HMAC-SHA-256, HKDF-SHA-256, scrypt,
+and OpenSSL's random byte APIs must be available from that configuration.
 
 OpenSSL allocation, initialization, cipher, digest, MAC, KDF, or
 random-generation failures are reported as

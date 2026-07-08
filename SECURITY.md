@@ -57,6 +57,12 @@ Out of scope:
 - unsupported OpenSSL versions
 - misuse of APIs after documented preconditions are ignored
 
+## Security Claims
+
+AnoSecureKit Community uses OpenSSL 3.x as its default production backend. It
+does not include AnoCrypto, does not provide an AnoCrypto backend, and does not
+make KCMVP, FIPS, certification, validation, or public-sector approval claims.
+
 ## Security Release Notes
 
 Security-impacting releases should mention the affected surface, fixed version,
