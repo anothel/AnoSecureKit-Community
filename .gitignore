@@ -32,10 +32,16 @@
 *.out
 *.app
 
-.vscode
+.vscode/
 build/
 build-*/
+_CPack_Packages/
+package-check/
+release-assets/
+artifacts/
 
 anosecurekit-cli-*
 
 docs/superpowers/
+
+*.txtt
