@@ -40,9 +40,11 @@ list(APPEND _anosecurekit_required_files
   "${ANOSECUREKIT_SOURCE_DIR}/README.md"
   "${ANOSECUREKIT_SOURCE_DIR}/CONTRIBUTING.md"
   "${ANOSECUREKIT_SOURCE_DIR}/SECURITY.md"
+  "${ANOSECUREKIT_SOURCE_DIR}/COMMUNITY_SPLIT_NOTES.md"
   "${ANOSECUREKIT_SOURCE_DIR}/.clang-format"
   "${ANOSECUREKIT_SOURCE_DIR}/.gitignore"
   "${ANOSECUREKIT_SOURCE_DIR}/docs/.nojekyll"
+  "${ANOSECUREKIT_SOURCE_DIR}/tests/consumer/CMakeLists.txt"
   ${_anosecurekit_cpp_headers}
   ${_anosecurekit_cpp_sources}
   ${_anosecurekit_cmake_files}
