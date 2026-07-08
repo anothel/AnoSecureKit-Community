@@ -1,0 +1,110 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Base64URL Guide</title>
+  <meta name="description" content="Base64URL guide with AnoSecureKit CLI and C++ API examples, plus canonical input rules.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../cli.html">CLI</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/base64.hpp">C++ API</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Guide</p>
+      <h1>Base64URL is Base64 made safe for URLs and filenames.</h1>
+      <p class="lead">
+        Use Base64URL when encoded values appear in URLs, filenames, or tokens
+        that should avoid `+`, `/`, and `=`. It is still encoding, not
+        confidentiality.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Base64URL summary">
+      <article class="card">
+        <h2>What changes</h2>
+        <p>
+          Compared to standard Base64, Base64URL replaces `+` with `-`, `/` with
+          `_`, and is commonly transmitted without padding.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>When to use</h2>
+        <p>
+          Use it for token-like strings, URLs, filenames, and similar contexts
+          where standard Base64 characters are inconvenient or rejected.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>What it does not do</h2>
+        <p>
+          It does not encrypt or authenticate. Anyone can decode it, and logs
+          or URLs are still sensitive depending on context.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>Input and decoding rules</h2>
+      <ul>
+        <li>Canonical Base64URL input is stricter than symbol replacement alone.</li>
+        <li>Padding (`=`) is not used for the canonical output form.</li>
+        <li>Malformed length or character set is rejected.</li>
+      </ul>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>CLI example</h2>
+        <p>AnoSecureKit provides dedicated commands for URL-safe encode/decode.</p>
+      </div>
+      <pre><code>anosecurekit base64url-encode --text abc
+anosecurekit base64url-decode --text YWJj</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>C++ API example</h2>
+      <pre><code>#include "anosecurekit/base64.hpp"
+
+#include &lt;cstddef&gt;
+#include &lt;string&gt;
+
+anosecurekit::bytes data{std::byte{'f'}, std::byte{'o'}, std::byte{'o'}};
+std::string token = anosecurekit::base64url_encode(data); // "Zm9v"
+anosecurekit::bytes decoded = anosecurekit::base64url_decode(token);</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../guides/base64.html">Base64 + Base64URL overview</a></li>
+        <li><a href="../tools/base64.html">Browser-local Base64/Base64URL tool</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/base64.hpp">Base64 public header</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/tests/base64_test.cpp">Base64 test vectors</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

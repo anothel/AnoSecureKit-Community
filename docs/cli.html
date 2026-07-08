@@ -1,0 +1,123 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AnoSecureKit CLI</title>
+  <meta name="description" content="AnoSecureKit CLI examples for hashing, HMAC, random tokens, packet encryption, and file sealing.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="./">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="./">Home</a>
+        <a href="https://github.com/anothel/anosecurekit">GitHub</a>
+        <a href="./security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/docs/CLI.md">Full CLI reference</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Command line reference</p>
+      <h1>Use AnoSecureKit from terminals, scripts, and release checks.</h1>
+      <p class="lead">
+        The installed `anosecurekit` executable covers hashes, HMAC, HKDF, random
+        tokens, AES-256-GCM packets, key wrapping, and chunked file sealing.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/anothel/anosecurekit/blob/main/docs/CLI.md">Read full CLI docs</a>
+        <a class="button" href="https://github.com/anothel/anosecurekit/releases">Download releases</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="CLI summary">
+      <article class="card">
+        <h2>Build</h2>
+        <p>
+          Configure with the CLI enabled, build the project, then run the local
+          check target before relying on the executable.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Inputs</h2>
+        <p>
+          Commands accept text, files, strict hex keys, key files, password
+          files, and optional AAD where the format supports it.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Automation</h2>
+        <p>
+          Check the process exit code before trusting output. Treat file-command
+          stdout as binary when using `--out -`.
+        </p>
+      </article>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>Quick start</h2>
+        <p>
+          Build from a checkout with tests enabled, then run the default local
+          check surface.
+        </p>
+      </div>
+      <pre><code>cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DANOSECUREKIT_BUILD_TESTS=ON
+cmake --build build --config Release --target check</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Common commands</h2>
+      <pre><code>anosecurekit --version
+anosecurekit token 32
+anosecurekit sha256 --text abc
+anosecurekit hmac-sha256 --key-hex 4a656665 --text "what do ya want for nothing?"
+anosecurekit keygen --out key.hex
+anosecurekit seal-file --in plain.bin --out plain.bin.skf --key-file key.hex
+anosecurekit verify-file --in plain.bin.skf --key-file key.hex
+anosecurekit open-file --in plain.bin.skf --out plain.bin --key-file key.hex</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>File recipes</h2>
+      <pre><code># Seal and open a file with a generated key file.
+anosecurekit keygen --out key.hex
+anosecurekit seal-file --in plain.bin --out plain.bin.skf --key-file key.hex
+anosecurekit open-file --in plain.bin.skf --out plain.bin --key-file key.hex
+
+# Bind authenticated context with AAD. Use the same AAD when opening.
+anosecurekit seal-file --in plain.bin --out plain.bin.skf --key-file key.hex --aad-text record:v1
+anosecurekit open-file --in plain.bin.skf --out plain.bin --key-file key.hex --aad-text record:v1
+
+# Verify without creating a plaintext output file.
+anosecurekit verify-file --in plain.bin.skf --key-file key.hex</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Behavior to remember</h2>
+      <ul>
+        <li>Output paths are never overwritten.</li>
+        <li>Wrong keys, wrong passwords, changed AAD, and modified data fail generically.</li>
+        <li>Password files are raw bytes: no trimming, normalization, prompt, or environment lookup.</li>
+        <li>`verify-file` and `verify-file-password` authenticate without writing plaintext.</li>
+        <li>Detailed command shapes live in the <a href="https://github.com/anothel/anosecurekit/blob/main/docs/CLI.md">full CLI reference</a>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+      Security boundaries are summarized in <a href="./security.html">Security</a>.
+    </p>
+  </footer>
+</body>
+</html>

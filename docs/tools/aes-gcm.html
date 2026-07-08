@@ -1,0 +1,284 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AES-GCM Text Demo</title>
+  <meta name="description" content="Browser-local educational AES-256-GCM text encryption and decryption demo.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/tool.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../guides/aes-gcm.html">AES-GCM guide</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit">GitHub</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Browser-local demo</p>
+      <h1>Encrypt and decrypt UTF-8 text with AES-256-GCM in your browser.</h1>
+      <p class="lead">
+        This educational demo uses Web Crypto in the browser. It does not upload
+        keys, nonces, plaintext, ciphertext, tags, AAD, or errors to a server.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="section tool-panel" aria-label="AES-GCM text demo">
+      <div class="tool-controls" aria-label="Operation">
+        <label>
+          <input type="radio" name="operation" value="encrypt" checked>
+          Encrypt
+        </label>
+        <label>
+          <input type="radio" name="operation" value="decrypt">
+          Decrypt
+        </label>
+      </div>
+
+      <label class="tool-field">
+        <span>Key hex (32 bytes)</span>
+        <input id="tool-key" type="text" spellcheck="false">
+      </label>
+
+      <label class="tool-field">
+        <span>Nonce hex (12 bytes)</span>
+        <input id="tool-nonce" type="text" spellcheck="false">
+      </label>
+
+      <label class="tool-field">
+        <span>AAD text (optional)</span>
+        <input id="tool-aad" type="text" spellcheck="false">
+      </label>
+
+      <label class="tool-field">
+        <span>Input text or ciphertext hex</span>
+        <textarea id="tool-input" rows="8" spellcheck="false">hello anosecurekit</textarea>
+      </label>
+
+      <label class="tool-field">
+        <span>Authentication tag hex</span>
+        <input id="tool-tag" type="text" spellcheck="false">
+      </label>
+
+      <div class="actions">
+        <button class="button primary" id="run-tool" type="button">Run</button>
+        <button class="button" id="generate-key" type="button">Generate key</button>
+        <button class="button" id="generate-nonce" type="button">Generate nonce</button>
+        <button class="button" id="clear-tool" type="button">Clear</button>
+      </div>
+
+      <label class="tool-field">
+        <span>Output text or ciphertext hex</span>
+        <textarea id="tool-output" rows="8" spellcheck="false" readonly></textarea>
+      </label>
+
+      <p class="tool-status" id="tool-status" role="status" aria-live="polite">
+        Ready.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Rules</h2>
+      <ul>
+        <li>This is a raw AES-256-GCM text demo, not an AnoSecureKit `SKT1` packet encoder.</li>
+        <li>Key must be 32 bytes as 64 hex characters.</li>
+        <li>Nonce must be 12 bytes as 24 hex characters. Never reuse a nonce with the same key.</li>
+        <li>AAD is authenticated but not encrypted. Decrypt requires the exact same AAD.</li>
+        <li>Do not paste production secrets into browsers or devices you do not trust.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../guides/aes-gcm.html">AES-GCM guide</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/aead.hpp">AnoSecureKit C++ AEAD API</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+
+  <script>
+    (() => {
+      const keyInput = document.querySelector("#tool-key");
+      const nonceInput = document.querySelector("#tool-nonce");
+      const aadInput = document.querySelector("#tool-aad");
+      const input = document.querySelector("#tool-input");
+      const tagInput = document.querySelector("#tool-tag");
+      const output = document.querySelector("#tool-output");
+      const status = document.querySelector("#tool-status");
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder("utf-8", { fatal: true });
+
+      const toHex = (bytes) => [...bytes]
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("");
+
+      const parseHex = (text, label, byteSize) => {
+        const value = text.trim();
+        if (value.length !== byteSize * 2 || !/^[0-9a-fA-F]+$/.test(value)) {
+          throw new Error(`${label} must be ${byteSize} bytes as ${byteSize * 2} hex characters.`);
+        }
+        const bytes = new Uint8Array(byteSize);
+        for (let i = 0; i < value.length; i += 2) {
+          bytes[i / 2] = Number.parseInt(value.slice(i, i + 2), 16);
+        }
+        return bytes;
+      };
+
+      const parseCiphertext = (text) => {
+        const value = text.trim();
+        if (value.length % 2 !== 0 || !/^[0-9a-fA-F]*$/.test(value)) {
+          throw new Error("Ciphertext must contain an even number of hex characters.");
+        }
+        const bytes = new Uint8Array(value.length / 2);
+        for (let i = 0; i < value.length; i += 2) {
+          bytes[i / 2] = Number.parseInt(value.slice(i, i + 2), 16);
+        }
+        return bytes;
+      };
+
+      const randomHex = (byteSize) => {
+        if (!globalThis.crypto?.getRandomValues) {
+          throw new Error("crypto.getRandomValues() is not available in this browser context.");
+        }
+        const bytes = new Uint8Array(byteSize);
+        crypto.getRandomValues(bytes);
+        return toHex(bytes);
+      };
+
+      const importKey = (keyBytes) => crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        "AES-GCM",
+        false,
+        ["encrypt", "decrypt"],
+      );
+
+      const aesEncrypt = async (keyHex, nonceHex, aadText, plaintext) => {
+        if (!globalThis.crypto?.subtle) {
+          throw new Error("Web Crypto AES-GCM is not available in this browser context.");
+        }
+        const key = await importKey(parseHex(keyHex, "Key", 32));
+        const nonce = parseHex(nonceHex, "Nonce", 12);
+        const encrypted = new Uint8Array(await crypto.subtle.encrypt(
+          { name: "AES-GCM", iv: nonce, additionalData: encoder.encode(aadText), tagLength: 128 },
+          key,
+          encoder.encode(plaintext),
+        ));
+        return {
+          ciphertextHex: toHex(encrypted.slice(0, -16)),
+          tagHex: toHex(encrypted.slice(-16)),
+        };
+      };
+
+      const aesDecrypt = async (keyHex, nonceHex, aadText, ciphertextHex, tagHex) => {
+        if (!globalThis.crypto?.subtle) {
+          throw new Error("Web Crypto AES-GCM is not available in this browser context.");
+        }
+        const key = await importKey(parseHex(keyHex, "Key", 32));
+        const nonce = parseHex(nonceHex, "Nonce", 12);
+        const ciphertext = parseCiphertext(ciphertextHex);
+        const tag = parseHex(tagHex, "Authentication tag", 16);
+        const encrypted = new Uint8Array(ciphertext.length + tag.length);
+        encrypted.set(ciphertext);
+        encrypted.set(tag, ciphertext.length);
+        const plaintext = await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: nonce, additionalData: encoder.encode(aadText), tagLength: 128 },
+          key,
+          encrypted,
+        );
+        return decoder.decode(plaintext);
+      };
+
+      const run = async () => {
+        const operation = document.querySelector("input[name='operation']:checked").value;
+
+        try {
+          if (operation === "encrypt") {
+            const result = await aesEncrypt(keyInput.value, nonceInput.value, aadInput.value, input.value);
+            output.value = result.ciphertextHex;
+            tagInput.value = result.tagHex;
+          } else {
+            output.value = await aesDecrypt(
+              keyInput.value,
+              nonceInput.value,
+              aadInput.value,
+              input.value,
+              tagInput.value,
+            );
+          }
+          status.textContent = "OK. Processed locally in this browser.";
+        } catch (error) {
+          output.value = "";
+          status.textContent = error.message;
+        }
+      };
+
+      const setGeneratedKey = () => {
+        keyInput.value = randomHex(32);
+        status.textContent = "Generated a local 32-byte key.";
+      };
+
+      const setGeneratedNonce = () => {
+        nonceInput.value = randomHex(12);
+        status.textContent = "Generated a local 12-byte nonce.";
+      };
+
+      const clear = () => {
+        aadInput.value = "";
+        input.value = "";
+        tagInput.value = "";
+        output.value = "";
+        status.textContent = "Ready.";
+      };
+
+      window.anosecurekitAesGcmTool = {
+        encrypt: aesEncrypt,
+        decrypt: aesDecrypt,
+        selfTest: async () => {
+          const key = "00".repeat(32);
+          const nonce = "00".repeat(12);
+          const encrypted = await aesEncrypt(key, nonce, "", "hello anosecurekit");
+          if (
+            encrypted.ciphertextHex !== "a6c22c512240180b643bb7b6d19ae9"
+            || encrypted.tagHex !== "aa8c6df5c5268021f7b8c2d504ebc28a"
+          ) {
+            throw new Error("self-test failed: encrypt vector");
+          }
+          const plaintext = await aesDecrypt(key, nonce, "", encrypted.ciphertextHex, encrypted.tagHex);
+          if (plaintext !== "hello anosecurekit") {
+            throw new Error("self-test failed: decrypt vector");
+          }
+          return true;
+        },
+      };
+
+      document.querySelector("#run-tool").addEventListener("click", () => {
+        void run();
+      });
+      document.querySelector("#generate-key").addEventListener("click", setGeneratedKey);
+      document.querySelector("#generate-nonce").addEventListener("click", setGeneratedNonce);
+      document.querySelector("#clear-tool").addEventListener("click", clear);
+      setGeneratedKey();
+      setGeneratedNonce();
+    })();
+  </script>
+</body>
+</html>

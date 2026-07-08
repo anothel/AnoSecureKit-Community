@@ -1,0 +1,388 @@
+// SPDX-License-Identifier: MPL-2.0
+#include "anosecurekit/aead.hpp"
+#include "anosecurekit/error.hpp"
+#include "anosecurekit/packet_stream.hpp"
+
+#include <cstddef>
+#include <initializer_list>
+#include <string_view>
+#include <utility>
+
+#include <gtest/gtest.h>
+
+#include "fixture_utils.hpp"
+
+namespace
+{
+
+constexpr std::size_t kHeaderSize = 5;
+constexpr std::size_t kNonceSize = 12;
+constexpr std::size_t kTagSize = 16;
+constexpr std::size_t kPrefixSize = kHeaderSize + kNonceSize;
+constexpr std::size_t kOverhead = kPrefixSize + kTagSize;
+
+anosecurekit::bytes bytes_from_ascii(std::string_view text)
+{
+	anosecurekit::bytes out;
+	out.reserve(text.size());
+	for (char ch : text)
+	{
+		out.push_back(static_cast<std::byte>(static_cast<unsigned char>(ch)));
+	}
+	return out;
+}
+
+anosecurekit::bytes bytes_from_values(std::initializer_list<unsigned int> values)
+{
+	anosecurekit::bytes out;
+	out.reserve(values.size());
+	for (unsigned int value : values)
+	{
+		out.push_back(static_cast<std::byte>(value));
+	}
+	return out;
+}
+
+anosecurekit::key256 key_from_seed(unsigned int seed)
+{
+	anosecurekit::key256 key{};
+	for (std::size_t i = 0; i < key.size(); ++i)
+	{
+		key[i] = static_cast<std::byte>((seed + i) & 0xffu);
+	}
+	return key;
+}
+
+template <typename Func>
+void expect_error(Func &&func, anosecurekit::error_code expected)
+{
+	try
+	{
+		std::forward<Func>(func)();
+		FAIL() << "expected anosecurekit::error";
+	}
+	catch (const anosecurekit::error &e)
+	{
+		EXPECT_EQ(e.code(), expected);
+	}
+}
+
+template <typename Func>
+void expect_invalid_input(Func &&func)
+{
+	expect_error(std::forward<Func>(func), anosecurekit::error_code::invalid_input);
+}
+
+template <typename Func>
+void expect_invalid_packet(Func &&func)
+{
+	expect_error(std::forward<Func>(func), anosecurekit::error_code::invalid_packet);
+}
+
+template <typename Func>
+void expect_authentication_failed(Func &&func)
+{
+	expect_error(std::forward<Func>(func), anosecurekit::error_code::authentication_failed);
+}
+
+anosecurekit::bytes join(std::initializer_list<anosecurekit::bytes> parts)
+{
+	anosecurekit::bytes out;
+	std::size_t total_size = 0;
+	for (const anosecurekit::bytes &part : parts)
+	{
+		total_size += part.size();
+	}
+
+	out.reserve(total_size);
+	for (const anosecurekit::bytes &part : parts)
+	{
+		out.insert(out.end(), part.begin(), part.end());
+	}
+	return out;
+}
+
+} // namespace
+
+TEST(PacketStream, EncryptsWithChunkedUpdatesAndRoundTrips)
+{
+	const anosecurekit::key256 key = key_from_seed(0x10);
+	const anosecurekit::bytes aad = bytes_from_ascii("record:v1");
+	const anosecurekit::bytes plaintext = bytes_from_ascii("streaming packet plaintext");
+
+	anosecurekit::packet_encryptor encryptor(key, aad);
+	const anosecurekit::bytes prefix = encryptor.begin();
+	const anosecurekit::bytes part1 = encryptor.update(std::span<const std::byte>(plaintext).first(7));
+	const anosecurekit::bytes part2 = encryptor.update(std::span<const std::byte>(plaintext).subspan(7, 8));
+	const anosecurekit::bytes part3 = encryptor.update(std::span<const std::byte>(plaintext).subspan(15));
+	const anosecurekit::bytes tag = encryptor.finalize();
+	const anosecurekit::bytes packet = join({prefix, part1, part2, part3, tag});
+
+	ASSERT_EQ(prefix.size(), kPrefixSize);
+	ASSERT_EQ(tag.size(), kTagSize);
+	ASSERT_EQ(packet.size(), plaintext.size() + kOverhead);
+	EXPECT_EQ(packet[0], std::byte{'S'});
+	EXPECT_EQ(packet[1], std::byte{'K'});
+	EXPECT_EQ(packet[2], std::byte{'T'});
+	EXPECT_EQ(packet[3], std::byte{'1'});
+	EXPECT_EQ(packet[4], std::byte{0x01});
+	EXPECT_EQ(anosecurekit::decrypt(packet, key, aad), plaintext);
+}
+
+TEST(PacketStream, DecryptsOneShotPacketWithChunkedUpdates)
+{
+	const anosecurekit::key256 key = key_from_seed(0x20);
+	const anosecurekit::bytes aad = bytes_from_ascii("aad");
+	const anosecurekit::bytes plaintext = bytes_from_values({
+	    0x00,
+	    0x01,
+	    0x02,
+	    0x7f,
+	    0x80,
+	    0xfe,
+	    0xff,
+	    0x42,
+	    0x43,
+	});
+	const anosecurekit::bytes packet = anosecurekit::encrypt(plaintext, key, aad);
+
+	const std::span<const std::byte> packet_span(packet);
+	const std::span<const std::byte> prefix = packet_span.first(kPrefixSize);
+	const std::span<const std::byte> ciphertext = packet_span.subspan(kPrefixSize, plaintext.size());
+	const std::span<const std::byte> tag = packet_span.last(kTagSize);
+
+	anosecurekit::packet_decryptor decryptor(key, aad);
+	decryptor.begin(prefix);
+	const anosecurekit::bytes part1 = decryptor.update(ciphertext.first(2));
+	const anosecurekit::bytes part2 = decryptor.update(ciphertext.subspan(2, 3));
+	const anosecurekit::bytes part3 = decryptor.update(ciphertext.subspan(5));
+	const anosecurekit::bytes tail = decryptor.finalize(tag);
+
+	EXPECT_EQ(join({part1, part2, part3, tail}), plaintext);
+	EXPECT_TRUE(tail.empty());
+}
+
+TEST(PacketStream, DecryptsKnownPacketVectorWithChunkedUpdates)
+{
+	const anosecurekit::key256 key{};
+	const anosecurekit::bytes aad = bytes_from_ascii("record:v1");
+	const anosecurekit::bytes expected_plaintext = bytes_from_ascii("hello anosecurekit");
+	const anosecurekit::bytes packet = anosecurekit::test::read_hex_fixture("skt1-aes256-gcm-aad.hex");
+
+	const std::span<const std::byte> packet_span(packet);
+	const std::span<const std::byte> ciphertext = packet_span.subspan(kPrefixSize, expected_plaintext.size());
+
+	anosecurekit::packet_decryptor decryptor(key, aad);
+	decryptor.begin(packet_span.first(kPrefixSize));
+	const anosecurekit::bytes part1 = decryptor.update(ciphertext.first(5));
+	const anosecurekit::bytes part2 = decryptor.update(ciphertext.subspan(5));
+	const anosecurekit::bytes tail = decryptor.finalize(packet_span.last(kTagSize));
+
+	EXPECT_EQ(join({part1, part2, tail}), expected_plaintext);
+	EXPECT_TRUE(tail.empty());
+}
+
+TEST(PacketStream, UpdateReturnsPlaintextBeforeAuthenticationFailure)
+{
+	const anosecurekit::key256 key = key_from_seed(0x22);
+	const anosecurekit::bytes aad = bytes_from_ascii("trusted aad");
+	const anosecurekit::bytes wrong_aad = bytes_from_ascii("wrong aad");
+	const anosecurekit::bytes plaintext = bytes_from_ascii("plaintext is unauthenticated until finalize");
+	const anosecurekit::bytes packet = anosecurekit::encrypt(plaintext, key, aad);
+	const std::span<const std::byte> packet_span(packet);
+	const std::span<const std::byte> prefix = packet_span.first(kPrefixSize);
+	const std::span<const std::byte> ciphertext = packet_span.subspan(kPrefixSize, plaintext.size());
+	const std::span<const std::byte> tag = packet_span.last(kTagSize);
+
+	anosecurekit::packet_decryptor decryptor(key, wrong_aad);
+	decryptor.begin(prefix);
+	const anosecurekit::bytes unauthenticated_plaintext = decryptor.update(ciphertext);
+
+	EXPECT_EQ(unauthenticated_plaintext, plaintext);
+	expect_authentication_failed([&] { (void)decryptor.finalize(tag); });
+}
+
+TEST(PacketStream, RoundTripsEmptyPlaintext)
+{
+	const anosecurekit::key256 key = key_from_seed(0x30);
+
+	anosecurekit::packet_encryptor encryptor(key);
+	const anosecurekit::bytes packet = join({encryptor.begin(), encryptor.finalize()});
+
+	ASSERT_EQ(packet.size(), kOverhead);
+	EXPECT_TRUE(anosecurekit::decrypt(packet, key).empty());
+
+	anosecurekit::packet_decryptor decryptor(key);
+	decryptor.begin(std::span<const std::byte>(packet).first(kPrefixSize));
+	EXPECT_TRUE(decryptor.update(std::span<const std::byte>{}).empty());
+	EXPECT_TRUE(decryptor.finalize(std::span<const std::byte>(packet).last(kTagSize)).empty());
+}
+
+TEST(PacketStream, RejectsEncryptInvalidCallOrder)
+{
+	const anosecurekit::key256 key = key_from_seed(0x40);
+	anosecurekit::packet_encryptor encryptor(key);
+
+	expect_invalid_input([&] { (void)encryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)encryptor.finalize(); });
+
+	(void)encryptor.begin();
+	expect_invalid_input([&] { (void)encryptor.begin(); });
+
+	(void)encryptor.finalize();
+	expect_invalid_input([&] { (void)encryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)encryptor.finalize(); });
+}
+
+TEST(PacketStream, RejectsDecryptInvalidCallOrder)
+{
+	const anosecurekit::key256 key = key_from_seed(0x50);
+	anosecurekit::packet_decryptor decryptor(key);
+
+	expect_invalid_input([&] { (void)decryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)decryptor.finalize(bytes_from_values({0x00})); });
+
+	const anosecurekit::bytes packet = anosecurekit::encrypt(bytes_from_ascii("message"), key);
+	decryptor.begin(std::span<const std::byte>(packet).first(kPrefixSize));
+	expect_invalid_input([&] { decryptor.begin(std::span<const std::byte>(packet).first(kPrefixSize)); });
+
+	(void)decryptor.update(std::span<const std::byte>(packet).subspan(kPrefixSize, packet.size() - kOverhead));
+	(void)decryptor.finalize(std::span<const std::byte>(packet).last(kTagSize));
+
+	expect_invalid_input([&] { (void)decryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)decryptor.finalize(std::span<const std::byte>(packet).last(kTagSize)); });
+}
+
+TEST(PacketStream, RejectsMovedFromObjects)
+{
+	const anosecurekit::key256 key = key_from_seed(0x51);
+
+	anosecurekit::packet_encryptor encryptor(key);
+	anosecurekit::packet_encryptor moved_encryptor(std::move(encryptor));
+	expect_invalid_input([&] { (void)encryptor.begin(); });
+	expect_invalid_input([&] { (void)encryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)encryptor.finalize(); });
+
+	anosecurekit::packet_decryptor decryptor(key);
+	anosecurekit::packet_decryptor moved_decryptor(std::move(decryptor));
+	const anosecurekit::bytes packet = anosecurekit::encrypt(bytes_from_ascii("message"), key);
+	const std::span<const std::byte> packet_span(packet);
+	expect_invalid_input([&] { decryptor.begin(packet_span.first(kPrefixSize)); });
+	expect_invalid_input([&] { (void)decryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)decryptor.finalize(packet_span.last(kTagSize)); });
+
+	const anosecurekit::bytes prefix = moved_encryptor.begin();
+	const anosecurekit::bytes tag = moved_encryptor.finalize();
+	moved_decryptor.begin(prefix);
+	EXPECT_TRUE(moved_decryptor.finalize(tag).empty());
+	EXPECT_EQ(join({prefix, tag}).size(), kOverhead);
+}
+
+TEST(PacketStream, RejectsMalformedPrefixAndTag)
+{
+	const anosecurekit::key256 key = key_from_seed(0x60);
+	const anosecurekit::bytes packet = anosecurekit::encrypt(bytes_from_ascii("message"), key);
+	const std::span<const std::byte> packet_span(packet);
+
+	anosecurekit::bytes bad_magic(packet_span.first(kPrefixSize).begin(), packet_span.first(kPrefixSize).end());
+	bad_magic[0] = std::byte{'X'};
+
+	anosecurekit::bytes bad_version(packet_span.first(kPrefixSize).begin(), packet_span.first(kPrefixSize).end());
+	bad_version[kHeaderSize - 1] = std::byte{0x02};
+
+	expect_invalid_packet([&] {
+		anosecurekit::packet_decryptor decryptor(key);
+		decryptor.begin(packet_span.first(kPrefixSize - 1));
+	});
+
+	expect_invalid_packet([&] {
+		anosecurekit::packet_decryptor decryptor(key);
+		decryptor.begin(packet_span.first(kPrefixSize + 1));
+	});
+
+	expect_invalid_packet([&] {
+		anosecurekit::packet_decryptor decryptor(key);
+		decryptor.begin(bad_magic);
+	});
+
+	expect_invalid_packet([&] {
+		anosecurekit::packet_decryptor decryptor(key);
+		decryptor.begin(bad_version);
+	});
+
+	expect_invalid_packet([&] {
+		anosecurekit::packet_decryptor decryptor(key);
+		decryptor.begin(packet_span.first(kPrefixSize));
+		(void)decryptor.finalize(packet_span.last(kTagSize - 1));
+	});
+
+	expect_invalid_packet([&] {
+		anosecurekit::packet_decryptor decryptor(key);
+		decryptor.begin(packet_span.first(kPrefixSize));
+		(void)decryptor.finalize(bytes_from_values({
+		    0x00,
+		    0x01,
+		    0x02,
+		    0x03,
+		    0x04,
+		    0x05,
+		    0x06,
+		    0x07,
+		    0x08,
+		    0x09,
+		    0x0a,
+		    0x0b,
+		    0x0c,
+		    0x0d,
+		    0x0e,
+		    0x0f,
+		    0x10,
+		}));
+	});
+}
+
+TEST(PacketStream, RejectsReuseAfterFailedFinalize)
+{
+	const anosecurekit::key256 key = key_from_seed(0x68);
+	const anosecurekit::key256 wrong_key = key_from_seed(0x69);
+	const anosecurekit::bytes plaintext = bytes_from_ascii("secret");
+	const anosecurekit::bytes packet = anosecurekit::encrypt(plaintext, key);
+	const std::span<const std::byte> packet_span(packet);
+
+	anosecurekit::packet_decryptor decryptor(wrong_key);
+	decryptor.begin(packet_span.first(kPrefixSize));
+	(void)decryptor.update(packet_span.subspan(kPrefixSize, plaintext.size()));
+	expect_authentication_failed([&] { (void)decryptor.finalize(packet_span.last(kTagSize)); });
+
+	expect_invalid_input([&] { decryptor.begin(packet_span.first(kPrefixSize)); });
+	expect_invalid_input([&] { (void)decryptor.update(bytes_from_ascii("abc")); });
+	expect_invalid_input([&] { (void)decryptor.finalize(packet_span.last(kTagSize)); });
+}
+
+TEST(PacketStream, RejectsWrongKeyAndAadAtFinalize)
+{
+	const anosecurekit::key256 key = key_from_seed(0x70);
+	const anosecurekit::key256 wrong_key = key_from_seed(0x71);
+	const anosecurekit::bytes aad = bytes_from_ascii("aad");
+	const anosecurekit::bytes wrong_aad = bytes_from_ascii("other aad");
+	const anosecurekit::bytes plaintext = bytes_from_ascii("secret");
+	const anosecurekit::bytes packet = anosecurekit::encrypt(plaintext, key, aad);
+	const std::span<const std::byte> packet_span(packet);
+	const std::span<const std::byte> prefix = packet_span.first(kPrefixSize);
+	const std::span<const std::byte> ciphertext = packet_span.subspan(kPrefixSize, plaintext.size());
+	const std::span<const std::byte> tag = packet_span.last(kTagSize);
+
+	expect_authentication_failed([&] {
+		anosecurekit::packet_decryptor decryptor(wrong_key, aad);
+		decryptor.begin(prefix);
+		(void)decryptor.update(ciphertext);
+		(void)decryptor.finalize(tag);
+	});
+
+	expect_authentication_failed([&] {
+		anosecurekit::packet_decryptor decryptor(key, wrong_aad);
+		decryptor.begin(prefix);
+		(void)decryptor.update(ciphertext);
+		(void)decryptor.finalize(tag);
+	});
+}

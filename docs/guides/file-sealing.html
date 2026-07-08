@@ -1,0 +1,148 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>File Sealing Guide</title>
+  <meta name="description" content="AnoSecureKit raw-key file sealing guide with SKF1 CLI and C++ API examples, verification, AAD, and output safety notes.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../cli.html">CLI</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/file.hpp">C++ API</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Guide</p>
+      <h1>File sealing encrypts files in authenticated chunks.</h1>
+      <p class="lead">
+        AnoSecureKit writes raw-key file ciphertext as `SKF1`. It uses a caller
+        supplied 32-byte key, derives a per-file key with HKDF-SHA256, and
+        authenticates every chunk before a path-based restore is committed.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="File sealing summary">
+      <article class="card">
+        <h2>What it is</h2>
+        <p>
+          File sealing is chunked authenticated encryption for files. It is for
+          file workflows that do not fit naturally into one small `SKT1` packet.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Path safety</h2>
+        <p>
+          Path-based open refuses existing outputs, writes a temporary file, and
+          renames it only after the whole sealed file authenticates.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Stream caveat</h2>
+        <p>
+          Stream overloads and CLI `--out -` write to caller-owned output.
+          Treat restored bytes as trusted only after the command or function succeeds.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>When to use it</h2>
+      <ul>
+        <li>Use file sealing for files that need confidentiality and tamper detection.</li>
+        <li>Use `verify-file` when a pipeline needs authentication without plaintext output.</li>
+        <li>Use AAD to bind external context such as record type, tenant ID, or schema version.</li>
+        <li>Use password-based file sealing only when users must provide a password instead of a key file.</li>
+      </ul>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>CLI example</h2>
+        <p>
+          Generate a raw 32-byte key file, seal the input, verify the sealed
+          file, then restore to a fresh output path.
+        </p>
+      </div>
+      <pre><code>anosecurekit keygen --out key.hex
+anosecurekit seal-file --in plain.bin --out plain.bin.skf --key-file key.hex
+anosecurekit verify-file --in plain.bin.skf --key-file key.hex
+anosecurekit open-file --in plain.bin.skf --out restored.bin --key-file key.hex</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>AAD example</h2>
+      <p>
+        AAD is authenticated but not stored. Opening or verifying requires the
+        exact same AAD bytes used while sealing.
+      </p>
+      <pre><code>anosecurekit seal-file --in plain.bin --out plain.bin.skf --key-file key.hex --aad-text record:v1
+anosecurekit open-file --in plain.bin.skf --out restored.bin --key-file key.hex --aad-text record:v1</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>C++ API example</h2>
+      <pre><code>#include "anosecurekit/file.hpp"
+#include "anosecurekit/random.hpp"
+
+anosecurekit::key256 key = anosecurekit::generate_key();
+
+anosecurekit::seal_file("plain.bin", "plain.bin.skf", key);
+anosecurekit::open_file("plain.bin.skf", "restored.bin", key);</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>`SKF1` file shape</h2>
+      <ul>
+        <li>Fixed 1 MiB chunk size.</li>
+        <li>Random per-file salt.</li>
+        <li>HKDF-SHA256-derived per-file key.</li>
+        <li>AES-256-GCM encryption for each chunk.</li>
+        <li>Chunk nonce made from an 8-byte random file nonce prefix plus a 32-bit chunk index.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Security notes</h2>
+      <ul>
+        <li>Output paths are not overwritten by path-based file APIs or CLI commands.</li>
+        <li>Wrong keys, wrong AAD, malformed structure, truncation, appended data, and tag failures reject the file.</li>
+        <li>Keep key files out of logs, URLs, command history, backups, crash dumps, and source control.</li>
+        <li>Do not trust stdout or stream output from open operations until the process exits successfully.</li>
+        <li>Use a separate security review before using AnoSecureKit in high-risk systems.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../cli.html">AnoSecureKit CLI summary</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="./aes-gcm.html">AES-GCM guide</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/docs/FORMAT.md">Format reference</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/file.hpp">File public header</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/tests/file_test.cpp">File sealing tests</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AnoSecureKit Security</title>
+  <meta name="description" content="AnoSecureKit security boundaries, audit status, OpenSSL dependency, and safe-use notes.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="./">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="./">Home</a>
+        <a href="./cli.html">CLI</a>
+        <a href="https://github.com/anothel/anosecurekit">GitHub</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/docs/SECURITY_MODEL.md">Security model</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Security boundaries</p>
+      <h1>Know what AnoSecureKit protects, and what it does not.</h1>
+      <p class="lead">
+        AnoSecureKit is a small C++20 utility library with OpenSSL 3.x as the
+        current default crypto backend. It has not had an external security
+        audit and is not a substitute for a full review in high-risk systems.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/anothel/anosecurekit/blob/main/docs/SECURITY_MODEL.md">Read security model</a>
+        <a class="button" href="https://github.com/anothel/anosecurekit/blob/main/SECURITY.md">Report policy</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Security summary">
+      <article class="card">
+        <h2>Scope</h2>
+        <p>
+          AnoSecureKit provides byte encoders, SHA-256, HMAC, HKDF, random bytes,
+          AES-256-GCM packets, and chunked file sealing through a private crypto
+          backend boundary. OpenSSL is the current default backend.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Audit status</h2>
+        <p>
+          AnoSecureKit has not had an external security audit. Use separate review
+          for high-risk systems.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Reports</h2>
+        <p>
+          Do not report vulnerabilities through public issues. Use GitHub
+          Security Advisories or a private maintainer contact path.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>What AnoSecureKit does not provide</h2>
+      <ul>
+        <li>Custom cryptographic primitives.</li>
+        <li>TLS, networking, or secure key storage.</li>
+        <li>Guaranteed memory erasure.</li>
+        <li>Password hashing for account authentication.</li>
+        <li>Caller-selected algorithms or nonces.</li>
+        <li>Protection from compromised hosts, filesystems, shells, or build tools.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Authentication rules</h2>
+      <p>
+        One-shot decrypt returns plaintext only after authentication succeeds.
+        Incremental `packet_decryptor::update()` can return unverified plaintext
+        before `finalize(tag)`, so callers must buffer it until final
+        authentication succeeds.
+      </p>
+      <p>
+        Wrong keys, wrong AAD, wrong passwords, modified ciphertext, modified
+        nonces, and modified tags use generic authentication failures.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>File output safety</h2>
+      <p>
+        Path-based open commands refuse to overwrite output paths and commit a
+        temporary file only after successful authentication. Stream output and
+        CLI `--out -` cannot be rolled back by AnoSecureKit, so callers must trust
+        output only after the command exits successfully.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Password-based file sealing</h2>
+      <p>
+        `SKP1` reads password bytes exactly as supplied. AnoSecureKit does not
+        trim, normalize, prompt, read environment variables, or define password
+        quality rules. Current `SKP1` uses fixed scrypt parameters.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>OpenSSL dependency</h2>
+      <p>
+        AnoSecureKit uses the default OpenSSL library context and provider
+        configuration already active in the process. Applications that require
+        FIPS mode or custom providers must configure OpenSSL before calling
+        AnoSecureKit.
+      </p>
+      <p>
+        Full details live in the
+        <a href="https://github.com/anothel/anosecurekit/blob/main/docs/SECURITY_MODEL.md">security model</a>,
+        <a href="https://github.com/anothel/anosecurekit/blob/main/docs/OPENSSL_POLICY.md">OpenSSL policy</a>, and
+        <a href="https://github.com/anothel/anosecurekit/blob/main/SECURITY.md">security policy</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+      CLI usage is summarized in <a href="./cli.html">CLI</a>.
+    </p>
+  </footer>
+</body>
+</html>

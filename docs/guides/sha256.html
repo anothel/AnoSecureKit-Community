@@ -1,0 +1,132 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SHA-256 Guide</title>
+  <meta name="description" content="SHA-256 guide with AnoSecureKit CLI and C++ API examples, plus security notes about hashing, HMAC, and encryption.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../cli.html">CLI</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/hash.hpp">C++ API</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Guide</p>
+      <h1>SHA-256 gives bytes a fixed 32-byte digest.</h1>
+      <p class="lead">
+        Use SHA-256 to identify data, compare known content, or build higher
+        level protocols that already require it. Do not use a plain hash as
+        encryption, authentication, or password storage.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="SHA-256 summary">
+      <article class="card">
+        <h2>What it is</h2>
+        <p>
+          SHA-256 is a cryptographic hash function. It maps any byte input to a
+          32-byte digest, usually printed as 64 lowercase hex characters.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Good uses</h2>
+        <p>
+          Use it for checksums, content identifiers, test vectors, and protocols
+          that already specify SHA-256.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Bad uses</h2>
+        <p>
+          A plain hash is not encryption, not a MAC, and not password hashing.
+          Use HMAC, AEAD, or a password KDF where appropriate.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>When to use it</h2>
+      <ul>
+        <li>Use SHA-256 to verify that public data matches an expected digest.</li>
+        <li>Use it to name immutable content when collision resistance is enough for the protocol.</li>
+        <li>Use HMAC-SHA-256 when a secret key must authenticate data.</li>
+        <li>Use encryption when data must stay confidential.</li>
+      </ul>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>CLI example</h2>
+        <p>
+          The CLI prints SHA-256 digests as lowercase hex. It accepts text or a
+          file path.
+        </p>
+      </div>
+      <pre><code>anosecurekit sha256 --text abc
+anosecurekit sha256 --file path/to/file.bin</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>C++ API example</h2>
+      <pre><code>#include "anosecurekit/hash.hpp"
+#include "anosecurekit/hex.hpp"
+
+#include &lt;cstddef&gt;
+#include &lt;iostream&gt;
+
+anosecurekit::bytes data{std::byte{'a'}, std::byte{'b'}, std::byte{'c'}};
+anosecurekit::digest256 digest = anosecurekit::sha256(data);
+
+std::cout &lt;&lt; anosecurekit::hex_encode(digest) &lt;&lt; "\n";</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Known vector</h2>
+      <p>`sha256("abc")` is:</p>
+      <pre><code>ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Security notes</h2>
+      <ul>
+        <li>SHA-256 is deterministic: the same input always gives the same digest.</li>
+        <li>Anyone with the input can recompute the digest.</li>
+        <li>Use `hmac_sha256` or `anosecurekit hmac-sha256` when a secret key must protect integrity.</li>
+        <li>Use `seal-file`, `encrypt`, or the C++ AEAD APIs when you need confidentiality.</li>
+        <li>Do not store account passwords as raw SHA-256 digests.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../cli.html">AnoSecureKit CLI summary</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/hash.hpp">Hash public header</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/tests/hash_test.cpp">SHA-256 and HMAC test vectors</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

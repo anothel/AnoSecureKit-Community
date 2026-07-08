@@ -1,0 +1,138 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Base64 and Base64URL Guide</title>
+  <meta name="description" content="Base64 and Base64URL guide with AnoSecureKit C++ API and CLI examples.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../cli.html">CLI</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/base64.hpp">C++ API</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Guide</p>
+      <h1>Base64 turns bytes into text. Base64URL makes that text URL-safe.</h1>
+      <p class="lead">
+        Use Base64 when a binary value must travel through text-only storage or
+        protocols. Use Base64URL when the encoded value will appear in URLs,
+        filenames, tokens, or other places where `+`, `/`, and padding are awkward.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Base64 summary">
+      <article class="card">
+        <h2>Base64</h2>
+        <p>
+          RFC 4648 Base64 uses `A-Z`, `a-z`, `0-9`, `+`, `/`, and `=` padding.
+          AnoSecureKit decoders require canonical input.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Base64URL</h2>
+        <p>
+          Base64URL replaces `+` with `-`, `/` with `_`, and AnoSecureKit emits it
+          without padding.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Not encryption</h2>
+        <p>
+          Base64 is encoding, not security. Anyone can decode it. Do not use it
+          to hide secrets.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>When to use it</h2>
+      <ul>
+        <li>Use Base64 for binary data in text formats that expect the standard alphabet.</li>
+        <li>Use Base64URL for compact URL-safe tokens and identifiers.</li>
+        <li>Do not use either as encryption, authentication, compression, or password protection.</li>
+      </ul>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>CLI example</h2>
+        <p>
+          AnoSecureKit exposes Base64URL through the CLI. It writes decoded bytes
+          to stdout, so automation should treat output as bytes.
+        </p>
+      </div>
+      <pre><code>anosecurekit base64url-encode --text abc
+anosecurekit base64url-decode --text YWJj</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>C++ API example</h2>
+      <pre><code>#include "anosecurekit/base64.hpp"
+
+#include &lt;cstddef&gt;
+#include &lt;string&gt;
+
+anosecurekit::bytes data{std::byte{'f'}, std::byte{'o'}, std::byte{'o'}};
+
+std::string standard = anosecurekit::base64_encode(data);    // "Zm9v"
+std::string url_safe = anosecurekit::base64url_encode(data); // "Zm9v"
+
+anosecurekit::bytes decoded = anosecurekit::base64url_decode(url_safe);</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Validation behavior</h2>
+      <p>
+        AnoSecureKit decoders are strict. Standard Base64 rejects malformed padding,
+        whitespace, and Base64URL-only characters. Base64URL rejects standard
+        `+` and `/`, rejects padding, and requires canonical input.
+      </p>
+      <p>
+        Malformed input raises `anosecurekit::error` with
+        `anosecurekit::error_code::invalid_encoding`.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Security notes</h2>
+      <ul>
+        <li>Base64 does not provide confidentiality or integrity.</li>
+        <li>Encoding a key, password, token, or packet does not make it safe to log or publish.</li>
+        <li>Use HMAC or AEAD when you need authenticity or tamper detection.</li>
+        <li>Use AnoSecureKit file or packet encryption when you need encryption.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../cli.html">AnoSecureKit CLI summary</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/base64.hpp">Base64 public header</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/tests/base64_test.cpp">Base64 test vectors</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

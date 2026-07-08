@@ -1,0 +1,151 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AnoSecureKit</title>
+  <meta name="description" content="AnoSecureKit is a small C++20 security utility library with OpenSSL 3.x as the current default crypto backend.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="./">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="#docs">Docs</a>
+        <a href="https://github.com/anothel/anosecurekit">GitHub</a>
+        <a href="https://github.com/anothel/anosecurekit/releases">Releases</a>
+        <a href="./cli.html">CLI</a>
+        <a href="./security.html">Security</a>
+        <a href="./license.html">License</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">OpenSSL-backed today, backend-neutral by design</p>
+      <h1>Practical C++20 crypto utilities.</h1>
+      <p class="lead">
+        AnoSecureKit gives application code a compact byte-oriented API for
+        encoding, hashing, random tokens, AES-256-GCM packets, key wrapping,
+        and chunked file sealing without spreading provider calls everywhere.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/anothel/anosecurekit">View on GitHub</a>
+        <a class="button" href="./cli.html">Use the CLI</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Project summary">
+      <article class="card">
+        <h2>What it is</h2>
+        <p>
+          A small C++20 library for common binary and cryptographic tasks in
+          application code.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>What it covers</h2>
+        <ul>
+          <li>Hex, Base64, and Base64URL</li>
+          <li>SHA-256, HMAC-SHA-256, and HKDF-SHA-256</li>
+          <li>Constant-time comparison for equal-length values</li>
+          <li>Random bytes, random keys, and URL-safe tokens</li>
+          <li>AES-256-GCM packets, key wrapping, and file sealing</li>
+        </ul>
+      </article>
+
+      <article class="card warning">
+        <h2>Security status</h2>
+        <p>
+          No external security audit yet. Do not use it as a replacement for a
+          full review in high-risk systems.
+        </p>
+      </article>
+      <article class="card">
+        <h2>License</h2>
+        <p>
+          MPL-2.0: commercial use is allowed, and distributed modifications to
+          AnoSecureKit-covered files should remain open under MPL-2.0.
+        </p>
+      </article>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>Quick start</h2>
+        <p>
+          Build the project and run the default local checks from a source checkout.
+        </p>
+      </div>
+      <pre><code>cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DANOSECUREKIT_BUILD_TESTS=ON
+cmake --build build --config Release --target check</code></pre>
+    </section>
+
+    <section class="section" id="docs">
+      <h2>Documentation</h2>
+      <div class="doc-sections">
+        <article class="doc-group">
+          <h3>Start</h3>
+          <a href="https://github.com/anothel/anosecurekit/blob/main/README.md">README</a>
+          <a href="./cli.html">CLI guide</a>
+          <a href="./security.html">Security model</a>
+          <a href="./license.html">License policy</a>
+          <a href="https://github.com/anothel/anosecurekit/releases">Releases</a>
+        </article>
+
+        <article class="doc-group">
+          <h3>Guides</h3>
+          <a href="./guides/base64.html">Base64 and Base64URL</a>
+          <a href="./guides/sha256.html">SHA-256</a>
+          <a href="./guides/hmac-sha256.html">HMAC-SHA-256</a>
+          <a href="./guides/aes-gcm.html">AES-GCM packets</a>
+          <a href="./guides/file-sealing.html">File sealing</a>
+          <a href="./guides/password-file-sealing.html">Password file sealing</a>
+        </article>
+
+        <article class="doc-group">
+          <h3>Browser-local tools</h3>
+          <a href="./tools/base64.html">Base64 encoder/decoder</a>
+          <a href="./tools/sha256.html">SHA-256 digest</a>
+          <a href="./tools/random-token.html">Random token generator</a>
+          <a href="./tools/hmac-sha256.html">HMAC-SHA-256 calculator</a>
+          <a href="./tools/aes-gcm.html">AES-GCM text demo</a>
+        </article>
+
+        <article class="doc-group">
+          <h3>Reference</h3>
+          <a href="https://github.com/anothel/anosecurekit/blob/main/docs/FORMAT.md">SKT1, SKF1, and SKP1 formats</a>
+          <a href="./release-verification.html">Verify release artifacts</a>
+          <a href="./roadmap.html">Roadmap and scope boundaries</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section callout">
+      <h2>Web access plan</h2>
+      <p>
+        This site starts as a documentation-first project page with small
+        browser-local tools. Plaintext, keys, passwords, and files should not be
+        uploaded to a server for routine crypto operations.
+      </p>
+      <p>
+        Any future web tools should run locally in the browser, avoid third-party
+        scripts on tool pages, and clearly separate documentation or advertising
+        areas from security-sensitive input areas.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Maintained by <a href="https://github.com/anothel">anothel</a>. Source code is available on
+      <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

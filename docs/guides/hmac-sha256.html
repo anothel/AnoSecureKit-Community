@@ -1,0 +1,137 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HMAC-SHA-256 Guide</title>
+  <meta name="description" content="HMAC-SHA-256 guide with AnoSecureKit CLI and C++ API examples, plus security notes about keyed message authentication.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../tools/hmac-sha256.html">Tool</a>
+        <a href="../cli.html">CLI</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/hash.hpp">C++ API</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Guide</p>
+      <h1>HMAC-SHA-256 authenticates bytes with a secret key.</h1>
+      <p class="lead">
+        Use HMAC-SHA-256 when both sides already share a secret key and need to
+        detect message changes. A plain SHA-256 hash is public and keyless; HMAC
+        is keyed authentication.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="HMAC-SHA-256 summary">
+      <article class="card">
+        <h2>What it is</h2>
+        <p>
+          HMAC combines a secret key with SHA-256 to produce a 32-byte tag,
+          commonly printed as 64 lowercase hex characters.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Good uses</h2>
+        <p>
+          Use it for webhook signatures, signed metadata, request verification,
+          and protocols that already define HMAC-SHA-256.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Not encryption</h2>
+        <p>
+          HMAC detects tampering but does not hide data. Use AEAD encryption
+          when confidentiality is required.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>When to use it</h2>
+      <ul>
+        <li>Use HMAC-SHA-256 when the verifier has the same secret key as the signer.</li>
+        <li>Use plain SHA-256 only for public, keyless digests.</li>
+        <li>Use AES-GCM or file sealing when data must be encrypted.</li>
+        <li>Do not invent custom signature formats without a replay and key-rotation plan.</li>
+      </ul>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>CLI example</h2>
+        <p>
+          The CLI accepts the HMAC key as strict hex and accepts text or file
+          input. Output is lowercase hex.
+        </p>
+      </div>
+      <pre><code>anosecurekit hmac-sha256 --key-hex 4a656665 --text "what do ya want for nothing?"
+anosecurekit hmac-sha256 --key-hex 4a656665 --file path/to/file.bin</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>C++ API example</h2>
+      <pre><code>#include "anosecurekit/hash.hpp"
+#include "anosecurekit/hex.hpp"
+
+#include &lt;cstddef&gt;
+#include &lt;iostream&gt;
+
+anosecurekit::bytes key{std::byte{'J'}, std::byte{'e'}, std::byte{'f'}, std::byte{'e'}};
+anosecurekit::bytes message{
+    std::byte{'w'}, std::byte{'h'}, std::byte{'a'}, std::byte{'t'}};
+
+anosecurekit::digest256 tag = anosecurekit::hmac_sha256(key, message);
+std::cout &lt;&lt; anosecurekit::hex_encode(tag) &lt;&lt; "\n";</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Known vector</h2>
+      <p>For key `Jefe` and message `what do ya want for nothing?`, HMAC-SHA-256 is:</p>
+      <pre><code>5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Security notes</h2>
+      <ul>
+        <li>Keep HMAC keys secret. Anyone with the key can create valid tags.</li>
+        <li>Include all fields that affect meaning in the signed bytes.</li>
+        <li>Use a replay defense when the same signed message should not be accepted twice.</li>
+        <li>Compare expected and received tags with constant-time comparison when values are secret.</li>
+        <li>Rotate keys with protocol support; do not silently change keys without verifier coordination.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../cli.html">AnoSecureKit CLI summary</a></li>
+        <li><a href="../tools/hmac-sha256.html">Browser-local HMAC-SHA-256 tool</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="./sha256.html">SHA-256 guide</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/hash.hpp">Hash public header</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/tests/hash_test.cpp">HMAC test vectors</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

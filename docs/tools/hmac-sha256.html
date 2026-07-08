@@ -1,0 +1,212 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HMAC-SHA-256 Tool</title>
+  <meta name="description" content="Browser-local HMAC-SHA-256 tool for UTF-8 text with text or hex keys.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/tool.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../guides/hmac-sha256.html">HMAC-SHA-256 guide</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit">GitHub</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Browser-local tool</p>
+      <h1>Calculate HMAC-SHA-256 for UTF-8 text in your browser.</h1>
+      <p class="lead">
+        This tool uses Web Crypto in the browser. It does not upload keys,
+        input, output, or errors to a server.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="section tool-panel" aria-label="HMAC-SHA-256 tool">
+      <div class="tool-controls" aria-label="Key encoding">
+        <label>
+          <input type="radio" name="key-format" value="text" checked>
+          Text key
+        </label>
+        <label>
+          <input type="radio" name="key-format" value="hex">
+          Hex key
+        </label>
+      </div>
+
+      <label class="tool-field">
+        <span>Key</span>
+        <input id="tool-key" type="text" spellcheck="false" value="Jefe">
+      </label>
+
+      <label class="tool-field">
+        <span>Message</span>
+        <textarea id="tool-input" rows="8" spellcheck="false">what do ya want for nothing?</textarea>
+      </label>
+
+      <div class="actions">
+        <button class="button primary" id="run-tool" type="button">Run</button>
+        <button class="button" id="clear-tool" type="button">Clear</button>
+      </div>
+
+      <label class="tool-field">
+        <span>HMAC-SHA-256 hex tag</span>
+        <textarea id="tool-output" rows="4" spellcheck="false" readonly></textarea>
+      </label>
+
+      <p class="tool-status" id="tool-status" role="status" aria-live="polite">
+        Ready.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Rules</h2>
+      <ul>
+        <li>Message input is encoded as UTF-8 text before signing.</li>
+        <li>Text keys are encoded as UTF-8. Hex keys must contain an even number of hex characters.</li>
+        <li>The output is a 32-byte HMAC-SHA-256 tag shown as 64 lowercase hex characters.</li>
+        <li>HMAC detects tampering but does not encrypt or hide the message.</li>
+        <li>Do not paste production secrets into browsers or devices you do not trust.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../guides/hmac-sha256.html">HMAC-SHA-256 guide</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/hash.hpp">AnoSecureKit C++ hash API</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+
+  <script>
+    (() => {
+      const keyInput = document.querySelector("#tool-key");
+      const input = document.querySelector("#tool-input");
+      const output = document.querySelector("#tool-output");
+      const status = document.querySelector("#tool-status");
+      const encoder = new TextEncoder();
+
+      const toHex = (bytes) => [...bytes]
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("");
+
+      const parseHex = (text) => {
+        const value = text.trim();
+        if (value.length === 0) {
+          throw new Error("Key is required.");
+        }
+        if (value.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(value)) {
+          throw new Error("Hex key must contain an even number of hex characters.");
+        }
+        const bytes = new Uint8Array(value.length / 2);
+        for (let i = 0; i < value.length; i += 2) {
+          bytes[i / 2] = Number.parseInt(value.slice(i, i + 2), 16);
+        }
+        return bytes;
+      };
+
+      const parseTextKey = (text) => {
+        if (text.length === 0) {
+          throw new Error("Key is required.");
+        }
+        return encoder.encode(text);
+      };
+
+      const keyBytes = (text, format) => format === "hex"
+        ? parseHex(text)
+        : parseTextKey(text);
+
+      const hmacSha256 = async (key, message) => {
+        if (!globalThis.crypto?.subtle) {
+          throw new Error("Web Crypto HMAC-SHA-256 is not available in this browser context.");
+        }
+        const cryptoKey = await crypto.subtle.importKey(
+          "raw",
+          key,
+          { name: "HMAC", hash: "SHA-256" },
+          false,
+          ["sign"],
+        );
+        const tag = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(message));
+        return toHex(new Uint8Array(tag));
+      };
+
+      const sign = async (keyText, keyFormat, message) => hmacSha256(
+        keyBytes(keyText, keyFormat),
+        message,
+      );
+
+      const run = async () => {
+        const keyFormat = document.querySelector("input[name='key-format']:checked").value;
+
+        try {
+          output.value = await sign(keyInput.value, keyFormat, input.value);
+          status.textContent = "OK. Processed locally in this browser.";
+        } catch (error) {
+          output.value = "";
+          status.textContent = error.message;
+        }
+      };
+
+      const clear = () => {
+        keyInput.value = "";
+        input.value = "";
+        output.value = "";
+        status.textContent = "Ready.";
+      };
+
+      window.anosecurekitHmacTool = {
+        sign,
+        selfTest: async () => {
+          const checks = [
+            [
+              "Jefe",
+              "text",
+              "what do ya want for nothing?",
+              "5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843",
+            ],
+            [
+              "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+              "hex",
+              "Hi There",
+              "b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7",
+            ],
+          ];
+          for (const [key, format, message, expected] of checks) {
+            const actual = await sign(key, format, message);
+            if (actual !== expected) {
+              throw new Error(`self-test failed: ${format} key`);
+            }
+          }
+          return true;
+        },
+      };
+
+      document.querySelector("#run-tool").addEventListener("click", () => {
+        void run();
+      });
+      document.querySelector("#clear-tool").addEventListener("click", clear);
+      void run();
+    })();
+  </script>
+</body>
+</html>

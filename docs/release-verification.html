@@ -1,0 +1,114 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify AnoSecureKit Releases</title>
+  <meta name="description" content="How to verify AnoSecureKit release checksums, GitHub artifact attestations, and release SBOM metadata.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="./assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="./">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="./">Home</a>
+        <a href="./cli.html">CLI</a>
+        <a href="./security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/releases">Releases</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/docs/VERIFY_RELEASE.md">Full guide</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Release verification</p>
+      <h1>Check downloaded release assets before using them.</h1>
+      <p class="lead">
+        AnoSecureKit releases publish checksums, GitHub artifact attestations, and
+        SPDX SBOM metadata. Verify assets from the same release before building
+        from source archives or using binary archives.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/anothel/anosecurekit/releases">Open releases</a>
+        <a class="button" href="https://github.com/anothel/anosecurekit/blob/main/docs/VERIFY_RELEASE.md">Read full guide</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Release verification summary">
+      <article class="card">
+        <h2>Download together</h2>
+        <p>
+          Use assets from one GitHub Release only: `SHA256SUMS.txt`, the archive
+          you plan to use, and the release SBOM if you need metadata.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Check checksums</h2>
+        <p>
+          Compare each downloaded asset against the digest listed in
+          `SHA256SUMS.txt` before unpacking or using it.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Know the limit</h2>
+        <p>
+          Verification shows assets match release workflow outputs. It does not
+          prove external audit status or suitability for high-risk systems.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>Checksum verification</h2>
+      <p>On Linux or macOS:</p>
+      <pre><code>sha256sum -c SHA256SUMS.txt</code></pre>
+      <p>On Windows PowerShell, compare the printed digest with `SHA256SUMS.txt`:</p>
+      <pre><code>Get-FileHash .\anosecurekit-0.2.2-source.tar.gz -Algorithm SHA256</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>GitHub artifact attestations</h2>
+      <p>Use GitHub CLI to verify the checksum file and the asset you downloaded:</p>
+      <pre><code>gh attestation verify SHA256SUMS.txt --repo anothel/anosecurekit
+gh attestation verify anosecurekit-0.2.2-source.tar.gz --repo anothel/anosecurekit</code></pre>
+      <p>
+        The attestation should point back to the `anothel/anosecurekit` repository
+        and its release workflow.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>SBOM metadata</h2>
+      <p>
+        Release SBOM files are named like `anosecurekit-X.Y.Z-release.spdx.json`.
+        Use the SBOM to inspect release asset names and recorded SHA-256
+        checksums. It is metadata, not a replacement for checksum and
+        attestation verification.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>Source or binary archive</h2>
+      <ul>
+        <li>Use source archives when rebuilding locally, auditing code, or using CMake `FetchContent`.</li>
+        <li>Use binary archives only when the platform and trust model match your deployment.</li>
+        <li>Do not mix source archives, binary archives, and checksum files from different versions.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Full details live in
+      <a href="https://github.com/anothel/anosecurekit/blob/main/docs/VERIFY_RELEASE.md">docs/VERIFY_RELEASE.md</a>.
+      Security boundaries are summarized in <a href="./security.html">Security</a>.
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Random Token Guide</title>
+  <meta name="description" content="Random token guide with AnoSecureKit CLI and C++ API examples, plus safe-use notes.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">AnoSecureKit</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../cli.html">CLI</a>
+        <a href="../security.html">Security</a>
+        <a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/random.hpp">C++ API</a>
+      </div>
+    </nav>
+
+    <section class="hero-body">
+      <p class="eyebrow">Guide</p>
+      <h1>Random tokens are URL-safe text from random bytes.</h1>
+      <p class="lead">
+        AnoSecureKit random tokens are generated from cryptographically secure
+        random bytes and encoded as unpadded Base64URL. The size argument is the
+        number of random bytes before encoding.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="cards" aria-label="Random token summary">
+      <article class="card">
+        <h2>What it is</h2>
+        <p>
+          A random token is unpredictable text suitable for identifiers,
+          one-time values, and application-level secrets when stored and handled safely.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Format</h2>
+        <p>
+          AnoSecureKit returns unpadded Base64URL text using `A-Z`, `a-z`, `0-9`,
+          `-`, and `_`.
+        </p>
+      </article>
+
+      <article class="card warning">
+        <h2>Storage matters</h2>
+        <p>
+          Token generation is only one part. Applications must protect tokens in
+          logs, URLs, databases, backups, and monitoring systems.
+        </p>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>When to use it</h2>
+      <ul>
+        <li>Use random tokens for session-like identifiers, CSRF-like nonces, invitation codes, and reset handles when the surrounding protocol is sound.</li>
+        <li>Use enough random bytes for the threat model. `32` bytes is a common strong default.</li>
+        <li>Do not use random tokens as encryption keys unless the API specifically expects raw key bytes.</li>
+        <li>Do not regenerate tokens deterministically from user data.</li>
+      </ul>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>CLI example</h2>
+        <p>
+          The CLI argument is the number of random bytes before Base64URL
+          encoding. `0` is rejected.
+        </p>
+      </div>
+      <pre><code>anosecurekit token 32</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>C++ API example</h2>
+      <pre><code>#include "anosecurekit/random.hpp"
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+std::string token = anosecurekit::random_token(32);
+std::cout &lt;&lt; token &lt;&lt; "\n";</code></pre>
+    </section>
+
+    <section class="section">
+      <h2>Security notes</h2>
+      <ul>
+        <li>Generated tokens are secrets if possession grants access.</li>
+        <li>Do not log generated tokens unless logs are protected like secrets.</li>
+        <li>Do not send high-value tokens through referrers, analytics, or third-party scripts.</li>
+        <li>Compare stored token digests or use a keyed design when database disclosure is in scope.</li>
+        <li>Use `anosecurekit::generate_key()` when you need a 32-byte raw key, not text.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Related docs</h2>
+      <ul>
+        <li><a href="../cli.html">AnoSecureKit CLI summary</a></li>
+        <li><a href="../security.html">Security boundaries</a></li>
+        <li><a href="./base64.html">Base64 and Base64URL guide</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/include/anosecurekit/random.hpp">Random public header</a></li>
+        <li><a href="https://github.com/anothel/anosecurekit/blob/main/tests/random_test.cpp">Random token tests</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      Source code is available on <a href="https://github.com/anothel/anosecurekit">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>

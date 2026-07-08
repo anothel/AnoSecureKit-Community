@@ -1,0 +1,194 @@
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+
+# AnoSecureKit Security Model
+
+## Goals
+
+AnoSecureKit provides small C++20 helpers for byte-oriented cryptographic tasks:
+
+- strict binary encoders and decoders
+- SHA-256, HMAC-SHA-256, and HKDF-SHA-256 wrappers
+- constant-time comparison for equal-length secret values
+- AES-256-GCM packets, currently implemented by the default OpenSSL backend
+- chunked file sealing, currently implemented by the default OpenSSL backend
+- password-based file sealing for `SKP1`
+
+The project aims to make these operations hard to misuse while keeping the API
+surface small.
+
+## Non-Goals
+
+AnoSecureKit does not provide:
+
+- custom cryptographic primitives
+- TLS or networking
+- secure key storage
+- guaranteed memory erasure
+- password hashing for account authentication
+- general KDF agility or caller-selected algorithms
+- caller-selected nonces
+- protection from compromised hosts, filesystems, shells, or build tools
+
+## Threat Model
+
+AnoSecureKit assumes attackers may read, modify, truncate, reorder, append, or
+replace serialized `SKT1`, `SKF1`, and `SKP1` data. It also assumes attackers may
+provide wrong AAD, wrong keys, wrong passwords, and malformed input.
+
+AnoSecureKit does not assume attackers can execute code inside the caller process
+or compromise OpenSSL, the operating system, or the compiler.
+
+## Key Material Handling
+
+Caller-owned keys and passwords remain caller responsibility. AnoSecureKit does not
+store them beyond the operation scope intentionally, but portable guaranteed
+erasure is not promised.
+
+Internal derived keys and OpenSSL contexts are scoped to the operation. Returned
+`std::vector<std::byte>` values, caller buffers, allocator copies, swap files,
+page files, crash dumps, logs, and debugger memory are outside AnoSecureKit's
+control.
+
+Do not advertise AnoSecureKit as guaranteeing secure memory wiping.
+
+## Randomness
+
+AnoSecureKit relies on OpenSSL random byte APIs for keys, tokens, packet nonces,
+file salts, and file nonce prefixes. Randomness backend failures are reported as
+`anosecurekit::error_code::backend_failure`.
+
+Callers cannot supply nonces in the public API. This avoids accidental nonce
+reuse across the v1 surface.
+
+## AEAD Authentication Rules
+
+AEAD decryption succeeds only after tag verification succeeds.
+
+For one-shot `decrypt`, plaintext is returned only after authentication.
+
+For `packet_decryptor`, `update()` returns unverified plaintext before
+`finalize(tag)` checks the authentication tag. Callers must buffer or otherwise
+hold that plaintext in a non-observable location until `finalize(tag)` returns
+successfully.
+
+Wrong keys, wrong AAD, modified non-structural authenticated bytes, modified
+ciphertext, modified nonces, and modified tags must not be distinguishable
+through detailed public error messages. Malformed or unsupported packet and file
+structure is reported as `invalid_packet`.
+
+## File Output Safety
+
+Path-based `open_file` and `open_file_with_password` refuse to overwrite an
+existing output path. They write a temporary file in the output directory and
+rename it to the requested output only after the whole file authenticates.
+Authentication failure should not leave the requested output path behind.
+Path-based file APIs flush AnoSecureKit-owned temporary output before committing it
+and use platform commit syncing where practical. This improves crash resilience,
+but AnoSecureKit does not guarantee survival across power loss, filesystem bugs, or
+storage-device failure. If a post-commit directory sync fails on a platform that
+supports it, AnoSecureKit reports `backend_failure` and the output path may already
+exist.
+
+Stream-based open APIs write to caller-provided streams. They cannot delete,
+truncate, or roll back bytes already accepted by that stream. Callers using
+streams must treat the output as committed only after the function returns
+successfully.
+
+CLI file commands inherit the same distinction:
+
+- path output refuses overwrite and commits after success
+- `--out -` writes to stdout and cannot be rolled back
+- `verify-file` and `verify-file-password` take no output path, discard
+  recovered plaintext, and report authentication success with exit code 0 and
+  failure with exit code 1
+
+## Future Streaming Format Gate
+
+No additional streaming format may be added until its design names exactly who
+owns unauthenticated output.
+
+Allowed choices are:
+
+- verified-output-only: AnoSecureKit buffers or owns temporary output and exposes
+  plaintext only after final authentication succeeds;
+- explicit early-plaintext: the API name and docs state that plaintext is
+  unauthenticated until final authentication succeeds, and caller-owned output
+  cannot be rolled back by AnoSecureKit.
+
+The design must map each new rejection rule to `docs/FORMAT.md` and either a
+negative fixture or a generated regression test when the fixture would be too
+large. It must also state whether path output, stream output, and CLI stdout can
+leave observable bytes after failure.
+
+## Password-Based Encryption
+
+`SKP1` accepts password bytes exactly as supplied. AnoSecureKit does not normalize
+Unicode, trim whitespace, prompt interactively, read environment variables, or
+define password quality rules.
+
+Current `SKP1` uses fixed scrypt parameters:
+
+- `N = 32768`
+- `r = 8`
+- `p = 1`
+- `maxmem = 64 MiB`
+
+Unsupported stored scrypt parameters are rejected instead of silently accepted.
+Future KDF agility requires a format spec, downgrade policy, and compatibility
+vectors before implementation. `docs/KDF_AGILITY.md` is the gate for future
+password-file KDF profiles.
+
+## Error Message Policy
+
+Public errors should be short and generic. They must not include keys,
+passwords, plaintext, AAD, OpenSSL error queue details, or filesystem content.
+
+Expected public categories:
+
+- invalid caller input: `invalid_input`
+- malformed text encoding: `invalid_encoding`
+- malformed packet or file structure: `invalid_packet`
+- failed authentication: `authentication_failed`
+- OpenSSL, filesystem, or other backend failure: `backend_failure`
+
+Authentication failures should not reveal whether the key, password, AAD,
+ciphertext, nonce, or tag was wrong. Malformed or unsupported structure may be
+reported separately as `invalid_packet`.
+
+The CLI maps public failures in these categories to exit code 1, writes the
+short diagnostic to stderr, and writes no stdout for failed commands.
+
+The public API shape policy is recorded in `docs/PUBLIC_API_POLICY.md`.
+
+## OpenSSL Providers and Backend Errors
+
+AnoSecureKit uses OpenSSL's default library context and the provider configuration
+already active in the process. It does not load providers, create an
+`OSSL_LIB_CTX`, set property queries, or switch between default, legacy, and
+FIPS providers.
+
+Applications that require FIPS mode or custom provider selection must configure
+OpenSSL before calling AnoSecureKit. AES-256-GCM, SHA-256, HMAC-SHA-256,
+HKDF-SHA-256, scrypt, and OpenSSL's random byte APIs must be available from
+that configuration.
+
+OpenSSL allocation, initialization, cipher, digest, MAC, KDF, or
+random-generation failures are reported as
+`anosecurekit::error_code::backend_failure`. AnoSecureKit does not add OpenSSL
+error-queue details to public exception messages. AEAD packet and file
+authentication failures are reported as
+`anosecurekit::error_code::authentication_failed` with generic messages. Malformed
+or unsupported packet and file structure is reported as
+`anosecurekit::error_code::invalid_packet`.
+
+The provider and FIPS support policy is recorded in `docs/OPENSSL_POLICY.md`.
+
+## Known Limitations
+
+- No portable secure erasure guarantee.
+- No protection for caller-owned secrets after return.
+- No protection against process memory inspection.
+- No protection against compromised OpenSSL providers.
+- No rollback guarantee for stream outputs.
+- Release assets are checksummed and provenance-attested by GitHub Actions.
+- Release assets include a generated SPDX SBOM.
