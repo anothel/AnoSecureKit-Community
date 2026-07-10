@@ -49,7 +49,7 @@ endif()
 file(SHA512 "${_anosecurekit_source_archive}" _anosecurekit_source_sha512)
 
 set(_anosecurekit_release_url
-  "https://github.com/anothel/anosecurekit/releases/download/v${ANOSECUREKIT_PROJECT_VERSION}/${_anosecurekit_source_name}")
+  "https://github.com/anothel/AnoSecureKit-Community/releases/download/v${ANOSECUREKIT_PROJECT_VERSION}/${_anosecurekit_source_name}")
 set(_anosecurekit_recipe_dir "${ANOSECUREKIT_PACKAGE_CHECK_ROOT}/package-recipes")
 file(REMOVE_RECURSE "${_anosecurekit_recipe_dir}")
 file(MAKE_DIRECTORY
@@ -61,7 +61,7 @@ set(_anosecurekit_homebrew_formula "${_anosecurekit_recipe_dir}/homebrew/anosecu
 file(WRITE "${_anosecurekit_homebrew_formula}"
 "class Anosecurekit < Formula
   desc \"Small C++20 security utility library\"
-  homepage \"https://github.com/anothel/anosecurekit\"
+  homepage \"https://github.com/anothel/AnoSecureKit-Community\"
   url \"${_anosecurekit_release_url}\"
   sha256 \"${_anosecurekit_source_sha256}\"
   license \"MPL-2.0\"
@@ -98,7 +98,7 @@ class AnoSecureKitConan(ConanFile):
     name = \"anosecurekit\"
     version = \"${ANOSECUREKIT_PROJECT_VERSION}\"
     license = \"MPL-2.0\"
-    url = \"https://github.com/anothel/anosecurekit\"
+    url = \"https://github.com/anothel/AnoSecureKit-Community\"
     description = \"Small C++20 security utility library\"
     settings = \"os\", \"compiler\", \"build_type\", \"arch\"
     options = {\"shared\": [True, False], \"with_cli\": [True, False]}
@@ -143,7 +143,7 @@ file(WRITE "${_anosecurekit_vcpkg_json}"
   \"name\": \"anosecurekit\",
   \"version\": \"${ANOSECUREKIT_PROJECT_VERSION}\",
   \"description\": \"Small C++20 security utility library\",
-  \"homepage\": \"https://github.com/anothel/anosecurekit\",
+  \"homepage\": \"https://github.com/anothel/AnoSecureKit-Community\",
   \"license\": \"MPL-2.0\",
   \"dependencies\": [
     \"openssl\",

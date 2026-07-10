@@ -320,7 +320,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   anosecurekit
-  URL https://github.com/anothel/anosecurekit/releases/download/v0.2.2/anosecurekit-0.2.2-source.tar.gz
+  URL https://github.com/anothel/AnoSecureKit-Community/releases/download/v0.2.2/anosecurekit-0.2.2-source.tar.gz
   URL_HASH SHA256=<release archive checksum>)
 
 FetchContent_MakeAvailable(anosecurekit)

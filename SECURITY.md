@@ -7,7 +7,7 @@
 Do not report security vulnerabilities through public GitHub issues.
 
 Preferred path: open a private report through GitHub Security Advisories:
-<https://github.com/anothel/anosecurekit/security/advisories/new>.
+<https://github.com/anothel/AnoSecureKit-Community/security/advisories/new>.
 
 If that path is unavailable, use a private contact method listed on the
 maintainer GitHub profile: <https://github.com/anothel>. Do not publish details

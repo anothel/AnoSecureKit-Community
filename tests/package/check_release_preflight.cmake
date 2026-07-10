@@ -924,12 +924,12 @@ _anosecurekit_require_terms(
   "SHA256SUMS.txt"
   "file(SHA256"
   "file(SHA512"
-  "https://github.com/anothel/anosecurekit/releases/download/v\${ANOSECUREKIT_PROJECT_VERSION}/")
+  "https://github.com/anothel/AnoSecureKit-Community/releases/download/v\${ANOSECUREKIT_PROJECT_VERSION}/")
 
 _anosecurekit_require_terms(
   "SECURITY private advisory path"
   "${_anosecurekit_security_text}"
-  "https://github.com/anothel/anosecurekit/security/advisories/new"
+  "https://github.com/anothel/AnoSecureKit-Community/security/advisories/new"
   "https://github.com/anothel"
   "Do not publish details")
 _anosecurekit_require_terms(
