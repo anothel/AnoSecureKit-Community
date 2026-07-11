@@ -9,9 +9,9 @@ refactor direction. It is not a public API or provider ABI contract.
 
 - `src/aead.cpp`: one-shot `SKT1` packet encryption/decryption through the
   packet APIs.
-- `src/crypto_backend.hpp`: current private cryptographic operation boundary.
-- `src/crypto_backend.cpp`: current OpenSSL implementation for hashes, HMAC,
-  HKDF, RNG, scrypt, one-shot AES-256-GCM chunk operations, and stateful
+- `src/backend/crypto_backend.hpp`: private cryptographic operation contract.
+- `src/backend/crypto_backend_openssl.cpp`: OpenSSL implementation for hashes,
+  HMAC, HKDF, RNG, scrypt, one-shot AES-256-GCM chunk operations, and stateful
   AES-GCM packet streaming.
 - `src/internal/secure_wipe.hpp` and `src/internal/secure_wipe.cpp`: backend-neutral
   secure-wipe helper used by common packet, file, key-management, and backend
@@ -38,8 +38,8 @@ refactor direction. It is not a public API or provider ABI contract.
 
 ## Approved Provider Refactor
 
-The first refactor should preserve the public and installed surface while moving
-provider-specific code into an internal layout such as:
+The public and installed surface is preserved while provider-specific code uses the
+internal layout:
 
 ```text
 src/backend/crypto_backend.hpp
@@ -47,9 +47,11 @@ src/backend/crypto_backend_openssl.cpp
 src/internal/secure_wipe.*
 ```
 
-The Community final target remains OpenSSL-backed. A build-tree-only external
-provider hook may be introduced for Enterprise integration, but it is not a
-public installed provider ABI and does not make AnoCrypto-C a Community backend.
+The Community final target remains OpenSSL-backed. The `backend-boundary-check`
+target prevents OpenSSL implementation details from leaking back into common source.
+A build-tree-only external provider hook may be introduced for Enterprise integration,
+but it is not a public installed provider ABI and does not make AnoCrypto-C a Community
+backend.
 
 See `docs/BACKEND_ARCHITECTURE.md` for responsibilities, capability rules,
 ownership, and the no-fallback policy.

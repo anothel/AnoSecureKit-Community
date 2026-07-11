@@ -34,11 +34,11 @@ the proprietary AnoCrypto-C provider.
 
 ## Current Implementation
 
-Most cryptographic operations already pass through the private boundary in:
+Cryptographic operations pass through the private contract and OpenSSL provider in:
 
 ```text
-src/crypto_backend.hpp
-src/crypto_backend.cpp
+src/backend/crypto_backend.hpp
+src/backend/crypto_backend_openssl.cpp
 ```
 
 That boundary currently covers:
@@ -51,10 +51,10 @@ That boundary currently covers:
 - AES-256-GCM one-shot chunk operations;
 - AES-256-GCM packet streaming state.
 
-OpenSSL-specific coupling remains in:
+OpenSSL-specific coupling is now isolated to:
 
 ```text
-src/crypto_backend.cpp
+src/backend/crypto_backend_openssl.cpp
 CMakeLists.txt
 ```
 
@@ -65,9 +65,10 @@ src/internal/secure_wipe.hpp
 src/internal/secure_wipe.cpp
 ```
 
-Common packet, file, and key-management logic no longer includes OpenSSL headers
-through the wipe helper. The next isolation step is the OpenSSL crypto provider
-implementation itself.
+Common packet, file, and key-management logic no longer includes OpenSSL headers.
+The OpenSSL implementation has also been moved behind the internal provider layout.
+The next isolation step is a build-tree-only external provider hook that preserves the
+Community OpenSSL default and installed package surface.
 
 ## Target Internal Layout
 
@@ -193,7 +194,7 @@ AnoSecureKit repository.
 ## Implementation Sequence
 
 1. **Completed:** isolate secure wiping from direct OpenSSL headers.
-2. Move the existing OpenSSL implementation behind the internal provider layout.
+2. **Completed:** move the OpenSSL implementation behind the internal provider layout.
 3. Add a build-tree-only external provider hook.
 4. Run the existing Community API and format suites through the OpenSSL provider.
 5. Verify install/export/package/release behavior remains unchanged.
@@ -203,7 +204,9 @@ AnoSecureKit repository.
 
 ## Required Verification
 
-Every provider-seam change must run the full configured release gate:
+The `backend-boundary-check` target enforces that OpenSSL headers and implementation
+symbols remain confined to the OpenSSL provider source. Every provider-seam change must
+also run the full configured release gate:
 
 ```sh
 cmake --build build --config Release --target release-preflight

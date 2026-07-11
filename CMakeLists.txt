@@ -90,7 +90,7 @@ add_library(anosecurekit
   src/aead.cpp
   src/base64.cpp
   src/compare.cpp
-  src/crypto_backend.cpp
+  src/backend/crypto_backend_openssl.cpp
   src/error.cpp
   src/file_crypto.cpp
   src/file.cpp
@@ -110,7 +110,9 @@ target_compile_features(anosecurekit PUBLIC cxx_std_20)
 target_include_directories(anosecurekit
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
 if(ANOSECUREKIT_CRYPTO_BACKEND STREQUAL "openssl")
   target_link_libraries(anosecurekit PUBLIC OpenSSL::Crypto)
@@ -154,6 +156,12 @@ add_custom_target(legacy-name-check
   COMMAND ${CMAKE_COMMAND}
     -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
     -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_legacy_identifiers.cmake
+  USES_TERMINAL)
+
+add_custom_target(backend-boundary-check
+  COMMAND ${CMAKE_COMMAND}
+    -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_backend_boundary.cmake
   USES_TERMINAL)
 
 if(ANOSECUREKIT_BUILD_CLI)
@@ -445,6 +453,7 @@ if(TARGET check AND ANOSECUREKIT_BUILD_CLI AND ANOSECUREKIT_INSTALL_CLI)
       release-workflow-check
       spdx-check
       legacy-name-check
+      backend-boundary-check
       cli-docs-check
     USES_TERMINAL)
 elseif(TARGET check)

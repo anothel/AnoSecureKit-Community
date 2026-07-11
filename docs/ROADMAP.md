@@ -58,7 +58,7 @@ Completed items leave the roadmap. Use Git history and `docs/RELEASE_NOTES.md` f
 
 Internal Backend Provider Seam:
 
-- Surface: `src/crypto_backend.*`, `src/internal/secure_wipe.*`, internal CMake
+- Surface: `src/backend/crypto_backend*`, `src/internal/secure_wipe.*`, internal CMake
   source/link selection, and the unchanged `anosecurekit::anosecurekit` final
   target.
 - Problem: most crypto calls are centralized and secure wiping is now
