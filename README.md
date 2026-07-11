@@ -125,7 +125,9 @@ For the canonical documentation map, see
 [`docs/DOCUMENTATION_GUIDE.md`](docs/DOCUMENTATION_GUIDE.md).
 
 For product-edition boundaries, see [`docs/EDITIONS.md`](docs/EDITIONS.md) and
-[`docs/ANOCRYPTO_BOUNDARY.md`](docs/ANOCRYPTO_BOUNDARY.md).
+[`docs/ANOCRYPTO_BOUNDARY.md`](docs/ANOCRYPTO_BOUNDARY.md). The approved
+internal provider-seam direction is documented in
+[`docs/BACKEND_ARCHITECTURE.md`](docs/BACKEND_ARCHITECTURE.md).
 
 ## Requirements
 
@@ -624,7 +626,8 @@ Public API shape decisions are documented in
 is documented in
 [docs/OPENSSL_POLICY.md](docs/OPENSSL_POLICY.md).
 Internal ownership boundaries and split gates are documented in
-[docs/INTERNALS.md](docs/INTERNALS.md).
+[docs/INTERNALS.md](docs/INTERNALS.md). The internal backend/provider design is
+documented in [docs/BACKEND_ARCHITECTURE.md](docs/BACKEND_ARCHITECTURE.md).
 
 ## AES-256-GCM Packet Format
 

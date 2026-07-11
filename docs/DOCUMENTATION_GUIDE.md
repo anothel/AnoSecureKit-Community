@@ -26,7 +26,8 @@ private project notes, not in public user documentation.
 - `docs/RELEASE_CHECKLIST.md`: release operator checklist.
 - `docs/RELEASE_NOTES.md`: source of truth for user-visible release notes.
 - `docs/ROADMAP.md`: future work only.
-- `docs/PUBLIC_API_POLICY.md`, `docs/OPENSSL_POLICY.md`,
+- `docs/PUBLIC_API_POLICY.md`, `docs/BACKEND_ARCHITECTURE.md`,
+  `docs/EDITIONS.md`, `docs/ANOCRYPTO_BOUNDARY.md`, `docs/OPENSSL_POLICY.md`,
   `docs/DEPENDENCY_POLICY.md`, `docs/KDF_AGILITY.md`, `docs/FUZZING.md`,
   `docs/COVERAGE.md`, `docs/BENCHMARKS.md`, `docs/DOGFOODING.md`, and
   `docs/EXTERNAL_SECURITY_REVIEW.md`: focused maintainer policies and gates.

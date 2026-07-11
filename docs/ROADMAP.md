@@ -10,9 +10,9 @@ Future work only. Completed work belongs in Git history and
 1. Security, data loss, and format compatibility come first.
 2. Keep v0.x public API changes minimal and keep the v1 free-function API
    stable unless real call sites prove otherwise.
-3. Keep OpenSSL as the only public production backend until a public native
-   backend proposal has parity, compatibility fixtures, release evidence,
-   license review, and security review.
+3. Keep OpenSSL as the only shipped Community production provider. A generic
+   internal provider contract or build-tree extension hook does not make an
+   external provider a supported Community backend.
 4. Keep CMake install/export, the CLI, and GitHub Actions package checks as
    first-class release surfaces.
 5. Do not add public API, wire formats, package channels, CI cost, or release
@@ -56,8 +56,27 @@ Completed items leave the roadmap. Use Git history and `docs/RELEASE_NOTES.md` f
 
 ### Now
 
-No repo-local `Now` item is open. Do not add local work until an accepted
-finding names an AnoSecureKit surface, regression check, and rollback path.
+Internal Backend Provider Seam:
+
+- Surface: `src/crypto_backend.*`, `src/wipe.hpp`, internal CMake source/link
+  selection, and the unchanged `anosecurekit::anosecurekit` final target.
+- Problem: most crypto calls are centralized, but OpenSSL implementation and
+  secure wiping are still coupled directly into the common source tree. This
+  prevents Enterprise from reusing the same common behavior with a separate
+  provider without privately patching Community files.
+- Plan: document the contract, isolate secure wiping, move the OpenSSL
+  implementation behind the internal provider layout, then add a build-tree-only
+  external provider hook. Do not add a proprietary adapter to Community.
+- Compatibility: preserve public API/CLI/package identity, public error policy,
+  and all `SKT1`/`SKF1`/`SKP1` v1 semantics and fixtures.
+- check: full test-enabled `release-preflight`, source/package consumer checks,
+  unchanged fixture inventory, and proof that the Community product still links
+  and reports OpenSSL only
+- rollback: revert the provider-selection hook and retain the existing OpenSSL
+  implementation behind the original private boundary if any public behavior,
+  package, format, or release check changes unexpectedly
+
+Architecture source of truth: `docs/BACKEND_ARCHITECTURE.md`.
 
 ### External Handoff
 
@@ -89,12 +108,14 @@ Package Publishing:
   check: `cmake --build build --config Release --target release-preflight`
   rollback: remove only the newly failing gate from `release-preflight` after
   documenting the replacement check
-- Keep external proprietary modules, including AnoCrypto, outside Community.
-  Any Enterprise integration remains in its separate commercial repository and
-  must not be exposed as a shipped Community backend.
+- Keep external proprietary modules, including AnoCrypto-C, outside Community.
+  Community may provide only a generic internal provider contract and a
+  build-tree integration seam. Enterprise integration remains in its separate
+  proprietary repository and must not be exposed as a shipped Community backend.
   check: public docs and package metadata continue to describe OpenSSL as the
-  only shipped production backend
-  rollback: remove any Community scaffold, integration, or proprietary source
-  and restore the OpenSSL-only backend configuration
+  only shipped production provider, and the Community tree contains no
+  proprietary adapter or external package
+  rollback: remove any external-provider scaffold or proprietary source and
+  restore the OpenSSL-only source selection
 - Turn accepted external-review findings into one protected change each.
   Do not add a fix here until it names an AnoSecureKit surface and regression check.

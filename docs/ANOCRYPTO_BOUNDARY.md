@@ -1,25 +1,53 @@
 <!-- SPDX-License-Identifier: MPL-2.0 -->
 
-# AnoCrypto Boundary
+# AnoCrypto-C Boundary
 
-AnoCrypto is an external proprietary cryptographic module managed outside the
-AnoSecureKit Community source tree.
+AnoCrypto-C is an external cryptographic module managed in its own repository
+and package lifecycle. It is not part of the AnoSecureKit Community source tree.
 
-Community may mention AnoCrypto only as a product-family and backend boundary.
-It must not present AnoCrypto as included, available, or implemented here.
-OpenSSL 3.x is the only public production backend in Community.
+Community may document AnoCrypto-C only as a product-family and architecture
+boundary. It must not present AnoCrypto-C as included, available, implemented,
+or supported by the Community distribution. OpenSSL 3.x remains the only
+Community production provider.
 
 ## Allowed in Community
 
-- Public backend-neutral API and format design.
-- OpenSSL 3.x backend as the public production backend.
-- Documentation that AnoCrypto is external, proprietary, and not included.
-- Tests and fixtures that can later be reused for backend compatibility.
+- A generic internal cryptographic-provider contract.
+- Backend-neutral public API, format, file, and error behavior.
+- The OpenSSL provider used by the Community product.
+- Build-tree extension points that do not ship or expose a proprietary provider.
+- Tests and fixtures reusable for provider compatibility and feature parity.
+- Documentation explaining that Enterprise may supply a separate proprietary
+  AnoCrypto-C adapter and consume the external `AnoCryptoC::AnoCryptoC` target.
 
-## Not allowed in Community
+## Not Allowed in Community
 
-- AnoCrypto proprietary source code.
-- AnoCrypto scaffold, placeholder, adapter, or fake backend.
-- Enterprise license, activation, entitlement, or support logic.
+- AnoCrypto-C source, headers, binaries, archives, or copied packages.
+- A proprietary AnoCrypto-C C++ adapter.
+- A fake, placeholder, or silently partial AnoCrypto-C provider.
+- Community package metadata claiming that AnoCrypto-C is a shipped backend.
+- Enterprise licensing, activation, entitlement, support, or customer-delivery
+  logic.
 - Certification, validation, public-sector approval, or compliance claims.
-- Documentation that implies Community ships or can enable AnoCrypto.
+
+## No Fallback Rule
+
+An Enterprise AnoCrypto-C profile must not silently route missing cryptographic
+operations through the Community OpenSSL provider. Missing required capabilities
+must fail closed at configuration, build, startup, or through a clear unsupported
+operation path in a non-production development profile.
+
+## Public Compatibility
+
+The generic provider seam is internal. It must not change the public Community
+identity:
+
+```text
+package: anosecurekit
+include root: include/anosecurekit
+namespace: anosecurekit
+CLI: anosecurekit
+CMake target: anosecurekit::anosecurekit
+```
+
+See `docs/BACKEND_ARCHITECTURE.md` for the approved incremental design.
