@@ -105,8 +105,8 @@ attestations for the checksum file and at least one archive:
 
 ```sh
 sha256sum -c SHA256SUMS.txt
-gh attestation verify SHA256SUMS.txt --repo anothel/anosecurekit
-gh attestation verify anosecurekit-0.2.2-source.tar.gz --repo anothel/anosecurekit
+gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
+gh attestation verify anosecurekit-0.2.2-source.tar.gz --repo anothel/AnoSecureKit-Community
 ```
 
 Replace the archive name with the released version and asset you downloaded.

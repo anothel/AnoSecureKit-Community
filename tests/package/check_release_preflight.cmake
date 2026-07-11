@@ -827,7 +827,7 @@ _anosecurekit_require_terms(
   "${_anosecurekit_release_checklist_text}"
   "GitHub artifact attestations"
   "anosecurekit-X.Y.Z-release.spdx.json"
-  "gh attestation verify SHA256SUMS.txt --repo anothel/anosecurekit"
+  "gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community"
   "sha256sum -c SHA256SUMS.txt"
   "docs/RELEASE_NOTES.md"
   "Do not introduce a separate `CHANGELOG.md`"
@@ -843,7 +843,7 @@ _anosecurekit_require_terms(
   "SHA256SUMS.txt"
   "sha256sum -c SHA256SUMS.txt"
   "Get-FileHash"
-  "gh attestation verify SHA256SUMS.txt --repo anothel/anosecurekit"
+  "gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community"
   "anosecurekit-X.Y.Z-release.spdx.json"
   "Source vs Binary Archives"
   "What This Does Not Prove")

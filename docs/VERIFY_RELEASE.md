@@ -38,12 +38,12 @@ The digest must match the corresponding line in `SHA256SUMS.txt`.
 Use GitHub CLI:
 
 ```sh
-gh attestation verify SHA256SUMS.txt --repo anothel/anosecurekit
-gh attestation verify anosecurekit-0.2.2-source.tar.gz --repo anothel/anosecurekit
+gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
+gh attestation verify anosecurekit-0.2.2-source.tar.gz --repo anothel/AnoSecureKit-Community
 ```
 
 Replace the archive name with the asset you downloaded. Verification should
-point back to the `anothel/anosecurekit` repository and the release workflow.
+point back to the `anothel/AnoSecureKit-Community` repository and the release workflow.
 
 ## Check The SBOM
 
