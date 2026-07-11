@@ -2,6 +2,54 @@
 
 # AnoSecureKit Release Notes
 
+## v0.3.0
+
+AnoSecureKit Community v0.3.0 is the first published Community release.
+Versions before v0.3.0 were pre-Community internal development milestones and
+were not published as AnoSecureKit Community releases.
+
+### Product and Repository
+
+- Established AnoSecureKit Community as the public `MPL-2.0` edition of the
+  AnoSecureKit product family.
+- Aligned repository links, release metadata, verification commands, package
+  recipes, and SBOM namespaces with `AnoSecureKit-Community`.
+- Preserved the package, public API, CLI, include root, namespace, and CMake
+  identity as `anosecurekit` and `anosecurekit::anosecurekit`.
+
+### Backend and Security Policy
+
+- Kept OpenSSL 3.x as the sole Community production backend.
+- Documented OpenSSL upgrade evidence requirements and rollback policy.
+- Clarified the external proprietary module boundary: no AnoCrypto
+  implementation or backend is included in Community.
+- Made no KCMVP or FIPS validation claim.
+
+### Licensing and Documentation
+
+- Aligned project-owned files and release checks with `MPL-2.0` SPDX
+  identifiers.
+- Documented Community, Enterprise, and external AnoCrypto ownership
+  boundaries.
+- Clarified that separate commercial terms for external proprietary modules do
+  not change the `MPL-2.0` license of Community files.
+
+### Verification
+
+- Passed a clean Release `release-preflight` build.
+- Passed all 121/121 unit and CLI tests.
+- Passed package, install/export, consumer, source rebuild, checksum, SBOM,
+  documentation, SPDX, legacy-name, and release-workflow checks.
+
+### Compatibility
+
+- No breaking public C++ API change.
+- No CLI, package, namespace, or CMake target change.
+- No cryptographic behavior change.
+- No `SKT1`, `SKF1`, or `SKP1` format change.
+- Preserved the compatibility-sensitive `SKF1` HKDF label
+  `anosecurekit file sealing v1`.
+
 ## v0.2.2
 
 ### Added

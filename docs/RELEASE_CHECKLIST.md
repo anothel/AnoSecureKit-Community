@@ -7,7 +7,7 @@ for tags matching `v*`.
 
 ## 1. Choose The Version
 
-- Decide the next semantic version, for example `0.2.2`.
+- Decide the next semantic version, for example `0.3.0`.
 - Update `project(... VERSION x.y.z)` in `CMakeLists.txt`.
 - Confirm `SECURITY.md`, `docs/FORMAT.md`, and `docs/SECURITY_MODEL.md` still
   match the shipped behavior.
@@ -78,11 +78,11 @@ Do not create the version tag from an unverified commit.
 Create the tag on the verified `main` commit:
 
 ```sh
-git tag v0.2.2
-git push origin v0.2.2
+git tag v0.3.0
+git push origin v0.3.0
 ```
 
-Replace `v0.2.2` with the version chosen in step 1.
+Replace `v0.3.0` with the version chosen in step 1.
 
 ## 6. Verify The GitHub Release
 
@@ -95,7 +95,7 @@ After the tag workflow finishes, check the GitHub Release for:
 - Binary archives from all package-check jobs, each prefixed by the CI artifact
   name to avoid asset-name collisions.
 - GitHub artifact attestations for `SHA256SUMS.txt` and release archives.
-- Release title `AnoSecureKit vX.Y.Z`.
+- Release title `AnoSecureKit Community vX.Y.Z`.
 - Release notes mention the same user-visible changes as `docs/RELEASE_NOTES.md`.
   Edit GitHub-generated notes when they omit CLI, format, package, SBOM, or
   provenance changes.
@@ -106,7 +106,7 @@ attestations for the checksum file and at least one archive:
 ```sh
 sha256sum -c SHA256SUMS.txt
 gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
-gh attestation verify anosecurekit-0.2.2-source.tar.gz --repo anothel/AnoSecureKit-Community
+gh attestation verify anosecurekit-0.3.0-source.tar.gz --repo anothel/AnoSecureKit-Community
 ```
 
 Replace the archive name with the released version and asset you downloaded.

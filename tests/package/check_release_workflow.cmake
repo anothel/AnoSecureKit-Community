@@ -129,6 +129,7 @@ _anosecurekit_require_workflow_text("release artifact attestation action" "uses:
 _anosecurekit_require_workflow_text("release artifact attestation subject" "subject-path: dist/*")
 _anosecurekit_require_workflow_text("release artifact download step" "- name: Download package artifacts")
 _anosecurekit_require_workflow_text("release view explicit repo" "gh release view \"$tag\" --repo \"$GITHUB_REPOSITORY\"")
+_anosecurekit_require_workflow_text("Community release title" "title=\"AnoSecureKit Community \${tag}\"")
 _anosecurekit_require_workflow_text("release edit explicit repo" "gh release edit \"$tag\" --repo \"$GITHUB_REPOSITORY\" --title \"$title\"")
 _anosecurekit_require_workflow_text("release create generated notes" "gh release create \"$tag\" --repo \"$GITHUB_REPOSITORY\" --verify-tag --title \"$title\" --generate-notes")
 _anosecurekit_require_workflow_text("release creation" "gh release create")
