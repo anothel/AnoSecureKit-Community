@@ -886,7 +886,12 @@ _anosecurekit_require_terms(
   "Commercial use is allowed"
   "Closed-source application use is allowed"
   "file-level copyleft"
-  "Private Or Commercial Native Crypto Assets")
+  "external proprietary cryptographic module"
+  "managed outside this"
+  "not shipped in Community"
+  "separate commercial terms"
+  "does not change the `MPL-2.0` license of Community files"
+  "No external proprietary source is included in this repository")
 
 _anosecurekit_require_terms(
   "documentation guide"
@@ -904,7 +909,11 @@ _anosecurekit_require_terms(
   "AnoSecureKit License"
   "MPL-2.0"
   "Modified files"
-  "Native crypto boundary")
+  "External proprietary module boundary"
+  "separate commercial"
+  "not included in Community"
+  "using an external module does not change"
+  "license of Community files")
 
 _anosecurekit_require_terms(
   "release hygiene scripts"

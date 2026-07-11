@@ -89,13 +89,12 @@ Package Publishing:
   check: `cmake --build build --config Release --target release-preflight`
   rollback: remove only the newly failing gate from `release-preflight` after
   documenting the replacement check
-- Do not document or expose separate private or commercial native crypto assets
-  as a shipped AnoSecureKit backend until a public backend proposal names the
-  API surface, compatibility fixture plan, license boundary, security review
-  plan, and rollback path.
+- Keep external proprietary modules, including AnoCrypto, outside Community.
+  Any Enterprise integration remains in its separate commercial repository and
+  must not be exposed as a shipped Community backend.
   check: public docs and package metadata continue to describe OpenSSL as the
   only shipped production backend
-  rollback: restore the private-boundary wording and fail any non-OpenSSL
-  backend option at configure time
+  rollback: remove any Community scaffold, integration, or proprietary source
+  and restore the OpenSSL-only backend configuration
 - Turn accepted external-review findings into one protected change each.
   Do not add a fix here until it names an AnoSecureKit surface and regression check.
