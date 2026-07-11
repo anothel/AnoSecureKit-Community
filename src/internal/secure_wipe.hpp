@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
-#ifndef ANOSECUREKIT_SRC_WIPE_HPP_
-#define ANOSECUREKIT_SRC_WIPE_HPP_
-
-#include <openssl/crypto.h>
+#ifndef ANOSECUREKIT_SRC_INTERNAL_SECURE_WIPE_HPP_
+#define ANOSECUREKIT_SRC_INTERNAL_SECURE_WIPE_HPP_
 
 #include <array>
 #include <cstddef>
@@ -13,13 +11,7 @@
 namespace anosecurekit::internal
 {
 
-inline void secure_wipe(std::span<std::byte> data) noexcept
-{
-	if (!data.empty())
-	{
-		OPENSSL_cleanse(data.data(), data.size());
-	}
-}
+void secure_wipe(std::span<std::byte> data) noexcept;
 
 template <std::size_t Size>
 inline void secure_wipe(std::array<std::byte, Size> &data) noexcept
@@ -53,4 +45,4 @@ private:
 
 } // namespace anosecurekit::internal
 
-#endif // ANOSECUREKIT_SRC_WIPE_HPP_
+#endif // ANOSECUREKIT_SRC_INTERNAL_SECURE_WIPE_HPP_

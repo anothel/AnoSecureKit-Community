@@ -9,7 +9,7 @@
 #include "anosecurekit/packet_stream.hpp"
 
 #include "aead_internal.hpp"
-#include "wipe.hpp"
+#include "internal/secure_wipe.hpp"
 
 namespace anosecurekit
 {

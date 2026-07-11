@@ -55,13 +55,19 @@ OpenSSL-specific coupling remains in:
 
 ```text
 src/crypto_backend.cpp
-src/wipe.hpp
 CMakeLists.txt
 ```
 
-`src/wipe.hpp` is included by otherwise common packet, file, and key-management
-logic, so secure wiping must be moved behind a backend-neutral internal helper
-before a clean external provider can be injected.
+Secure wiping has been moved to the backend-neutral internal helper:
+
+```text
+src/internal/secure_wipe.hpp
+src/internal/secure_wipe.cpp
+```
+
+Common packet, file, and key-management logic no longer includes OpenSSL headers
+through the wipe helper. The next isolation step is the OpenSSL crypto provider
+implementation itself.
 
 ## Target Internal Layout
 
@@ -186,7 +192,7 @@ AnoSecureKit repository.
 
 ## Implementation Sequence
 
-1. Isolate secure wiping from direct OpenSSL headers.
+1. **Completed:** isolate secure wiping from direct OpenSSL headers.
 2. Move the existing OpenSSL implementation behind the internal provider layout.
 3. Add a build-tree-only external provider hook.
 4. Run the existing Community API and format suites through the OpenSSL provider.

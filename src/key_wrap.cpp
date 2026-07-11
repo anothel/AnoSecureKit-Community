@@ -7,7 +7,7 @@
 #include "anosecurekit/aead.hpp"
 #include "anosecurekit/error.hpp"
 
-#include "wipe.hpp"
+#include "internal/secure_wipe.hpp"
 
 namespace anosecurekit
 {

@@ -58,15 +58,16 @@ Completed items leave the roadmap. Use Git history and `docs/RELEASE_NOTES.md` f
 
 Internal Backend Provider Seam:
 
-- Surface: `src/crypto_backend.*`, `src/wipe.hpp`, internal CMake source/link
-  selection, and the unchanged `anosecurekit::anosecurekit` final target.
-- Problem: most crypto calls are centralized, but OpenSSL implementation and
-  secure wiping are still coupled directly into the common source tree. This
-  prevents Enterprise from reusing the same common behavior with a separate
-  provider without privately patching Community files.
-- Plan: document the contract, isolate secure wiping, move the OpenSSL
-  implementation behind the internal provider layout, then add a build-tree-only
-  external provider hook. Do not add a proprietary adapter to Community.
+- Surface: `src/crypto_backend.*`, `src/internal/secure_wipe.*`, internal CMake
+  source/link selection, and the unchanged `anosecurekit::anosecurekit` final
+  target.
+- Problem: most crypto calls are centralized and secure wiping is now
+  backend-neutral, but the cryptographic implementation and target linkage are
+  still OpenSSL-specific. This prevents Enterprise from reusing the same common
+  behavior with a separate provider without privately patching Community files.
+- Plan: keep the completed secure-wipe isolation, move the OpenSSL implementation
+  behind the internal provider layout, then add a build-tree-only external
+  provider hook. Do not add a proprietary adapter to Community.
 - Compatibility: preserve public API/CLI/package identity, public error policy,
   and all `SKT1`/`SKF1`/`SKP1` v1 semantics and fixtures.
 - check: full test-enabled `release-preflight`, source/package consumer checks,

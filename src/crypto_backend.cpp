@@ -14,7 +14,7 @@
 
 #include "anosecurekit/error.hpp"
 
-#include "wipe.hpp"
+#include "internal/secure_wipe.hpp"
 
 namespace anosecurekit::detail::crypto_backend
 {

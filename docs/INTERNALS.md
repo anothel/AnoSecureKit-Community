@@ -13,9 +13,9 @@ refactor direction. It is not a public API or provider ABI contract.
 - `src/crypto_backend.cpp`: current OpenSSL implementation for hashes, HMAC,
   HKDF, RNG, scrypt, one-shot AES-256-GCM chunk operations, and stateful
   AES-GCM packet streaming.
-- `src/wipe.hpp`: current secure-wipe helper with a direct OpenSSL dependency.
-  This dependency reaches otherwise common packet/file/key logic and must be
-  isolated before a provider can be exchanged cleanly.
+- `src/internal/secure_wipe.hpp` and `src/internal/secure_wipe.cpp`: backend-neutral
+  secure-wipe helper used by common packet, file, key-management, and backend
+  cleanup paths. It deliberately has no OpenSSL header or symbol dependency.
 - `src/packet_stream.cpp`: move-only `SKT1` packet streaming state machines.
   `packet_decryptor::update()` returns unverified plaintext until `finalize()`
   succeeds.

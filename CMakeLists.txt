@@ -97,6 +97,7 @@ add_library(anosecurekit
   src/file_io.cpp
   src/hash.cpp
   src/hex.cpp
+  src/internal/secure_wipe.cpp
   src/key_wrap.cpp
   src/packet_stream.cpp
   src/random.cpp
