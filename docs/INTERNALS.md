@@ -83,6 +83,7 @@ Any internal split must run:
 
 ```sh
 cmake --build build --config Release --target external-backend-hook-check
+cmake --build build --config Release --target external-backend-parity-check
 cmake --build build --config Release --target check
 cmake --build build --config Release --target release-preflight
 ```

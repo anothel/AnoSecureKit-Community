@@ -207,7 +207,10 @@ The shipped Community profile is `ANOSECUREKIT_CRYPTO_BACKEND=openssl`. The
 an `OBJECT_LIBRARY` provider target before adding AnoSecureKit with
 `add_subdirectory()`. It is not installed, packaged, or supported as a Community
 provider, and a missing or invalid target fails configuration. Run
-`external-backend-hook-check` to verify the positive and fail-closed paths.
+`external-backend-hook-check` to verify the positive and fail-closed configuration paths.
+With tests enabled, run `external-backend-parity-check` to execute the same
+public API, fixture, CLI, example, benchmark-smoke, and documentation checks
+through an externally injected provider object.
 
 Release package check targets `package-check` and `release-preflight`
 require the OpenSSL profile plus `ANOSECUREKIT_BUILD_CLI=ON` and

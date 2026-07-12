@@ -154,6 +154,14 @@ The `OBJECT_LIBRARY` requirement keeps provider implementation objects inside th
 selected product target without creating an installed provider dependency or a
 static-library link cycle with common internal helpers.
 
+The `external-backend-parity-check` target is available when tests are enabled. It
+configures a nested parent-project build, injects the existing OpenSSL provider as
+an external provider object, verifies that its discovered CTest inventory exactly
+matches the shipped OpenSSL profile, and then runs the complete API, fixture, CLI,
+example, benchmark-smoke, CLI-documentation, SPDX, legacy-name, and backend-boundary
+checks through that seam. This is a regression test for provider substitution, not a
+second shipped Community backend.
+
 ## Capability and Failure Policy
 
 A product profile defines its required capability set. Configuration, build, or
@@ -207,8 +215,9 @@ AnoSecureKit repository.
 1. **Completed:** isolate secure wiping from direct OpenSSL headers.
 2. **Completed:** move the OpenSSL implementation behind the internal provider layout.
 3. **Completed:** add and regression-test the build-tree-only external provider hook.
-4. Run the existing Community API and format suites through the OpenSSL provider.
-5. Verify install/export/package/release behavior remains unchanged.
+4. **Completed:** run the full Community API, fixture, CLI, example, benchmark-smoke,
+   and documentation checks through the externally injected OpenSSL provider.
+5. Verify the shipped OpenSSL install/export/package/release behavior remains unchanged.
 6. Release the refactored Community baseline before Enterprise consumes the new
    seam.
 7. Implement and test the proprietary AnoCrypto-C provider in Enterprise.

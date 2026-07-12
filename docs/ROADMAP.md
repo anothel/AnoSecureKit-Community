@@ -61,18 +61,19 @@ Internal Backend Provider Seam:
 - Surface: `src/backend/crypto_backend*`, `src/internal/secure_wipe.*`, internal CMake
   source/link selection, and the unchanged `anosecurekit::anosecurekit` final
   target.
-- Problem: the backend contract, OpenSSL provider isolation, and build-tree-only
-  external hook are complete, but the full Community API/format regression suite
-  and release surfaces still need one consolidated verification pass before the
-  refactored seam becomes the next release baseline.
-- Plan: run the same API, fixture, package, install/export, consumer, and release
-  checks through the OpenSSL profile; keep the external hook regression check in
-  the release gate. Do not add a proprietary adapter to Community.
+- Problem: the backend contract, OpenSSL provider isolation, build-tree-only
+  external hook, and full API/fixture/CLI parity suite are complete. The shipped
+  OpenSSL package and release surfaces now need one final clean release-preflight
+  pass before the refactored seam becomes the next release baseline.
+- Plan: keep the external hook and full parity checks in the release gate, run the
+  shipped OpenSSL package/install/export/consumer/release flow from a clean build,
+  and prepare the next Community release without adding a proprietary adapter.
 - Compatibility: preserve public API/CLI/package identity, public error policy,
   and all `SKT1`/`SKF1`/`SKP1` v1 semantics and fixtures.
-- check: `external-backend-hook-check`, full test-enabled `release-preflight`,
-  source/package consumer checks, unchanged fixture inventory, and proof that the
-  Community product still links and reports OpenSSL only
+- check: `external-backend-hook-check`, `external-backend-parity-check`, full
+  test-enabled `release-preflight`, source/package consumer checks, identical test
+  inventory through both provider assembly paths, unchanged fixtures, and proof
+  that the shipped Community product still links and reports OpenSSL only
 - rollback: revert the external provider hook while retaining the isolated OpenSSL
   implementation if any public behavior, package, format, or release check changes
   unexpectedly

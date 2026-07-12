@@ -9,6 +9,8 @@ endif()
 
 option(ANOSECUREKIT_EXTERNAL_TEST_DEFINE_PROVIDER
   "Define the external provider target for the smoke test" ON)
+option(ANOSECUREKIT_EXTERNAL_TEST_FULL_SUITE
+  "Build the full Community API, fixture, and CLI suite through the external provider seam" OFF)
 set(ANOSECUREKIT_EXTERNAL_TEST_PROVIDER_TYPE "object" CACHE STRING
   "Provider target type used by negative configuration tests")
 set_property(CACHE ANOSECUREKIT_EXTERNAL_TEST_PROVIDER_TYPE PROPERTY STRINGS object interface)
@@ -28,9 +30,15 @@ if(ANOSECUREKIT_EXTERNAL_TEST_DEFINE_PROVIDER)
   endif()
 endif()
 
-set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(ANOSECUREKIT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(ANOSECUREKIT_BUILD_CLI OFF CACHE BOOL "" FORCE)
+if(ANOSECUREKIT_EXTERNAL_TEST_FULL_SUITE)
+  set(BUILD_TESTING ON CACHE BOOL "" FORCE)
+  set(ANOSECUREKIT_BUILD_TESTS ON CACHE BOOL "" FORCE)
+  set(ANOSECUREKIT_BUILD_CLI ON CACHE BOOL "" FORCE)
+else()
+  set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+  set(ANOSECUREKIT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(ANOSECUREKIT_BUILD_CLI OFF CACHE BOOL "" FORCE)
+endif()
 set(ANOSECUREKIT_INSTALL_CLI OFF CACHE BOOL "" FORCE)
 set(ANOSECUREKIT_BUILD_FUZZ OFF CACHE BOOL "" FORCE)
 set(ANOSECUREKIT_CRYPTO_BACKEND external CACHE STRING "" FORCE)
@@ -57,3 +65,15 @@ add_custom_target(external-backend-smoke-check
   COMMAND $<TARGET_FILE:anosecurekit_external_backend_smoke>
   DEPENDS anosecurekit_external_backend_smoke
   USES_TERMINAL)
+
+if(ANOSECUREKIT_EXTERNAL_TEST_FULL_SUITE)
+  add_custom_target(external-backend-parity-suite
+    DEPENDS
+      examples-check
+      benchmarks-check
+      cli-docs-check
+      backend-boundary-check
+      spdx-check
+      legacy-name-check
+      external-backend-smoke-check)
+endif()

@@ -528,6 +528,42 @@ if(ANOSECUREKIT_BUILD_TESTS)
   endif()
 endif()
 
+if(TARGET check)
+  set(_anosecurekit_googletest_source_dir "")
+  if(DEFINED googletest_SOURCE_DIR
+      AND EXISTS "${googletest_SOURCE_DIR}/CMakeLists.txt")
+    set(_anosecurekit_googletest_source_dir "${googletest_SOURCE_DIR}")
+  endif()
+
+  add_custom_target(external-backend-parity-check
+    COMMAND ${CMAKE_COMMAND}
+      -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -DANOSECUREKIT_PARENT_BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}
+      -DANOSECUREKIT_CHECK_ROOT=${CMAKE_CURRENT_BINARY_DIR}/external-backend-parity-check
+      -DANOSECUREKIT_BUILD_CONFIG=$<CONFIG>
+      -DANOSECUREKIT_DEFAULT_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DANOSECUREKIT_CMAKE_GENERATOR=${CMAKE_GENERATOR}
+      -DANOSECUREKIT_CMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
+      -DANOSECUREKIT_CMAKE_GENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
+      -DANOSECUREKIT_CMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+      -DANOSECUREKIT_CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+      -DVCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}
+      -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_DIR}
+      -DANOSECUREKIT_OPENSSL_RUNTIME_DIR=${ANOSECUREKIT_OPENSSL_RUNTIME_DIR}
+      -DANOSECUREKIT_CTEST_COMMAND=${CMAKE_CTEST_COMMAND}
+      -DANOSECUREKIT_GTEST_DIR=${GTest_DIR}
+      -DANOSECUREKIT_GOOGLETEST_SOURCE_DIR=${_anosecurekit_googletest_source_dir}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/package/check_external_backend_parity.cmake
+    DEPENDS anosecurekit_tests
+    USES_TERMINAL)
+else()
+  add_custom_target(external-backend-parity-check
+    COMMAND ${CMAKE_COMMAND} -E echo "external-backend-parity-check requires ANOSECUREKIT_BUILD_TESTS=ON"
+    COMMAND ${CMAKE_COMMAND} -E false
+    USES_TERMINAL)
+endif()
+
 if(_anosecurekit_external_backend)
   add_custom_target(release-preflight
     COMMAND ${CMAKE_COMMAND} -E echo "release-preflight is available only for the shipped Community OpenSSL profile"
@@ -561,6 +597,7 @@ elseif(TARGET check AND ANOSECUREKIT_BUILD_CLI AND ANOSECUREKIT_INSTALL_CLI)
       legacy-name-check
       backend-boundary-check
       external-backend-hook-check
+      external-backend-parity-check
       cli-docs-check
     USES_TERMINAL)
 elseif(TARGET check)
