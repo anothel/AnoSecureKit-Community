@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(
   anosecurekit
-  VERSION 0.3.0
+  VERSION 0.4.0
   DESCRIPTION "AnoSecureKit Community security utilities"
   LANGUAGES CXX)
 

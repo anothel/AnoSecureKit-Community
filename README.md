@@ -278,7 +278,7 @@ artifact attestations for release assets, writes a release SPDX SBOM, and
 creates or updates the GitHub Release.
 
 The tag version must match the CMake project version. For example,
-`project(... VERSION 0.3.0)` should be released with tag `v0.3.0`.
+`project(... VERSION 0.4.0)` should be released with tag `v0.4.0`.
 
 Local release preflight:
 
@@ -334,7 +334,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   anosecurekit
-  URL https://github.com/anothel/AnoSecureKit-Community/releases/download/v0.3.0/anosecurekit-0.3.0-source.tar.gz
+  URL https://github.com/anothel/AnoSecureKit-Community/releases/download/v0.4.0/anosecurekit-0.4.0-source.tar.gz
   URL_HASH SHA256=<release archive checksum>)
 
 FetchContent_MakeAvailable(anosecurekit)

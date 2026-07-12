@@ -69,14 +69,14 @@
       <p>On Linux or macOS:</p>
       <pre><code>sha256sum -c SHA256SUMS.txt</code></pre>
       <p>On Windows PowerShell, compare the printed digest with `SHA256SUMS.txt`:</p>
-      <pre><code>Get-FileHash .\anosecurekit-0.3.0-source.tar.gz -Algorithm SHA256</code></pre>
+      <pre><code>Get-FileHash .\anosecurekit-0.4.0-source.tar.gz -Algorithm SHA256</code></pre>
     </section>
 
     <section class="section">
       <h2>GitHub artifact attestations</h2>
       <p>Use GitHub CLI to verify the checksum file and the asset you downloaded:</p>
       <pre><code>gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
-gh attestation verify anosecurekit-0.3.0-source.tar.gz --repo anothel/AnoSecureKit-Community</code></pre>
+gh attestation verify anosecurekit-0.4.0-source.tar.gz --repo anothel/AnoSecureKit-Community</code></pre>
       <p>
         The attestation should point back to the `anothel/AnoSecureKit-Community` repository
         and its release workflow.

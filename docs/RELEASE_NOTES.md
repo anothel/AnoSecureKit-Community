@@ -2,6 +2,49 @@
 
 # AnoSecureKit Release Notes
 
+## v0.4.0
+
+AnoSecureKit Community v0.4.0 establishes an internal backend provider seam
+while preserving OpenSSL 3.x as the only shipped Community production provider.
+
+### Backend Architecture
+
+- Isolated secure wiping from direct OpenSSL headers so common packet, file, and
+  key-management code no longer includes `<openssl/crypto.h>`.
+- Moved the unchanged OpenSSL implementation behind
+  `src/backend/crypto_backend_openssl.cpp` and kept the internal contract in
+  `src/backend/crypto_backend.hpp`.
+- Added a build-tree-only external provider hook for parent projects that inject
+  a non-imported `OBJECT_LIBRARY` provider target.
+- Kept Community install, export, CPack, package, and release surfaces on the
+  OpenSSL profile; no proprietary provider is included or shipped.
+- Made unsupported, missing, imported, wrong-type, and top-level external
+  provider configurations fail closed at configure time.
+
+### Verification
+
+- Added `backend-boundary-check`, `external-backend-hook-check`, and
+  `external-backend-parity-check` to protect provider isolation and selection.
+- Verified the same 124-test inventory through the shipped OpenSSL profile and
+  the externally injected provider assembly.
+- Passed 124/124 configured tests through both provider assembly paths.
+- Preserved package, install/export, installed-consumer, library-only consumer,
+  source-rebuild, release-asset, checksum, SBOM, documentation, SPDX,
+  legacy-name, and release-workflow checks.
+
+### Compatibility
+
+- No breaking public C++ API change.
+- No CLI, package, namespace, include-root, or CMake target change.
+- No cryptographic behavior change.
+- No `SKT1`, `SKF1`, or `SKP1` format change.
+- Preserved the compatibility-sensitive `SKF1` HKDF label
+  `anosecurekit file sealing v1`.
+- The external provider hook is not a second supported Community backend; it is
+  an internal build-tree integration seam.
+- No AnoCrypto-C implementation is included and no KCMVP or FIPS validation
+  claim is made.
+
 ## v0.3.0
 
 AnoSecureKit Community v0.3.0 is the first published Community release.

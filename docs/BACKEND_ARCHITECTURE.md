@@ -217,9 +217,10 @@ AnoSecureKit repository.
 3. **Completed:** add and regression-test the build-tree-only external provider hook.
 4. **Completed:** run the full Community API, fixture, CLI, example, benchmark-smoke,
    and documentation checks through the externally injected OpenSSL provider.
-5. Verify the shipped OpenSSL install/export/package/release behavior remains unchanged.
-6. Release the refactored Community baseline before Enterprise consumes the new
-   seam.
+5. **Completed:** verify the shipped OpenSSL install/export/package/release behavior
+   remains unchanged.
+6. **In progress:** prepare and release the refactored Community `v0.4.0` baseline
+   before Enterprise consumes the new seam.
 7. Implement and test the proprietary AnoCrypto-C provider in Enterprise.
 
 ## Required Verification

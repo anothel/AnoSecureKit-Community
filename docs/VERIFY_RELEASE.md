@@ -11,7 +11,7 @@ Download these files from the same GitHub Release:
 
 - `SHA256SUMS.txt`
 - The source archive you plan to use, for example
-  `anosecurekit-0.3.0-source.tar.gz`
+  `anosecurekit-0.4.0-source.tar.gz`
 - The binary archive for your platform, if you use one
 - `anosecurekit-X.Y.Z-release.spdx.json`, if you need SBOM metadata
 
@@ -28,7 +28,7 @@ sha256sum -c SHA256SUMS.txt
 On Windows PowerShell, compare each listed digest with:
 
 ```powershell
-Get-FileHash .\anosecurekit-0.3.0-source.tar.gz -Algorithm SHA256
+Get-FileHash .\anosecurekit-0.4.0-source.tar.gz -Algorithm SHA256
 ```
 
 The digest must match the corresponding line in `SHA256SUMS.txt`.
@@ -39,7 +39,7 @@ Use GitHub CLI:
 
 ```sh
 gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
-gh attestation verify anosecurekit-0.3.0-source.tar.gz --repo anothel/AnoSecureKit-Community
+gh attestation verify anosecurekit-0.4.0-source.tar.gz --repo anothel/AnoSecureKit-Community
 ```
 
 Replace the archive name with the asset you downloaded. Verification should

@@ -56,26 +56,25 @@ Completed items leave the roadmap. Use Git history and `docs/RELEASE_NOTES.md` f
 
 ### Now
 
-Internal Backend Provider Seam:
+Community v0.4.0 Release Candidate:
 
-- Surface: `src/backend/crypto_backend*`, `src/internal/secure_wipe.*`, internal CMake
-  source/link selection, and the unchanged `anosecurekit::anosecurekit` final
-  target.
+- Surface: project version, release notes, release documentation, package assets,
+  SBOM/provenance metadata, and the provider-seam release gates.
 - Problem: the backend contract, OpenSSL provider isolation, build-tree-only
-  external hook, and full API/fixture/CLI parity suite are complete. The shipped
-  OpenSSL package and release surfaces now need one final clean release-preflight
-  pass before the refactored seam becomes the next release baseline.
-- Plan: keep the external hook and full parity checks in the release gate, run the
-  shipped OpenSSL package/install/export/consumer/release flow from a clean build,
-  and prepare the next Community release without adding a proprietary adapter.
+  external hook, full API/fixture/CLI parity suite, and shipped OpenSSL package
+  checks are complete. The verified baseline now needs a versioned Community
+  release before Enterprise consumes the seam.
+- Plan: prepare and verify `v0.4.0`, keep OpenSSL as the only shipped Community
+  provider, publish the same API and v1 formats, and verify the released assets,
+  checksums, SBOM, and attestations after tagging.
 - Compatibility: preserve public API/CLI/package identity, public error policy,
   and all `SKT1`/`SKF1`/`SKP1` v1 semantics and fixtures.
-- check: `external-backend-hook-check`, `external-backend-parity-check`, full
-  test-enabled `release-preflight`, source/package consumer checks, identical test
-  inventory through both provider assembly paths, unchanged fixtures, and proof
-  that the shipped Community product still links and reports OpenSSL only
-- rollback: revert the external provider hook while retaining the isolated OpenSSL
-  implementation if any public behavior, package, format, or release check changes
+- check: 124/124 tests through both provider assembly paths, full test-enabled
+  `release-preflight`, source/package consumer checks, identical test inventory,
+  unchanged fixtures, and proof that the shipped Community product still links
+  and reports OpenSSL only
+- rollback: do not tag `v0.4.0`; revert the release-preparation commit or the
+  provider seam if any public behavior, package, format, or release check changes
   unexpectedly
 
 Architecture source of truth: `docs/BACKEND_ARCHITECTURE.md`.
