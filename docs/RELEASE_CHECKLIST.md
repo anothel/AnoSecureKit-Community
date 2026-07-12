@@ -49,7 +49,8 @@ extract one source archive, build from that extracted source, install it, and
 run `anosecurekit --version`.
 
 `release-preflight` runs `check`, `package-check`, `release-workflow-check`,
-`spdx-check`, `legacy-name-check`, and `cli-docs-check`, then checks SemVer
+`spdx-check`, `legacy-name-check`, `backend-boundary-check`,
+`external-backend-hook-check`, and `cli-docs-check`, then checks SemVer
 shape, README and release-checklist version examples, documented local target
 names, package artifact version prefixes, staged release assets,
 `SHA256SUMS.txt`, the release SPDX SBOM, and release provenance attestation

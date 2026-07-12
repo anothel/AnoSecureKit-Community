@@ -255,11 +255,25 @@ _anosecurekit_require_terms(
   "release-workflow-check"
   "spdx-check"
   "legacy-name-check"
+  "backend-boundary-check"
+  "external-backend-hook-check"
   "cli-docs-check"
   "check_spdx.cmake"
   "check_legacy_identifiers.cmake"
+  "check_backend_boundary.cmake"
+  "check_external_backend_hook.cmake"
   "check_cli_docs.cmake"
   "check_package_recipes.cmake")
+
+
+_anosecurekit_require_terms(
+  "external backend build-tree hook"
+  "${_anosecurekit_cmakelists_text}"
+  "ANOSECUREKIT_CRYPTO_BACKEND"
+  "ANOSECUREKIT_EXTERNAL_BACKEND_TARGET"
+  "OBJECT_LIBRARY"
+  "build-tree-only integration hook"
+  "external-backend-hook-check")
 
 _anosecurekit_forbid_terms(
   "release-preflight nested build"

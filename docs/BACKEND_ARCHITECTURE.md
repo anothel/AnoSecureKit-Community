@@ -67,8 +67,8 @@ src/internal/secure_wipe.cpp
 
 Common packet, file, and key-management logic no longer includes OpenSSL headers.
 The OpenSSL implementation has also been moved behind the internal provider layout.
-The next isolation step is a build-tree-only external provider hook that preserves the
-Community OpenSSL default and installed package surface.
+A build-tree-only external provider hook is now implemented while the Community
+OpenSSL default and installed package surface remain unchanged.
 
 ## Target Internal Layout
 
@@ -126,22 +126,33 @@ public error policy explicitly changes in a versioned release.
 Provider selection should be compile-time/link-time, not an untrusted runtime
 plugin mechanism.
 
-A future internal CMake shape may use concepts such as:
+The implemented internal CMake seam is:
 
 ```text
 ANOSECUREKIT_CRYPTO_BACKEND=openssl
 ANOSECUREKIT_CRYPTO_BACKEND=external
-ANOSECUREKIT_EXTERNAL_BACKEND_TARGET=<private provider target>
+ANOSECUREKIT_EXTERNAL_BACKEND_TARGET=<existing provider OBJECT_LIBRARY target>
 ```
 
 Rules:
 
 - Community defaults to and officially supports only `openssl`.
-- `external` is a build-tree integration seam, not an installed public provider
-  ABI or a shipped backend.
+- `external` works only when AnoSecureKit is added by a parent project after the
+  parent has defined a non-imported `OBJECT_LIBRARY` provider target.
+- The provider target receives the private Community include roots needed to
+  implement `src/backend/crypto_backend.hpp`.
+- Top-level `external` configuration, a missing target, an imported target, or a
+  target of the wrong type fails at configuration time.
+- The external profile is build-tree only. Community install, CPack,
+  `package-check`, `dogfood-check`, and `release-preflight` remain OpenSSL-profile
+  release surfaces.
 - The Community repository must not contain a proprietary provider.
 - Provider identity must be explicit in diagnostics and build metadata.
 - No provider may silently delegate unsupported operations to another provider.
+
+The `OBJECT_LIBRARY` requirement keeps provider implementation objects inside the
+selected product target without creating an installed provider dependency or a
+static-library link cycle with common internal helpers.
 
 ## Capability and Failure Policy
 
@@ -195,7 +206,7 @@ AnoSecureKit repository.
 
 1. **Completed:** isolate secure wiping from direct OpenSSL headers.
 2. **Completed:** move the OpenSSL implementation behind the internal provider layout.
-3. Add a build-tree-only external provider hook.
+3. **Completed:** add and regression-test the build-tree-only external provider hook.
 4. Run the existing Community API and format suites through the OpenSSL provider.
 5. Verify install/export/package/release behavior remains unchanged.
 6. Release the refactored Community baseline before Enterprise consumes the new
@@ -205,8 +216,11 @@ AnoSecureKit repository.
 ## Required Verification
 
 The `backend-boundary-check` target enforces that OpenSSL headers and implementation
-symbols remain confined to the OpenSSL provider source. Every provider-seam change must
-also run the full configured release gate:
+symbols remain confined to the OpenSSL provider source. The
+`external-backend-hook-check` target configures a parent-project smoke build with the
+OpenSSL implementation injected through the external seam and also verifies that a
+missing provider and top-level external configuration fail closed. Every provider-seam
+change must also run the full configured release gate:
 
 ```sh
 cmake --build build --config Release --target release-preflight

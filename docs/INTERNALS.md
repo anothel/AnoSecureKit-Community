@@ -49,9 +49,9 @@ src/internal/secure_wipe.*
 
 The Community final target remains OpenSSL-backed. The `backend-boundary-check`
 target prevents OpenSSL implementation details from leaking back into common source.
-A build-tree-only external provider hook may be introduced for Enterprise integration,
-but it is not a public installed provider ABI and does not make AnoCrypto-C a Community
-backend.
+A build-tree-only external provider hook is available for Enterprise integration.
+It requires a parent-defined provider `OBJECT_LIBRARY`, is excluded from the installed
+Community package surface, and does not make AnoCrypto-C a Community backend.
 
 See `docs/BACKEND_ARCHITECTURE.md` for responsibilities, capability rules,
 ownership, and the no-fallback policy.
@@ -82,6 +82,7 @@ surface has a written compatibility policy.
 Any internal split must run:
 
 ```sh
+cmake --build build --config Release --target external-backend-hook-check
 cmake --build build --config Release --target check
 cmake --build build --config Release --target release-preflight
 ```

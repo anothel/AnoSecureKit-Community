@@ -61,21 +61,21 @@ Internal Backend Provider Seam:
 - Surface: `src/backend/crypto_backend*`, `src/internal/secure_wipe.*`, internal CMake
   source/link selection, and the unchanged `anosecurekit::anosecurekit` final
   target.
-- Problem: most crypto calls are centralized and secure wiping is now
-  backend-neutral, but the cryptographic implementation and target linkage are
-  still OpenSSL-specific. This prevents Enterprise from reusing the same common
-  behavior with a separate provider without privately patching Community files.
-- Plan: keep the completed secure-wipe isolation, move the OpenSSL implementation
-  behind the internal provider layout, then add a build-tree-only external
-  provider hook. Do not add a proprietary adapter to Community.
+- Problem: the backend contract, OpenSSL provider isolation, and build-tree-only
+  external hook are complete, but the full Community API/format regression suite
+  and release surfaces still need one consolidated verification pass before the
+  refactored seam becomes the next release baseline.
+- Plan: run the same API, fixture, package, install/export, consumer, and release
+  checks through the OpenSSL profile; keep the external hook regression check in
+  the release gate. Do not add a proprietary adapter to Community.
 - Compatibility: preserve public API/CLI/package identity, public error policy,
   and all `SKT1`/`SKF1`/`SKP1` v1 semantics and fixtures.
-- check: full test-enabled `release-preflight`, source/package consumer checks,
-  unchanged fixture inventory, and proof that the Community product still links
-  and reports OpenSSL only
-- rollback: revert the provider-selection hook and retain the existing OpenSSL
-  implementation behind the original private boundary if any public behavior,
-  package, format, or release check changes unexpectedly
+- check: `external-backend-hook-check`, full test-enabled `release-preflight`,
+  source/package consumer checks, unchanged fixture inventory, and proof that the
+  Community product still links and reports OpenSSL only
+- rollback: revert the external provider hook while retaining the isolated OpenSSL
+  implementation if any public behavior, package, format, or release check changes
+  unexpectedly
 
 Architecture source of truth: `docs/BACKEND_ARCHITECTURE.md`.
 

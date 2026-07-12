@@ -199,11 +199,20 @@ archive URL and checksum.
 | `ANOSECUREKIT_BUILD_FUZZ` | `OFF` | Build optional libFuzzer smoke targets. See [docs/FUZZING.md](docs/FUZZING.md). |
 | `ANOSECUREKIT_ENABLE_COVERAGE` | `OFF` | Add GCC/Clang coverage instrumentation for the non-blocking `coverage-report` target. See [docs/COVERAGE.md](docs/COVERAGE.md). |
 | `ANOSECUREKIT_WARNINGS_AS_ERRORS` | `OFF` | Treat AnoSecureKit compiler warnings as errors. |
-| `ANOSECUREKIT_CRYPTO_BACKEND` | `openssl` | Select the crypto backend. `openssl` is the only Community production backend. |
+| `ANOSECUREKIT_CRYPTO_BACKEND` | `openssl` | Select `openssl` for the shipped Community provider or `external` for the internal build-tree integration hook. |
+| `ANOSECUREKIT_EXTERNAL_BACKEND_TARGET` | empty | Existing non-imported `OBJECT_LIBRARY` provider target required by the build-tree-only `external` mode. |
+
+The shipped Community profile is `ANOSECUREKIT_CRYPTO_BACKEND=openssl`. The
+`external` value is an internal build-tree hook for a parent project that defines
+an `OBJECT_LIBRARY` provider target before adding AnoSecureKit with
+`add_subdirectory()`. It is not installed, packaged, or supported as a Community
+provider, and a missing or invalid target fails configuration. Run
+`external-backend-hook-check` to verify the positive and fail-closed paths.
 
 Release package check targets `package-check` and `release-preflight`
-require `ANOSECUREKIT_BUILD_CLI=ON` and `ANOSECUREKIT_INSTALL_CLI=ON` because they
-install and run the CLI. Library-only consumers can disable tests and the CLI:
+require the OpenSSL profile plus `ANOSECUREKIT_BUILD_CLI=ON` and
+`ANOSECUREKIT_INSTALL_CLI=ON` because they install and run the CLI. Library-only
+consumers can disable tests and the CLI:
 
 ```sh
 cmake -S . -B build-lib-only \
