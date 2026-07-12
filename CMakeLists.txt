@@ -422,6 +422,12 @@ add_custom_target(release-workflow-check
   USES_TERMINAL)
 
 option(ANOSECUREKIT_BUILD_TESTS "Build AnoSecureKit tests" ${BUILD_TESTING})
+set(ANOSECUREKIT_TEST_PARALLEL_LEVEL "4" CACHE STRING
+  "Parallel test/build jobs used by check and nested provider parity validation")
+if(NOT ANOSECUREKIT_TEST_PARALLEL_LEVEL MATCHES "^[1-9][0-9]*$")
+  message(FATAL_ERROR
+    "ANOSECUREKIT_TEST_PARALLEL_LEVEL must be a positive integer")
+endif()
 
 if(ANOSECUREKIT_BUILD_TESTS)
   find_package(GTest CONFIG QUIET)
@@ -502,6 +508,7 @@ if(ANOSECUREKIT_BUILD_TESTS)
       --test-dir ${CMAKE_CURRENT_BINARY_DIR}
       --build-config $<CONFIG>
       --output-on-failure
+      --parallel ${ANOSECUREKIT_TEST_PARALLEL_LEVEL}
     DEPENDS ${_anosecurekit_check_dependencies}
     USES_TERMINAL)
 
@@ -552,6 +559,7 @@ if(TARGET check)
       -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_DIR}
       -DANOSECUREKIT_OPENSSL_RUNTIME_DIR=${ANOSECUREKIT_OPENSSL_RUNTIME_DIR}
       -DANOSECUREKIT_CTEST_COMMAND=${CMAKE_CTEST_COMMAND}
+      -DANOSECUREKIT_TEST_PARALLEL_LEVEL=${ANOSECUREKIT_TEST_PARALLEL_LEVEL}
       -DANOSECUREKIT_GTEST_DIR=${GTest_DIR}
       -DANOSECUREKIT_GOOGLETEST_SOURCE_DIR=${_anosecurekit_googletest_source_dir}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/package/check_external_backend_parity.cmake

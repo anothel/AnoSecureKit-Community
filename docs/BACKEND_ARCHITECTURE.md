@@ -160,7 +160,9 @@ an external provider object, verifies that its discovered CTest inventory exactl
 matches the shipped OpenSSL profile, and then runs the complete API, fixture, CLI,
 example, benchmark-smoke, CLI-documentation, SPDX, legacy-name, and backend-boundary
 checks through that seam. This is a regression test for provider substitution, not a
-second shipped Community backend.
+second shipped Community backend. The configured
+`ANOSECUREKIT_TEST_PARALLEL_LEVEL` value controls both nested builds and CTest
+execution so release-preflight remains practical on local and CI workers.
 
 ## Capability and Failure Policy
 

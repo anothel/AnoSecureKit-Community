@@ -194,6 +194,7 @@ archive URL and checksum.
 | Option | Default | Use |
 | --- | --- | --- |
 | `ANOSECUREKIT_BUILD_TESTS` | `BUILD_TESTING` | Build unit, fixture, and CLI tests. |
+| `ANOSECUREKIT_TEST_PARALLEL_LEVEL` | `4` | Parallel jobs used by `check` and nested external-provider parity validation. Must be a positive integer. |
 | `ANOSECUREKIT_BUILD_CLI` | `ON` | Build the `anosecurekit` CLI executable. |
 | `ANOSECUREKIT_INSTALL_CLI` | `ON` | Install the CLI. Requires `ANOSECUREKIT_BUILD_CLI=ON`. |
 | `ANOSECUREKIT_BUILD_FUZZ` | `OFF` | Build optional libFuzzer smoke targets. See [docs/FUZZING.md](docs/FUZZING.md). |
@@ -210,7 +211,9 @@ provider, and a missing or invalid target fails configuration. Run
 `external-backend-hook-check` to verify the positive and fail-closed configuration paths.
 With tests enabled, run `external-backend-parity-check` to execute the same
 public API, fixture, CLI, example, benchmark-smoke, and documentation checks
-through an externally injected provider object.
+through an externally injected provider object. Set
+`ANOSECUREKIT_TEST_PARALLEL_LEVEL` at configure time to tune both the top-level
+CTest run and the nested provider-parity build/test run without editing scripts.
 
 Release package check targets `package-check` and `release-preflight`
 require the OpenSSL profile plus `ANOSECUREKIT_BUILD_CLI=ON` and

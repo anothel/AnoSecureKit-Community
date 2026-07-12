@@ -88,6 +88,10 @@ cmake --build build --config Release --target check
 cmake --build build --config Release --target release-preflight
 ```
 
+Configure `ANOSECUREKIT_TEST_PARALLEL_LEVEL` with a positive integer when the
+default of 4 is too low or high for the local/CI worker. The same value is used
+by the top-level `check` target and nested external-provider parity validation.
+
 If the split touches package installation, CLI usage, release assets, or public
 headers, run the smallest matching package or CLI check before
 `release-preflight`.

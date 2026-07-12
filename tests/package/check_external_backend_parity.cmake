@@ -21,6 +21,14 @@ endif()
 if(NOT IS_ABSOLUTE "${ANOSECUREKIT_PARENT_BUILD_DIR}")
   message(FATAL_ERROR "ANOSECUREKIT_PARENT_BUILD_DIR must be absolute")
 endif()
+if(NOT DEFINED ANOSECUREKIT_TEST_PARALLEL_LEVEL
+    OR ANOSECUREKIT_TEST_PARALLEL_LEVEL STREQUAL "")
+  set(ANOSECUREKIT_TEST_PARALLEL_LEVEL "4")
+endif()
+if(NOT ANOSECUREKIT_TEST_PARALLEL_LEVEL MATCHES "^[1-9][0-9]*$")
+  message(FATAL_ERROR
+    "ANOSECUREKIT_TEST_PARALLEL_LEVEL must be a positive integer")
+endif()
 
 if(NOT DEFINED ANOSECUREKIT_BUILD_CONFIG OR ANOSECUREKIT_BUILD_CONFIG STREQUAL "")
   if(DEFINED ANOSECUREKIT_DEFAULT_BUILD_TYPE
@@ -149,7 +157,7 @@ endif()
 execute_process(
   COMMAND "${CMAKE_COMMAND}" --build "${_anosecurekit_parity_build}"
     --config "${ANOSECUREKIT_BUILD_CONFIG}"
-    --parallel
+    --parallel "${ANOSECUREKIT_TEST_PARALLEL_LEVEL}"
     --target anosecurekit_tests anosecurekit_cli
   RESULT_VARIABLE _anosecurekit_test_build_result)
 if(NOT _anosecurekit_test_build_result EQUAL 0)
@@ -180,7 +188,7 @@ endif()
 execute_process(
   COMMAND "${CMAKE_COMMAND}" --build "${_anosecurekit_parity_build}"
     --config "${ANOSECUREKIT_BUILD_CONFIG}"
-    --parallel
+    --parallel "${ANOSECUREKIT_TEST_PARALLEL_LEVEL}"
     --target external-backend-parity-suite
   RESULT_VARIABLE _anosecurekit_build_result)
 if(NOT _anosecurekit_build_result EQUAL 0)
@@ -191,7 +199,7 @@ set(_anosecurekit_ctest_command
   "${ANOSECUREKIT_CTEST_COMMAND}"
   --test-dir "${_anosecurekit_parity_build}/anosecurekit-community"
   --output-on-failure
-  --parallel 4)
+  --parallel "${ANOSECUREKIT_TEST_PARALLEL_LEVEL}")
 if(DEFINED ANOSECUREKIT_BUILD_CONFIG
     AND NOT ANOSECUREKIT_BUILD_CONFIG STREQUAL "")
   list(APPEND _anosecurekit_ctest_command -C "${ANOSECUREKIT_BUILD_CONFIG}")

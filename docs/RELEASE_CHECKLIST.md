@@ -43,6 +43,10 @@ enabled:
 cmake --build build --config Release --target release-preflight
 ```
 
+The configured `ANOSECUREKIT_TEST_PARALLEL_LEVEL` (default `4`) is used by both
+the top-level test run and nested external-provider parity validation. Increase
+it only when the release worker has matching CPU and memory capacity.
+
 `package-check` must install AnoSecureKit, run the installed CLI, build a consumer
 project, create CPack binary and source archives, inspect archive contents,
 extract one source archive, build from that extracted source, install it, and

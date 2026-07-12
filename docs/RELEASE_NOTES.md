@@ -25,6 +25,8 @@ while preserving OpenSSL 3.x as the only shipped Community production provider.
 
 - Added `backend-boundary-check`, `external-backend-hook-check`, and
   `external-backend-parity-check` to protect provider isolation and selection.
+- Added `ANOSECUREKIT_TEST_PARALLEL_LEVEL` so top-level and nested parity tests
+  use one validated, configurable parallelism setting during release preflight.
 - Verified the same 124-test inventory through the shipped OpenSSL profile and
   the externally injected provider assembly.
 - Passed 124/124 configured tests through both provider assembly paths.
