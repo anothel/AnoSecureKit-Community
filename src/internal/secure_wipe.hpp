@@ -6,12 +6,13 @@
 #include <cstddef>
 #include <span>
 
+#include "anosecurekit/export.hpp"
 #include "anosecurekit/types.hpp"
 
 namespace anosecurekit::internal
 {
 
-void secure_wipe(std::span<std::byte> data) noexcept;
+ANOSECUREKIT_API void secure_wipe(std::span<std::byte> data) noexcept;
 
 template <std::size_t Size>
 inline void secure_wipe(std::array<std::byte, Size> &data) noexcept
