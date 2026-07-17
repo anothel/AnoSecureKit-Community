@@ -2,19 +2,19 @@
 
 # Community Split Notes
 
-This repository was extracted from the uploaded AnoSecureKit codebase as the
-public AnoSecureKit Community edition.
+This file is retained as a historical extraction marker and is not a current
+architecture or product-family source of truth.
 
-The extraction intentionally keeps the existing public package surface:
+The Community extraction preserved:
 
-- `anosecurekit` package and CLI name.
-- `include/anosecurekit` public include root.
-- `anosecurekit` C++ namespace.
-- `anosecurekit::anosecurekit` CMake target.
+- `anosecurekit` package and CLI name;
+- `include/anosecurekit` public include root;
+- `anosecurekit` C++ namespace;
+- `anosecurekit::anosecurekit` CMake target;
 - `SKT1`, `SKF1`, and `SKP1` v1 serialized formats.
 
-The extraction intentionally removes generated build directories and local IDE
-state from the distributed source archive.
+Current status and repository boundaries are documented in:
 
-Enterprise and AnoCrypto work should happen in separate private/commercial
-repositories.
+- `docs/CURRENT_STATUS.md`;
+- `docs/CROSS_REPOSITORY_BOUNDARY.md`;
+- `docs/DOCUMENT_INDEX.md`.

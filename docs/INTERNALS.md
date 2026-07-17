@@ -2,8 +2,8 @@
 
 # AnoSecureKit Internal Boundaries
 
-This document records current implementation ownership and the approved provider
-refactor direction. It is not a public API or provider ABI contract.
+This document records current implementation ownership after the completed v0.4.0
+provider refactor. It is not a public API or provider ABI contract.
 
 ## Current Ownership
 
@@ -49,11 +49,11 @@ src/internal/secure_wipe.*
 
 The Community final target remains OpenSSL-backed. The `backend-boundary-check`
 target prevents OpenSSL implementation details from leaking back into common source.
-A build-tree-only external provider hook is available for Enterprise integration.
+A build-tree-only external provider hook is available for a parent project.
 It requires a parent-defined provider `OBJECT_LIBRARY`, is excluded from the installed
-Community package surface, and does not make AnoCrypto-C a Community backend.
+Community package surface, and is not a second Community production backend.
 
-See `docs/BACKEND_ARCHITECTURE.md` for responsibilities, capability rules,
+See `docs/BACKEND_AND_PROVIDER_CONTRACT.md` for responsibilities, capability rules,
 ownership, and the no-fallback policy.
 
 ## Split Gates
@@ -68,8 +68,8 @@ Provider work must additionally ensure:
 - common code contains no OpenSSL types after the relevant boundary is moved;
 - a missing external provider or capability fails closed;
 - proprietary adapters remain outside Community;
-- the AnoCrypto-C profile cannot acquire an OpenSSL production dependency by
-  fallback or transitive linkage.
+- an external-provider profile cannot acquire an OpenSSL production dependency by
+  fallback or unintended transitive linkage.
 
 Keep file and CLI internals private. Further splits require repeated edit
 conflicts, a smaller safety fix, or a test-protected behavior change that is hard

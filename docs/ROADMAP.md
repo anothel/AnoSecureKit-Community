@@ -1,122 +1,65 @@
 <!-- SPDX-License-Identifier: MPL-2.0 -->
 
-# AnoSecureKit Roadmap
+# AnoSecureKit Community Roadmap
 
-Future work only. Completed work belongs in Git history and
-`docs/RELEASE_NOTES.md`, not in a standing changelog.
-
-## Rules
-
-1. Security, data loss, and format compatibility come first.
-2. Keep v0.x public API changes minimal and keep the v1 free-function API
-   stable unless real call sites prove otherwise.
-3. Keep OpenSSL as the only shipped Community production provider. A generic
-   internal provider contract or build-tree extension hook does not make an
-   external provider a supported Community backend.
-4. Keep CMake install/export, the CLI, and GitHub Actions package checks as
-   first-class release surfaces.
-5. Do not add public API, wire formats, package channels, CI cost, or release
-   ceremony without a written problem, regression check, and rollback plan.
-6. Active roadmap items must name an existing AnoSecureKit surface.
-7. External audit or roadmap notes are triage input only. Node.js backend middleware,
-   npm/package metadata, web framework middleware, JWT, CSRF, CORS, rate limiting,
-   request validation, diagnostic routes, and adapter parity do not become
-   AnoSecureKit work unless this repository's identity changes.
-8. Keep out-of-scope boundaries as rules, not queued work: no novel,
-   unpublished, or project-specific cryptographic algorithms, custom string
-   classes or allocators, TLS/networking, secure key storage, guaranteed memory
-   erasure claims, or framework-scale abstractions without call-site pressure.
-
-Release-impacting work must pass the matching configured build directory:
-
-```sh
-cmake --build build --config Release --target release-preflight
-```
-
-Before tagging a release, verify package archives, source archives,
-`SHA256SUMS.txt`, release SPDX SBOM, GitHub artifact attestations, and release
-notes source of truth.
-
-`release-preflight` includes `dogfood-check`. If no repeated friction is
-recorded, do not promote an API expansion or split.
+This compatibility roadmap records the active work queue. The canonical numbered
+queue is `docs/NEXT_WORK_QUEUE.md`.
 
 ## Intake Rules
 
-Broad audit documents must be split before implementation. Each accepted item
-must map to an existing AnoSecureKit API, CLI command, serialized format, CMake
-package surface, release asset, or security-reporting surface.
-
-Put work in `Now` only when it has a named surface, a concrete problem, one
-runnable check, and a rollback path. Put accepted fixes in `Fix Queue` until
-they move to `Now`. Do not leave accepted fixes deferred.
-
-Completed items leave the roadmap. Use Git history and `docs/RELEASE_NOTES.md` for full completed-change detail.
+- Active roadmap items must name an existing AnoSecureKit surface: public C++ API,
+  CLI, `SKT1`/`SKF1`/`SKP1`, CMake package, provider seam, release asset, or
+  security-reporting surface.
+- External audit or roadmap notes are triage input only until mapped to a current
+  repository surface and a regression check.
+- Node.js and backend middleware are outside this C++ Community repository unless
+  an existing public package or release contract requires a focused change.
+- Keep v0.x public API changes minimal.
+- Release-impacting work must name a check and rollback path.
+- Do not leave accepted fixes deferred; move them to the Fix Queue with an owner,
+  protected surface, and validation command.
+- `dogfood-check` results should create work only after no repeated friction is
+  disproved by a reproducible issue.
 
 ## Current Plan
 
 ### Now
 
-Community v0.4.0 Release Candidate:
+COMM-REL-01 — v0.4.0 publication evidence:
 
-- Surface: project version, release notes, release documentation, package assets,
-  SBOM/provenance metadata, and the provider-seam release gates.
-- Problem: the backend contract, OpenSSL provider isolation, build-tree-only
-  external hook, full API/fixture/CLI parity suite, and shipped OpenSSL package
-  checks are complete. The verified baseline now needs a versioned Community
-  release before Enterprise consumes the seam.
-- Plan: prepare and verify `v0.4.0`, keep OpenSSL as the only shipped Community
-  provider, publish the same API and v1 formats, and verify the released assets,
-  checksums, SBOM, and attestations after tagging.
-- Compatibility: preserve public API/CLI/package identity, public error policy,
-  and all `SKT1`/`SKF1`/`SKP1` v1 semantics and fixtures.
-- check: 124/124 tests through both provider assembly paths, full test-enabled
-  `release-preflight`, source/package consumer checks, identical test inventory,
-  unchanged fixtures, and proof that the shipped Community product still links
-  and reports OpenSSL only
-- rollback: do not tag `v0.4.0`; revert the release-preparation commit or the
-  provider seam if any public behavior, package, format, or release check changes
-  unexpectedly
+- Confirm the GitHub Release, asset inventory, checksums, SBOM, attestations,
+  hosted CI, CodeQL, and claimed platform evidence for the exact tag commit.
+- Keep unavailable evidence `UNVERIFIED` or `DEFERRED`.
+- check: compare the tag commit, release metadata, `SHA256SUMS.txt`, SBOM,
+  attestation verification, and hosted run conclusions
+- rollback: remove or correct only the unsupported publication claim; do not move
+  or recreate `v0.4.0`
 
-Architecture source of truth: `docs/BACKEND_ARCHITECTURE.md`.
+COMM-VER-01 — provider parity evidence:
 
-### External Handoff
+- Re-run the same discovered inventory through the OpenSSL and external
+  assemblies and retain machine-readable output.
+- check: `cmake --build build --config Release --target release-preflight`
+- rollback: keep the historical 124/124 statement as `RECORDED` and do not claim
+  a current `PASS`
 
-Focused External Security Review:
+### Package Publishing
 
-- Run `docs/EXTERNAL_SECURITY_REVIEW.md` against the released and attested
-  source assets for the current package-published release.
-- Keep only findings that name an existing API, CLI command, serialized format,
-  CMake package surface, release asset, or security-reporting surface.
-- check: every accepted finding names a focused regression check before any fix
-- rollback: keep un-mapped findings as triage notes outside this roadmap
-
-Package Publishing:
-
-- Package-manager recipe publication remains a package-channel handoff.
-- Use the Homebrew, Conan, and vcpkg recipe drafts generated by
-  `release-preflight` under `<build>/package-check/package-recipes`.
-- Actual package-channel publication requires target channel access and should
-  be tracked in the target package channel until published and consumer-verified.
+- Package-manager recipe publication remains an external channel handoff.
+- Use recipe drafts only after the matching GitHub Release assets are uploaded,
+  checksum-verified, attested, and consumer-tested.
 - check: consumer project builds against each published recipe
 - rollback: remove or replace the package recipe update if checksum or consumer
-  build verification fails
+  verification fails
 
 ### Fix Queue
 
-- Keep release hygiene gates (`spdx-check`, `legacy-name-check`, and
-  `cli-docs-check`) wired into `release-preflight` as the public release surface
-  evolves.
-  check: `cmake --build build --config Release --target release-preflight`
-  rollback: remove only the newly failing gate from `release-preflight` after
-  documenting the replacement check
-- Keep external proprietary modules, including AnoCrypto-C, outside Community.
-  Community may provide only a generic internal provider contract and a
-  build-tree integration seam. Enterprise integration remains in its separate
-  proprietary repository and must not be exposed as a shipped Community backend.
-  check: public docs and package metadata continue to describe OpenSSL as the
-  only shipped production provider, and the Community tree contains no
-  proprietary adapter or external package
-  rollback: remove any external-provider scaffold or proprietary source and
-  restore the OpenSSL-only source selection
+- Keep release hygiene gates, provider-boundary gates, and v1 fixtures aligned
+  with the current public surface.
+- Prevent EOL-only worktree drift before source-archive generation.
+- Refresh hosted GCC, Clang, MSVC, AppleClang, sanitizer, package, and CodeQL
+  evidence.
 - Turn accepted external-review findings into one protected change each.
-  Do not add a fix here until it names an AnoSecureKit surface and regression check.
+
+Completed implementation history belongs in Git history and
+`docs/RELEASE_NOTES.md`, not in this active roadmap.

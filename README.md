@@ -4,15 +4,14 @@
 
 Project site: https://anothel.github.io/anosecurekit-community/
 
-AnoSecureKit Community is the open-source edition of the AnoSecureKit product family.
-It is licensed under MPL-2.0 and uses OpenSSL 3.x as its default production
-cryptographic backend. The package name, include root, C++
-namespace, CLI, and CMake target intentionally remain `anosecurekit`.
+AnoSecureKit Community is the public MPL-2.0 C++20 edition of AnoSecureKit.
+OpenSSL 3.x is its only shipped production cryptographic provider. The package
+name, include root, C++ namespace, CLI, and CMake target intentionally remain
+`anosecurekit`.
 
-AnoSecureKit Enterprise is separate commercial software. AnoCrypto is an
-external proprietary cryptographic module managed outside this repository.
-AnoCrypto is not included in Community, and Community does not provide an
-AnoCrypto backend.
+AnoSecureKit Enterprise and AnoCrypto-C are separate repositories and products.
+Their proprietary source, adapters, policy, packages, evidence, and validation
+status are not included in Community.
 
 AnoSecureKit Community makes no KCMVP, FIPS, certification, validation, or
 public-sector approval claims.
@@ -23,10 +22,12 @@ provider boundaries and be protected by known-answer tests, differential tests,
 fuzzing, compatibility fixtures, and review.
 
 Security status: AnoSecureKit has not had an external security audit. It is a
-small utility library with OpenSSL as the current default backend, compatibility
-fixtures, CI, fuzz smoke targets, package checks, release checksums, an SPDX
-SBOM, and GitHub artifact attestations. Do not treat it as a substitute for a
-full security review in high-risk systems.
+small utility library with OpenSSL as the shipped backend, compatibility fixtures,
+CI definitions, fuzz smoke targets, package checks, and release tooling capable
+of producing checksums, an SPDX SBOM, and GitHub artifact attestations. The
+current publication evidence state is recorded in
+[docs/RELEASE_AND_EVIDENCE_STATUS.md](docs/RELEASE_AND_EVIDENCE_STATUS.md). Do not
+treat the project as a substitute for a full security review in high-risk systems.
 
 ## License
 
@@ -48,24 +49,23 @@ without pulling low-level provider calls through the whole codebase.
 The current identity is:
 
 - Practical C++20 security utility library.
-- OpenSSL 3.x backed by default.
+- OpenSSL 3.x as the only shipped Community production provider.
 - Backend-neutral public API, CLI, and file formats.
-- No AnoCrypto source, scaffold, or backend.
+- No Enterprise proprietary source or AnoCrypto-C adapter.
 - No novel or unpublished cryptographic algorithms.
 - Free-function API first.
 - Distinct packet streaming objects where incremental AEAD is useful.
 
 ## Backend Strategy
 
-AnoSecureKit Community uses OpenSSL 3.x as the default production backend.
-AnoCrypto is an external proprietary module and is not part of this repository.
+AnoSecureKit Community uses OpenSSL 3.x as its only shipped production backend.
+A build-tree-only external provider seam exists for a parent project, but it is
+not installed, exported, packaged, released, or supported as a second Community
+production backend. Invalid provider configuration and unsupported capability
+must fail closed without silent fallback.
 
-The Community backend boundary is:
-
-1. Keep AnoSecureKit's public API, CLI, and `SKT1` / `SKF1` / `SKP1` formats stable.
-2. Keep OpenSSL 3.x as the only public production backend.
-3. Keep AnoCrypto source, scaffolding, and integration code outside Community.
-4. Keep Enterprise license, activation, packaging, and support logic outside Community.
+See [docs/BACKEND_AND_PROVIDER_CONTRACT.md](docs/BACKEND_AND_PROVIDER_CONTRACT.md)
+and [docs/CROSS_REPOSITORY_BOUNDARY.md](docs/CROSS_REPOSITORY_BOUNDARY.md).
 
 ## Features
 
@@ -122,11 +122,15 @@ asset, or security-reporting surface are triage input, not implementation scope.
 `docs/ROADMAP.md` records the active work queue.
 
 For the canonical documentation map, see
-[`docs/DOCUMENTATION_GUIDE.md`](docs/DOCUMENTATION_GUIDE.md).
+[`docs/DOCUMENT_INDEX.md`](docs/DOCUMENT_INDEX.md). The compatibility entry point
+[`docs/DOCUMENTATION_GUIDE.md`](docs/DOCUMENTATION_GUIDE.md) remains for existing
+release checks.
 
-For product-edition boundaries, see [`docs/EDITIONS.md`](docs/EDITIONS.md) and
-[`docs/ANOCRYPTO_BOUNDARY.md`](docs/ANOCRYPTO_BOUNDARY.md). The approved
-internal provider-seam direction is documented in
+Current repository boundaries and provider rules are documented in
+[`docs/CROSS_REPOSITORY_BOUNDARY.md`](docs/CROSS_REPOSITORY_BOUNDARY.md) and
+[`docs/BACKEND_AND_PROVIDER_CONTRACT.md`](docs/BACKEND_AND_PROVIDER_CONTRACT.md).
+Compatibility links remain at [`docs/EDITIONS.md`](docs/EDITIONS.md),
+[`docs/ANOCRYPTO_BOUNDARY.md`](docs/ANOCRYPTO_BOUNDARY.md), and
 [`docs/BACKEND_ARCHITECTURE.md`](docs/BACKEND_ARCHITECTURE.md).
 
 ## Requirements
@@ -134,7 +138,7 @@ internal provider-seam direction is documented in
 - C++20 compiler.
 - CMake 3.20 or newer.
 - OpenSSL 3.x, version 3.0 or newer, when using the current default OpenSSL backend.
-- No AnoCrypto source, scaffold, or backend is shipped in Community.
+- No Enterprise proprietary source or AnoCrypto-C adapter is shipped in Community.
 
 ## Build
 
@@ -279,6 +283,11 @@ Release automation runs on version tags matching `v*`. A tag push runs the CI
 matrix, gathers package artifacts, writes `SHA256SUMS.txt`, creates GitHub
 artifact attestations for release assets, writes a release SPDX SBOM, and
 creates or updates the GitHub Release.
+
+This describes the workflow contract, not proof that a particular tag completed
+publication. Check [docs/RELEASE_AND_EVIDENCE_STATUS.md](docs/RELEASE_AND_EVIDENCE_STATUS.md)
+before claiming that release assets, checksums, SBOM, attestations, or hosted
+runs exist for a specific revision.
 
 The tag version must match the CMake project version. For example,
 `project(... VERSION 0.4.0)` should be released with tag `v0.4.0`.
@@ -641,8 +650,10 @@ Public API shape decisions are documented in
 is documented in
 [docs/OPENSSL_POLICY.md](docs/OPENSSL_POLICY.md).
 Internal ownership boundaries and split gates are documented in
-[docs/INTERNALS.md](docs/INTERNALS.md). The internal backend/provider design is
-documented in [docs/BACKEND_ARCHITECTURE.md](docs/BACKEND_ARCHITECTURE.md).
+[docs/INTERNALS.md](docs/INTERNALS.md). The canonical internal provider contract
+is [docs/BACKEND_AND_PROVIDER_CONTRACT.md](docs/BACKEND_AND_PROVIDER_CONTRACT.md);
+[docs/BACKEND_ARCHITECTURE.md](docs/BACKEND_ARCHITECTURE.md) remains a
+compatibility entry point.
 
 ## AES-256-GCM Packet Format
 
@@ -870,7 +881,9 @@ executables with the OpenSSL DLL directory on `PATH`.
 
 ## Roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for forward-looking work.
-Completed work is kept in Git history instead of the active roadmap.
+See [docs/NEXT_WORK_QUEUE.md](docs/NEXT_WORK_QUEUE.md) for the canonical
+post-v0.4.0 queue. `docs/ROADMAP.md` records the active work queue as a
+compatibility entry point. Completed work is kept in Git history or release
+notes instead of the active roadmap.
 Website, guide, and browser-local tool planning lives in
 [docs/WEB_ROADMAP.md](docs/WEB_ROADMAP.md).

@@ -1,74 +1,100 @@
 <!-- SPDX-License-Identifier: MPL-2.0 -->
 
-# Verifying AnoSecureKit Releases
+# Verify an AnoSecureKit Community Release
 
-This guide is for users checking release artifacts downloaded from GitHub. For
-maintainer release steps, see `docs/RELEASE_CHECKLIST.md`.
+Use this procedure only after confirming that the requested GitHub Release and
+assets actually exist. A repository tag or workflow definition alone is not
+publication evidence.
 
-## What To Download
+Set the release version and repository:
 
-Download these files from the same GitHub Release:
+```sh
+VERSION=X.Y.Z
+REPO=anothel/AnoSecureKit-Community
+```
 
-- `SHA256SUMS.txt`
-- The source archive you plan to use, for example
-  `anosecurekit-0.4.0-source.tar.gz`
-- The binary archive for your platform, if you use one
-- `anosecurekit-X.Y.Z-release.spdx.json`, if you need SBOM metadata
+Expected release assets include names such as:
 
-Do not mix assets from different release versions.
+```text
+anosecurekit-X.Y.Z-source.tar.gz
+anosecurekit-X.Y.Z-source.zip
+anosecurekit-X.Y.Z-<platform>.zip or .tar.gz
+SHA256SUMS.txt
+anosecurekit-X.Y.Z-release.spdx.json
+```
 
-## Check SHA-256 Sums
+## Verify Checksums
 
-On Linux or macOS:
+Download all release assets into one directory and run:
 
 ```sh
 sha256sum -c SHA256SUMS.txt
 ```
 
-On Windows PowerShell, compare each listed digest with:
+On PowerShell, compare each expected line with:
 
 ```powershell
-Get-FileHash .\anosecurekit-0.4.0-source.tar.gz -Algorithm SHA256
+Get-FileHash .\anosecurekit-X.Y.Z-source.tar.gz -Algorithm SHA256
 ```
 
-The digest must match the corresponding line in `SHA256SUMS.txt`.
+The file name and digest must exactly match `SHA256SUMS.txt`.
 
-## Check GitHub Artifact Attestations
+## Verify GitHub Artifact Attestations
 
-Use GitHub CLI:
+With the GitHub CLI:
 
 ```sh
 gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
-gh attestation verify anosecurekit-0.4.0-source.tar.gz --repo anothel/AnoSecureKit-Community
+gh attestation verify anosecurekit-X.Y.Z-source.tar.gz --repo anothel/AnoSecureKit-Community
 ```
 
-Replace the archive name with the asset you downloaded. Verification should
-point back to the `anothel/AnoSecureKit-Community` repository and the release workflow.
+Repeat for each asset that the release claims is attested.
 
-## Check The SBOM
+## Inspect the SPDX SBOM
 
-The release SBOM is an SPDX JSON file named like:
-
-```text
-anosecurekit-X.Y.Z-release.spdx.json
-```
-
-Use it to inspect release asset names and recorded SHA-256 checksums. The SBOM
-does not replace checksum or attestation verification; it is metadata for the
-release contents.
+Open `anosecurekit-X.Y.Z-release.spdx.json` and verify that its package name,
+version, download location, checksums, and listed release files match the release
+being inspected.
 
 ## Source vs Binary Archives
 
-Source archives contain the project source tree for building AnoSecureKit.
-Binary archives contain built outputs for one platform and configuration.
-Choose source archives when you need to rebuild locally, audit the code, or use
-CMake `FetchContent`. Choose binary archives only when the platform and trust
-model match your deployment.
+- Source archives must contain the expected source, public headers, CMake files,
+  license, security policy, and documentation.
+- Binary archives must match the stated platform and configuration.
+- Do not substitute an automatically generated GitHub source snapshot for a
+  project-generated source release asset without checking the documented asset
+  inventory.
+
+## Build a Consumer
+
+After checksum and attestation verification, extract a source archive, configure
+and build it, install it into a clean prefix, and build a small consumer using:
+
+```cmake
+find_package(anosecurekit CONFIG REQUIRED)
+target_link_libraries(app PRIVATE anosecurekit::anosecurekit)
+```
+
+Confirm the installed CLI reports the expected version.
+
+## Record the Result
+
+Retain:
+
+- release URL and publication timestamp;
+- tag and commit SHA;
+- asset names, sizes, and SHA-256 values;
+- SBOM file name and digest;
+- attestation verification output;
+- hosted CI/CodeQL run identity and conclusion;
+- consumer platform and toolchain versions.
+
+Update `docs/RELEASE_AND_EVIDENCE_STATUS.md` only from retained evidence.
 
 ## What This Does Not Prove
 
-Successful checksum and attestation verification only shows that the downloaded
-assets match the release workflow outputs for this repository. It does not
-prove that AnoSecureKit is externally audited, that OpenSSL is configured for
-your deployment policy, or that the software is appropriate for a high-risk
-system without your own review.
+Checksums prove file integrity relative to the published checksum list.
+Attestations prove the stated GitHub build provenance when verification succeeds.
+An SBOM describes declared release contents. These checks do not prove absence of
+vulnerabilities, correctness of cryptography, external audit completion, KCMVP,
+FIPS validation, certification, or public-sector approval.

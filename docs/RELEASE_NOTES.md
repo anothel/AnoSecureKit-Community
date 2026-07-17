@@ -27,9 +27,12 @@ while preserving OpenSSL 3.x as the only shipped Community production provider.
   `external-backend-parity-check` to protect provider isolation and selection.
 - Added `ANOSECUREKIT_TEST_PARALLEL_LEVEL` so top-level and nested parity tests
   use one validated, configurable parallelism setting during release preflight.
-- Verified the same 124-test inventory through the shipped OpenSSL profile and
-  the externally injected provider assembly.
-- Passed 124/124 configured tests through both provider assembly paths.
+- The v0.4.0 release-preparation record reports the same 124-test inventory
+  through the shipped OpenSSL profile and externally injected provider assembly.
+- That record reports 124/124 configured tests through both assembly paths. The
+  current retained-evidence state is tracked separately in
+  `docs/RELEASE_AND_EVIDENCE_STATUS.md`; do not treat release notes alone as a
+  current machine-verifiable PASS.
 - Preserved package, install/export, installed-consumer, library-only consumer,
   source-rebuild, release-asset, checksum, SBOM, documentation, SPDX,
   legacy-name, and release-workflow checks.

@@ -5,6 +5,11 @@
 Use this checklist before pushing a version tag. Release automation only runs
 for tags matching `v*`.
 
+A workflow definition or pushed tag is not publication evidence. Retain the
+exact release object, asset inventory, checksums, SPDX SBOM, attestations, and
+hosted run conclusions for the tagged commit, then update
+`docs/RELEASE_AND_EVIDENCE_STATUS.md`.
+
 ## 1. Choose The Version
 
 - Decide the next semantic version, for example `0.4.0`.
