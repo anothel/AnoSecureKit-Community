@@ -19,10 +19,10 @@ Current release code/tag baseline: `v0.4.0`
 ## Repository And Release Identity
 
 ```text
-current main HEAD: b6dde65db44679fe91428663f98662a429b93cd6
-current main subject: docs: record v0.4.0 publication evidence audit
-main compared with v0.4.0: ahead by 2, behind by 0
-post-tag change class: documentation only
+audited implementation baseline: c3872c196452b561b1a545ee73204dca0df83dc7
+baseline subject: fix: normalize hex fixtures in fuzz adapter
+current main identity: resolve from Git at audit time
+post-tag change classes: documentation/evidence and fuzz adapter maintenance
 release tag: v0.4.0
 annotated tag object: a2dfd3b79335062ffe73ebfb520b4aac7f590e3d
 release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
@@ -34,8 +34,9 @@ release prerelease: false
 project version at tag: 0.4.0
 ```
 
-The tag remains unchanged. The current `main` contains two post-tag documentation
-commits and is not the source revision used to build the v0.4.0 assets.
+The tag remains unchanged. The current maintenance line is not the source revision
+used to build the v0.4.0 assets. Source-controlled documents record an audited
+baseline rather than chasing their own resulting commit SHA.
 
 ## COMM-REL-02 Authenticated Publication Result
 
@@ -124,9 +125,12 @@ path: src/hex.cpp:60
       tests/fuzz/skt1_fuzz.cpp:9
 ```
 
-No crash artifact file was retained under `fuzz-artifacts/`. The failure is a
-Community fuzz-harness or invalid-input handling defect candidate. It is not a
-v0.4.0 asset-integrity or publication blocker.
+No crash artifact file was retained under `fuzz-artifacts/`. The adapter defect was
+fixed by commit `c3872c196452b561b1a545ee73204dca0df83dc7`. The exact fixture,
+existing odd-length seed, all five fuzz targets, general CTest 124/124, and package
+checks passed locally. Hosted confirmation is `DEFERRED_EXTERNAL` because GitHub
+Actions billing prevents runner execution. The production strict hex parser was
+not weakened.
 
 ## Current Evidence Matrix
 
@@ -147,7 +151,9 @@ v0.4.0 asset-integrity or publication blocker.
 | macOS package/consumer lanes | PASS | 2/2 exact-commit jobs succeeded |
 | Exact-commit CodeQL execution | PASS | Two analyses completed without analysis errors or warnings |
 | CodeQL result triage | UNVERIFIED | `results_count=19` per analysis requires separate review |
-| Scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
+| Historical scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
+| Fuzz adapter fix | PASS LOCAL | `c3872c1`; focused and full local fuzz smoke passed |
+| Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
 | Historical provider parity | RECORDED | 124/124 reported for OpenSSL and external assemblies |
 | Current local provider parity rerun | DEFERRED | Earlier audit lacked GoogleTest package/cache |
 
@@ -163,6 +169,14 @@ repository mutation during collection: none
 The successful supplementary attestation output should be retained next to the
 archive or included in a new evidence bundle before treating the archive itself
 as self-contained.
+
+## Source Repository Evidence Retention
+
+Full release binaries, expanded archives, authenticated API dumps, and local
+evidence ZIPs are not retained in the current source tree. Compact summaries live
+under `artifacts/`; exact archive SHA-256 values point to externally retained
+evidence. CPack source archives exclude repository-external evidence paths, and
+package-check fails if those paths reappear. Git history is not rewritten.
 
 ## Local Release Gate
 

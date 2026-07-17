@@ -41,6 +41,7 @@ Status: CURRENT
 - `docs/DOGFOODING.md`
 - `docs/EXTERNAL_SECURITY_REVIEW.md`
 - `docs/WEB_ROADMAP.md`
+- `docs/REPOSITORY_HYGIENE.md`
 
 ## Compatibility Entry Points
 
@@ -57,12 +58,13 @@ They are not independent sources of truth:
 
 ## Historical And Release Evidence
 
-Versioned evidence may remain under `artifacts/`. Evidence applies only to its
-exact revision and collection scope.
+Only compact versioned summaries remain under `artifacts/`. Full release binaries,
+expanded archives, authenticated response dumps, and local evidence ZIPs remain
+outside the source tree.
 
-- `artifacts/v0.3.0-post-publication-audit/`: historical v0.3.0 evidence.
-- `artifacts/v0.4.0-post-publication-audit/`: compact COMM-REL-02 publication
-  summary and evidence archive identity.
+- `artifacts/v0.3.0-post-publication-audit/README.md`: historical v0.3.0 pointer.
+- `artifacts/v0.4.0-post-publication-audit/README.md`: compact COMM-REL-02
+  publication summary and external archive identity.
 
 A historical directory does not prove a later release, and a publication audit
 does not replace current fuzz, provider-parity, or security-review work.

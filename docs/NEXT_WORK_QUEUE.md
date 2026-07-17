@@ -7,64 +7,44 @@ Baseline: post-`v0.4.0`
 
 ## Completed
 
-### COMM-AUDIT-01 — Audit Post-v0.4.0 Current State
+- `COMM-AUDIT-01`: post-v0.4.0 current-state audit — COMPLETE
+- `COMM-DOC-01`: CURRENT ONLY documentation — COMPLETE
+- `COMM-REL-01`: publication evidence audit — COMPLETE
+- `COMM-REL-02`: authenticated publication evidence recovery — COMPLETE
+- `COMM-FUZZ-01`: SKT1 fuzz invalid-input escape — COMPLETE LOCAL
+- `COMM-HYG-01`: line-ending and evidence-retention hygiene — COMPLETE
 
-Result: COMPLETE
+### COMM-FUZZ-01 Closeout
 
-### COMM-DOC-01 — Establish Community CURRENT ONLY Documentation
+Implementation commit:
 
-Result: COMPLETE
+```text
+c3872c196452b561b1a545ee73204dca0df83dc7
+fix: normalize hex fixtures in fuzz adapter
+```
 
-### COMM-REL-01 — Audit v0.4.0 Publication Evidence
+Local verification:
 
-Result: COMPLETE
+- exact crash fixture and existing odd-length seed passed;
+- five configured fuzz targets passed without sanitizer findings;
+- general CTest passed 124/124;
+- backend boundary, external hook, package, install, export, source rebuild, and
+  consumer checks passed;
+- public API, CLI, CMake identity, fixtures, and v1 format meaning were unchanged.
 
-### COMM-REL-02 — Recover Authenticated Hosted Publication Evidence
+Hosted confirmation is `DEFERRED_EXTERNAL` because GitHub Actions billing prevents
+runner execution. Do not reopen the production parser or weaken strict hex
+validation to compensate for the unavailable hosted lane.
 
-Result: COMPLETE WITH ONE SCHEDULED FUZZ FAILURE
+### COMM-HYG-01 Closeout
 
-Confirmed:
-
-- public `v0.4.0` Release object, exact title, state, and publication time;
-- 20/20 expected release assets and matching API/download inventory;
-- `SHA256SUMS.txt` 19/19;
-- SPDX release SBOM 18/18;
-- GitHub digest 20/20;
-- supplementary attestation verification 20/20;
-- successful v0.4.0 tag workflow with 10/10 jobs;
-- Windows 4/4 and macOS 2/2 jobs;
-- two successful exact-commit CodeQL analyses.
-
-Open items discovered by the evidence review:
-
-- scheduled fuzz run `29334006653` failed;
-- CodeQL `results_count=19` per analysis has not been triaged;
-- the evidence archive itself records attestation as `DEFERRED_GH_VERSION`, while
-  the successful supplementary verification was performed separately;
-- Release body parity with `docs/RELEASE_NOTES.md` was not assessed.
-
-## COMM-FUZZ-01 — Fix SKT1 Fuzz Invalid-Input Escape
-
-Priority: P0
-
-Reproduce and fix the scheduled fuzz failure without changing production format
-semantics or accepting malformed input.
-
-Required outcomes:
-
-1. Reproduce the odd-length hex input path that throws
-   `anosecurekit::error("hex input must contain an even number of characters")`.
-2. Keep production `hex_decode` strict and fail-closed.
-3. Prevent expected invalid-input exceptions from escaping the libFuzzer target.
-4. Limit exception handling to the fuzz adapter/target boundary rather than
-   weakening public API behavior.
-5. Add a regression seed or focused harness test for odd-length and malformed hex.
-6. Run all configured fuzz smoke targets and retain logs.
-7. Confirm no public API, CLI, CMake identity, fixture, or `SKT1`/`SKF1`/`SKP1`
-   v1 meaning changes.
-
-Do not suppress unexpected exceptions, sanitizer findings, memory errors, or
-format invariant violations.
+- deterministic LF policy added through `.gitattributes`;
+- full release evidence and binaries removed from the current source tree;
+- compact versioned evidence summaries retained under `artifacts/`;
+- root evidence outputs ignored;
+- CPack source archives exclude evidence paths;
+- package-check rejects regressions that reintroduce those paths;
+- Git history was not rewritten.
 
 ## COMM-CODEQL-01 — Triage Exact-Commit CodeQL Results
 
@@ -79,62 +59,46 @@ success alone is not a zero-alert conclusion.
 
 Priority: P1
 
-Run the exact same discovered test inventory through:
-
-1. the shipped OpenSSL assembly;
-2. the externally injected provider assembly.
-
-Retain CTest/JUnit output, environment versions, and inventory comparison for the
-exact commit. Historical 124/124 remains `RECORDED` until reproduced or the
-original machine-readable evidence is recovered.
+Run the same discovered test inventory through the shipped OpenSSL assembly and
+the externally injected assembly. Retain machine-readable CTest/JUnit evidence.
+Hosted execution may remain `DEFERRED_EXTERNAL` while billing is blocked, but a
+local reproducible run can still close the evidence gap.
 
 ## COMM-REL-03 — Make Publication Evidence Self-Contained
 
 Priority: P1
 
-Retain the successful `gh 2.95.0` attestation outputs with the evidence archive,
-verify Release body parity, and store a compact repository-safe evidence summary.
-Do not commit credentials, transient runner data, or all release binaries to the
-source repository.
+Retain the successful `gh 2.95.0` attestation outputs beside the external evidence
+archive and verify Release body parity. Keep only compact repository-safe
+summaries in source control.
 
-## COMM-DOC-02 — Close Website and Repository Drift
-
-Priority: P1
-
-Keep Markdown and GitHub Pages status text aligned and ensure release pages point
-to verified publication evidence.
-
-## COMM-HYG-01 — Prevent EOL-Only Worktree Drift
+## COMM-DOC-02 — Close Website And Repository Drift
 
 Priority: P1
 
-Define and verify repository line-ending policy. Start releases from a clean
-worktree and confirm source-archive checksums are generated only after line-ending
-normalization is stable.
+Align GitHub Pages HTML with the canonical Markdown status and replace candidate-
+era wording. Keep `docs/ROADMAP.md` as a compatibility entry point without
+creating a second independent queue.
 
 ## COMM-PLAT-01 — Refresh Hosted Platform Matrix
 
-Priority: P2
+Priority: P2 / DEFERRED_EXTERNAL while billing is blocked
 
-The v0.4.0 exact-commit Windows/macOS lanes are now verified. Refresh the declared
-support matrix only when compiler, OpenSSL, runner, sanitizer, or packaging
-requirements change.
+The v0.4.0 Windows/macOS lanes are verified. Re-run current hosted lanes only
+when runner billing is restored or platform requirements change.
 
 ## COMM-SEC-01 — Security Review Readiness
 
 Priority: P2
 
-After fuzz, CodeQL triage, and provider parity are current, prepare the released
-source and public surfaces for the focused process in
-`docs/EXTERNAL_SECURITY_REVIEW.md`. Do not claim an audit before an external
-review report exists.
+After CodeQL triage and provider parity evidence are current, prepare the public
+source for focused external review. Do not claim an audit before a completed
+external report exists.
 
 ## Version Direction
 
-- Keep `v0.4.0` as the current published release baseline.
+- Keep `v0.4.0` as the published release baseline.
 - Do not move or recreate `v0.4.0`.
-- Fix the fuzz harness on `main`.
-- Use `v0.4.1` if the fuzz fix or another source/workflow maintenance change is
-  published as a release.
+- Use `v0.4.1` when the fuzz fix and maintenance changes are published.
 - Use `v0.5.0` only for intentional public product evolution.
-- Do not change `SKT1`, `SKF1`, or `SKP1` v1 meaning in either line.
+- Do not reinterpret `SKT1`, `SKF1`, or `SKP1` v1.

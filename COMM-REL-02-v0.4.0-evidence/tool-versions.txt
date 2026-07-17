@@ -1,5 +1,0 @@
-2026-07-17T08:25:32Z
-gh version 2.46.0 (2025-12-13 Ubuntu 2.46.0-4)
-jq-1.8.1
-sha256sum (uutils coreutils) 0.8.0
-Python 3.14.4

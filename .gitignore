@@ -38,7 +38,17 @@ build-*/
 _CPack_Packages/
 package-check/
 release-assets/
-artifacts/
+# Full release evidence and package binaries stay outside the source tree.
+# Compact, versioned README summaries may be committed under artifacts/.
+/artifacts/**
+!/artifacts/**/
+!/artifacts/**/README.md
+
+# Authenticated evidence-collection outputs are local/external archives.
+/COMM-REL-*-evidence/
+/COMM-REL-*.zip
+/COMM-REL-*.zip.sha256
+/collect_v*-publication-evidence*.sh
 
 anosecurekit-cli-*
 

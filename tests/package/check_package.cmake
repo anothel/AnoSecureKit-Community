@@ -413,6 +413,17 @@ if(NOT _anosecurekit_source_cmakelists_count EQUAL 1)
 endif()
 list(GET _anosecurekit_source_cmakelists 0 _anosecurekit_source_cmakelist)
 get_filename_component(_anosecurekit_extracted_source_dir "${_anosecurekit_source_cmakelist}" DIRECTORY)
+
+file(GLOB _anosecurekit_forbidden_source_evidence
+  "${_anosecurekit_extracted_source_dir}/COMM-REL-*"
+  "${_anosecurekit_extracted_source_dir}/collect_v*-publication-evidence*.sh"
+  "${_anosecurekit_extracted_source_dir}/artifacts")
+if(_anosecurekit_forbidden_source_evidence)
+  list(JOIN _anosecurekit_forbidden_source_evidence "\n  " _anosecurekit_forbidden_source_evidence_text)
+  message(FATAL_ERROR
+    "Source package contains repository-external evidence or artifact paths:\n  "
+    "${_anosecurekit_forbidden_source_evidence_text}")
+endif()
 list(APPEND _anosecurekit_source_configure_args -S "${_anosecurekit_extracted_source_dir}")
 _anosecurekit_append_host_configure_args(_anosecurekit_source_configure_args)
 
