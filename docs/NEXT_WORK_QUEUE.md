@@ -15,55 +15,65 @@ Result: COMPLETE
 
 Result: COMPLETE
 
-Remote `main` now includes commit:
-
-```text
-2fa66fb2fc7d5449d57f615dbc3543c34e5077d9
-```
-
 ### COMM-REL-01 — Audit v0.4.0 Publication Evidence
 
-Result: COMPLETE WITH EXTERNAL EVIDENCE UNVERIFIED
+Result: COMPLETE
+
+### COMM-REL-02 — Recover Authenticated Hosted Publication Evidence
+
+Result: COMPLETE WITH ONE SCHEDULED FUZZ FAILURE
 
 Confirmed:
 
-- `v0.4.0` resolves to `694459ebe497d15ba75ef76a52fa7c36ddd7bcce`;
-- annotated tag identity and timestamp;
-- project version `0.4.0`;
-- current `main` is one documentation-only commit ahead of the release tag;
-- the expected 20-file workflow publication contract.
+- public `v0.4.0` Release object, exact title, state, and publication time;
+- 20/20 expected release assets and matching API/download inventory;
+- `SHA256SUMS.txt` 19/19;
+- SPDX release SBOM 18/18;
+- GitHub digest 20/20;
+- supplementary attestation verification 20/20;
+- successful v0.4.0 tag workflow with 10/10 jobs;
+- Windows 4/4 and macOS 2/2 jobs;
+- two successful exact-commit CodeQL analyses.
 
-Not recovered:
+Open items discovered by the evidence review:
 
-- authoritative GitHub Release object and publication time;
-- actual asset inventory, sizes and digests;
-- published `SHA256SUMS.txt` and SPDX SBOM;
-- artifact-attestation results;
-- exact tag-push CI, CodeQL, Windows and macOS results.
+- scheduled fuzz run `29334006653` failed;
+- CodeQL `results_count=19` per analysis has not been triaged;
+- the evidence archive itself records attestation as `DEFERRED_GH_VERSION`, while
+  the successful supplementary verification was performed separately;
+- Release body parity with `docs/RELEASE_NOTES.md` was not assessed.
 
-No tag or Release mutation was performed.
-
-## COMM-REL-02 — Recover Authenticated Hosted Publication Evidence
+## COMM-FUZZ-01 — Fix SKT1 Fuzz Invalid-Input Escape
 
 Priority: P0
 
-Run the read-only evidence collector from an authenticated GitHub CLI
-environment and retain the output for the exact release commit.
+Reproduce and fix the scheduled fuzz failure without changing production format
+semantics or accepting malformed input.
 
 Required outcomes:
 
-1. Resolve the Release REST object or record an authoritative API 404.
-2. Record complete asset names, sizes, content types and GitHub digest fields.
-3. Download all assets and verify `SHA256SUMS.txt`.
-4. Compare the SPDX SBOM package/checksum inventory with downloaded assets.
-5. Verify GitHub artifact attestations.
-6. Record tag-push Actions runs, jobs, conclusions and artifact inventory.
-7. Record CodeQL analysis for the exact release commit, if one exists.
-8. If a billing, authorization, retention or service blocker is proven, record the
-   exact blocker and classify the affected evidence `DEFERRED`.
+1. Reproduce the odd-length hex input path that throws
+   `anosecurekit::error("hex input must contain an even number of characters")`.
+2. Keep production `hex_decode` strict and fail-closed.
+3. Prevent expected invalid-input exceptions from escaping the libFuzzer target.
+4. Limit exception handling to the fuzz adapter/target boundary rather than
+   weakening public API behavior.
+5. Add a regression seed or focused harness test for odd-length and malformed hex.
+6. Run all configured fuzz smoke targets and retain logs.
+7. Confirm no public API, CLI, CMake identity, fixture, or `SKT1`/`SKF1`/`SKP1`
+   v1 meaning changes.
 
-Do not move or recreate `v0.4.0`. Do not create or repair a Release without a
-separate explicit authorization.
+Do not suppress unexpected exceptions, sanitizer findings, memory errors, or
+format invariant violations.
+
+## COMM-CODEQL-01 — Triage Exact-Commit CodeQL Results
+
+Priority: P1
+
+Retrieve and classify the 19 results reported by each exact-commit analysis.
+Determine whether they are active alerts, duplicate SARIF results, dismissed
+findings, generated-code noise, or actionable Community defects. Workflow
+success alone is not a zero-alert conclusion.
 
 ## COMM-VER-01 — Reproduce Provider Parity Evidence
 
@@ -75,47 +85,56 @@ Run the exact same discovered test inventory through:
 2. the externally injected provider assembly.
 
 Retain CTest/JUnit output, environment versions, and inventory comparison for the
-exact commit. The historical 124/124 statement remains `RECORDED` until this is
-reproduced or the original evidence is recovered.
+exact commit. Historical 124/124 remains `RECORDED` until reproduced or the
+original machine-readable evidence is recovered.
+
+## COMM-REL-03 — Make Publication Evidence Self-Contained
+
+Priority: P1
+
+Retain the successful `gh 2.95.0` attestation outputs with the evidence archive,
+verify Release body parity, and store a compact repository-safe evidence summary.
+Do not commit credentials, transient runner data, or all release binaries to the
+source repository.
 
 ## COMM-DOC-02 — Close Website and Repository Drift
 
 Priority: P1
 
-Keep Markdown and GitHub Pages status text aligned. Remove candidate-era wording
-and ensure release pages point to evidence rather than assuming publication.
+Keep Markdown and GitHub Pages status text aligned and ensure release pages point
+to verified publication evidence.
 
 ## COMM-HYG-01 — Prevent EOL-Only Worktree Drift
 
 Priority: P1
 
 Define and verify repository line-ending policy. Start releases from a clean
-worktree, and confirm source-archive checksums are generated only after EOL
+worktree and confirm source-archive checksums are generated only after line-ending
 normalization is stable.
 
 ## COMM-PLAT-01 — Refresh Hosted Platform Matrix
 
-Priority: P1
+Priority: P2
 
-Reconfirm supported GCC, Clang, MSVC, AppleClang, OpenSSL, sanitizer, install,
-consumer, package, and CodeQL lanes. Record unavailable hosted lanes as
-`DEFERRED`, not `PASS`.
+The v0.4.0 exact-commit Windows/macOS lanes are now verified. Refresh the declared
+support matrix only when compiler, OpenSSL, runner, sanitizer, or packaging
+requirements change.
 
 ## COMM-SEC-01 — Security Review Readiness
 
 Priority: P2
 
-After release evidence is complete, prepare the current released source and its
-public surfaces for the focused process in `docs/EXTERNAL_SECURITY_REVIEW.md`.
-Do not claim an audit before a completed external review report exists.
+After fuzz, CodeQL triage, and provider parity are current, prepare the released
+source and public surfaces for the focused process in
+`docs/EXTERNAL_SECURITY_REVIEW.md`. Do not claim an audit before an external
+review report exists.
 
 ## Version Direction
 
-- Keep `v0.4.0` as the current release code/tag baseline.
-- Keep the post-tag documentation commit on `main`; do not describe it as part of
-  the `v0.4.0` release assets.
+- Keep `v0.4.0` as the current published release baseline.
 - Do not move or recreate `v0.4.0`.
-- Use `v0.4.1` for a source, workflow, packaging, documentation, or maintenance
-  change that requires a new release.
+- Fix the fuzz harness on `main`.
+- Use `v0.4.1` if the fuzz fix or another source/workflow maintenance change is
+  published as a release.
 - Use `v0.5.0` only for intentional public product evolution.
 - Do not change `SKT1`, `SKF1`, or `SKP1` v1 meaning in either line.

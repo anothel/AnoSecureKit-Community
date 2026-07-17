@@ -1,0 +1,78 @@
+{
+  "windows": {
+    "status": "PASS",
+    "jobs": [
+      {
+        "run_id": 29242038502,
+        "workflow": "AnoSecureKit CI",
+        "event": "push",
+        "name": "windows-latest msvc Release shared",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-07-13T10:14:17Z",
+        "completed_at": "2026-07-13T10:25:34Z",
+        "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29242038502/job/86790088115"
+      },
+      {
+        "run_id": 29242038502,
+        "workflow": "AnoSecureKit CI",
+        "event": "push",
+        "name": "windows-latest msvc Release",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-07-13T10:14:15Z",
+        "completed_at": "2026-07-13T10:26:37Z",
+        "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29242038502/job/86790088116"
+      },
+      {
+        "run_id": 29241168496,
+        "workflow": "AnoSecureKit CI",
+        "event": "push",
+        "name": "windows-latest msvc Release shared",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-07-13T10:00:16Z",
+        "completed_at": "2026-07-13T10:13:05Z",
+        "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310931"
+      },
+      {
+        "run_id": 29241168496,
+        "workflow": "AnoSecureKit CI",
+        "event": "push",
+        "name": "windows-latest msvc Release",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-07-13T10:00:16Z",
+        "completed_at": "2026-07-13T10:12:40Z",
+        "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310980"
+      }
+    ]
+  },
+  "macos": {
+    "status": "PASS",
+    "jobs": [
+      {
+        "run_id": 29242038502,
+        "workflow": "AnoSecureKit CI",
+        "event": "push",
+        "name": "macos-latest appleclang Release package",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-07-13T10:14:15Z",
+        "completed_at": "2026-07-13T10:15:13Z",
+        "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29242038502/job/86790088103"
+      },
+      {
+        "run_id": 29241168496,
+        "workflow": "AnoSecureKit CI",
+        "event": "push",
+        "name": "macos-latest appleclang Release package",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-07-13T10:00:16Z",
+        "completed_at": "2026-07-13T10:01:20Z",
+        "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310934"
+      }
+    ]
+  }
+}

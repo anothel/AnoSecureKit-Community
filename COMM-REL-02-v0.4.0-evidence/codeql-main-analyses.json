@@ -1,0 +1,359 @@
+[
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "b6dde65db44679fe91428663f98662a429b93cd6",
+    "created_at": "2026-07-17T08:00:51Z",
+    "deletable": true,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1491300481,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "a09edf5c-81b5-11f1-8645-84ddd0fd98db",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1491300481",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "2fa66fb2fc7d5449d57f615dbc3543c34e5077d9",
+    "created_at": "2026-07-17T07:36:31Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1491222760,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "3a1f2820-81b2-11f1-9f30-0dfc8e2c5b3d",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1491222760",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "created_at": "2026-07-13T12:43:57Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1471719182,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "8394da42-7eb8-11f1-8104-7d1e000ef86d",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1471719182",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "created_at": "2026-07-13T10:01:54Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1471089159,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "e050ed46-7ea1-11f1-8f6b-e2edd0d80b1b",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1471089159",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "102965bee601f2adfb1b624e8425d1c95aaa8c8d",
+    "created_at": "2026-07-12T01:48:56Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467910394,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "d80f47c2-7d93-11f1-970c-69ec5c684f14",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467910394",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "5e7f6dd9341d1b7c3d8668a9deea6fbb9bdf1cf1",
+    "created_at": "2026-07-12T01:36:49Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467894673,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "2683aa4e-7d92-11f1-894c-b7bd129c694c",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467894673",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "12dfa79f6bbba4d17f2fe64b447dc6f2d161cb73",
+    "created_at": "2026-07-12T00:50:52Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467837556,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "bb0bbbea-7d8b-11f1-917c-5db003b15ca0",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467837556",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "351882f21063a1205911c5938f1f836b09d77b4c",
+    "created_at": "2026-07-12T00:20:12Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467795959,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "7260a80a-7d87-11f1-8a50-d897d02e5d43",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467795959",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "a7236bd9a43ad13789386d572616e18ece1bcf6b",
+    "created_at": "2026-07-11T23:50:53Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467767044,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "5a2dc7e4-7d83-11f1-9283-136e9bb63f67",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467767044",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "942386f2cf6dd3d439b70d30489e3c0f3152fcec",
+    "created_at": "2026-07-11T23:33:48Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467748929,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "f755b688-7d80-11f1-94fe-658313e3044a",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467748929",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "7f3ac6529015a83756fc23e3b3ea61bb4532279c",
+    "created_at": "2026-07-11T13:27:50Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1467038032,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "4fd7240e-7d2c-11f1-8b56-af65969acfbc",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1467038032",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "ba58d5ba48c8e04ae46cabf50b12588ac4ecfb21",
+    "created_at": "2026-07-11T01:02:47Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1466155484,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "3abedde0-7cc4-11f1-8be5-6b4a220315f8",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1466155484",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "356a39ca6d3f93ded58a62038efe14a10e5690cd",
+    "created_at": "2026-07-11T00:04:07Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1466065588,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "08d4b4e2-7cbc-11f1-86d8-2c35ccc18fe3",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1466065588",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "c1723d3bce2889995afdeeac1bfeab1399b2ed26",
+    "created_at": "2026-07-10T21:51:49Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1465782642,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "8db54f0e-7ca9-11f1-8410-84392d7f5ab2",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.26.0"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1465782642",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "a67f3652b6b1b34053c20d97c5e233b2c847e8ea",
+    "created_at": "2026-07-08T13:51:19Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1454477828,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "18dc5bc2-7ad4-11f1-9440-50fce6de7777",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.25.6"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1454477828",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "a2022c0dabd8c37b0509a0558009b446a5f3f0e4",
+    "created_at": "2026-07-08T13:22:53Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1454338540,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "1f9ea8ba-7ad0-11f1-9d40-519b32d591d4",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.25.6"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1454338540",
+    "warning": ""
+  },
+  {
+    "analysis_key": ".github/workflows/codeql.yml:analyze",
+    "category": "/language:cpp",
+    "commit_sha": "2da3fca6fc9411710f498f1cd24f1478e316f539",
+    "created_at": "2026-07-08T11:28:47Z",
+    "deletable": false,
+    "environment": "{\"language\":\"cpp\"}",
+    "error": "",
+    "id": 1453868630,
+    "ref": "refs/heads/main",
+    "results_count": 19,
+    "rules_count": 179,
+    "sarif_id": "2f4b1132-7ac0-11f1-9a1b-6b220dbf313d",
+    "tool": {
+      "guid": null,
+      "name": "CodeQL",
+      "version": "2.25.6"
+    },
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1453868630",
+    "warning": ""
+  }
+]

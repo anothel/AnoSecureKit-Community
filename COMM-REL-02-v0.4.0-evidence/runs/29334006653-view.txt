@@ -1,0 +1,26 @@
+
+X main Fuzz · 29334006653
+Triggered via schedule about 2 days ago
+
+JOBS
+X ubuntu-latest clang scheduled fuzz in 32s (ID 87088639651)
+  ✓ Set up job
+  ✓ Checkout
+  ✓ Install Linux dependencies
+  ✓ Configure CMake
+  X Fuzz smoke
+  - Bounded fuzz
+  ✓ Upload crash artifacts
+  ✓ Post Checkout
+  ✓ Complete job
+
+ANNOTATIONS
+! No files were found with the provided path: fuzz-artifacts/. No artifacts will be uploaded.
+ubuntu-latest clang scheduled fuzz: .github#12
+
+X Process completed with exit code 77.
+ubuntu-latest clang scheduled fuzz: .github#112
+
+
+To see what failed, try: gh run view 29334006653 --log-failed
+View this run on GitHub: https://github.com/anothel/AnoSecureKit-Community/actions/runs/29334006653

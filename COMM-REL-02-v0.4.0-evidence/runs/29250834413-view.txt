@@ -1,0 +1,17 @@
+
+✓ main CodeQL · 29250834413
+Triggered via schedule about 3 days ago
+
+JOBS
+✓ Analyze (cpp) in 2m13s (ID 86818677460)
+
+ANNOTATIONS
+! Failed to save: Unable to reserve cache with key codeql-trap-1-2.26.0-cpp-694459ebe497d15ba75ef76a52fa7c36ddd7bcce, another job may be creating this cache.
+Analyze (cpp): .github#1214
+
+! Cannot build an overlay-base database because build-mode is set to "manual" instead of "none". Falling back to creating a normal full database instead.
+Analyze (cpp): .github#857
+
+
+For more information about the job, try: gh run view --job=86818677460
+View this run on GitHub: https://github.com/anothel/AnoSecureKit-Community/actions/runs/29250834413

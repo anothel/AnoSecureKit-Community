@@ -1,0 +1,102 @@
+[
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/87088639651",
+    "completed_at": "2026-07-14T12:50:31Z",
+    "conclusion": "failure",
+    "created_at": "2026-07-14T12:49:56Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29334006653/job/87088639651",
+    "id": 87088639651,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest clang scheduled fuzz",
+    "node_id": "CR_kwDOTRkyF88AAAAURuMuow",
+    "run_attempt": 1,
+    "run_id": 29334006653,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29334006653",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000004040,
+    "runner_name": "GitHub Actions 1000004040",
+    "started_at": "2026-07-14T12:49:59Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-14T12:50:00Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-14T12:49:59Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:01Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-14T12:50:00Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:11Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-14T12:50:01Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:17Z",
+        "conclusion": "success",
+        "name": "Configure CMake",
+        "number": 4,
+        "started_at": "2026-07-14T12:50:11Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:30Z",
+        "conclusion": "failure",
+        "name": "Fuzz smoke",
+        "number": 5,
+        "started_at": "2026-07-14T12:50:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:30Z",
+        "conclusion": "skipped",
+        "name": "Bounded fuzz",
+        "number": 6,
+        "started_at": "2026-07-14T12:50:30Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:30Z",
+        "conclusion": "success",
+        "name": "Upload crash artifacts",
+        "number": 7,
+        "started_at": "2026-07-14T12:50:30Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:30Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 14,
+        "started_at": "2026-07-14T12:50:30Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-14T12:50:30Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 15,
+        "started_at": "2026-07-14T12:50:30Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/87088639651",
+    "workflow_name": "Fuzz"
+  }
+]

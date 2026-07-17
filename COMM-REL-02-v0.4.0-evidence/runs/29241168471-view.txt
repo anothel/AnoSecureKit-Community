@@ -1,0 +1,14 @@
+
+✓ main CodeQL · 29241168471
+Triggered via push about 3 days ago
+
+JOBS
+✓ Analyze (cpp) in 1m51s (ID 86787310621)
+
+ANNOTATIONS
+! Cannot build an overlay-base database because build-mode is set to "manual" instead of "none". Falling back to creating a normal full database instead.
+Analyze (cpp): .github#857
+
+
+For more information about the job, try: gh run view --job=86787310621
+View this run on GitHub: https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168471

@@ -55,11 +55,17 @@ They are not independent sources of truth:
 - `docs/ANOCRYPTO_BOUNDARY.md` → `docs/CROSS_REPOSITORY_BOUNDARY.md`
 - `COMMUNITY_SPLIT_NOTES.md` → historical extraction note only
 
-## Historical Evidence
+## Historical And Release Evidence
 
-Versioned historical evidence may remain under `artifacts/`. Historical evidence
-does not become current merely because it is present in the latest repository.
-For example, a v0.3.0 post-publication audit does not prove v0.4.0 publication.
+Versioned evidence may remain under `artifacts/`. Evidence applies only to its
+exact revision and collection scope.
+
+- `artifacts/v0.3.0-post-publication-audit/`: historical v0.3.0 evidence.
+- `artifacts/v0.4.0-post-publication-audit/`: compact COMM-REL-02 publication
+  summary and evidence archive identity.
+
+A historical directory does not prove a later release, and a publication audit
+does not replace current fuzz, provider-parity, or security-review work.
 
 ## Update Rule
 

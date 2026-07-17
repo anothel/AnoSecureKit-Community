@@ -1,0 +1,162 @@
+[
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275761613/zip",
+    "created_at": "2026-07-13T10:12:57Z",
+    "digest": "sha256:e060bd2dc99b1e563b2a4f749f4bf179e64ce26d08112ae09ed9ca1216c7ea96",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275761613,
+    "name": "anosecurekit-windows-msvc-release-shared-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NzYxNjEz",
+    "size_in_bytes": 563215,
+    "updated_at": "2026-07-13T10:12:57Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275761613",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275753771/zip",
+    "created_at": "2026-07-13T10:12:36Z",
+    "digest": "sha256:0a73497459c8e3a29595936ceff842d3f0a2a7dfafe707e163957499e611b5f9",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275753771,
+    "name": "anosecurekit-windows-latest-msvc-Release-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NzUzNzcx",
+    "size_in_bytes": 1206930,
+    "updated_at": "2026-07-13T10:12:36Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275753771",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275485674/zip",
+    "created_at": "2026-07-13T10:01:23Z",
+    "digest": "sha256:e65f7da60891a55e1be2dfdfafd738a1fe688ed93d592a450112405fa0deef5e",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275485674,
+    "name": "anosecurekit-ubuntu-latest-clang-Release-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NDg1Njc0",
+    "size_in_bytes": 600944,
+    "updated_at": "2026-07-13T10:01:23Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275485674",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275483128/zip",
+    "created_at": "2026-07-13T10:01:16Z",
+    "digest": "sha256:3661f6815cdc3687a33885ba054616c40bda7e249f2b9eb0b0f1badc78221067",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275483128,
+    "name": "anosecurekit-macos-clang-release-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NDgzMTI4",
+    "size_in_bytes": 585808,
+    "updated_at": "2026-07-13T10:01:16Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275483128",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275481851/zip",
+    "created_at": "2026-07-13T10:01:13Z",
+    "digest": "sha256:6a8012ecb71098dd9db9b98bf70472d29e1926160efc33ac2d1d15350b7e75e0",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275481851,
+    "name": "anosecurekit-ubuntu-latest-gcc-Debug-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NDgxODUx",
+    "size_in_bytes": 3937133,
+    "updated_at": "2026-07-13T10:01:13Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275481851",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275480820/zip",
+    "created_at": "2026-07-13T10:01:11Z",
+    "digest": "sha256:b7ddfc0b2c663e58c44de91064615136718f49f135842a9278975fc7003df147",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275480820,
+    "name": "anosecurekit-ubuntu-latest-gcc-Release-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NDgwODIw",
+    "size_in_bytes": 658823,
+    "updated_at": "2026-07-13T10:01:11Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275480820",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275480786/zip",
+    "created_at": "2026-07-13T10:01:11Z",
+    "digest": "sha256:e30d42c41330ca5a2a277880d07fed9791a5fa9b5bf54ce0387ee61348883014",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275480786,
+    "name": "anosecurekit-ubuntu-gcc-release-static-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NDgwNzg2",
+    "size_in_bytes": 658849,
+    "updated_at": "2026-07-13T10:01:11Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275480786",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  },
+  {
+    "archive_download_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275475362/zip",
+    "created_at": "2026-07-13T10:00:57Z",
+    "digest": "sha256:26c820dbff4d11377eb7be4c3eb71cf62bde489a79a1be5a19ab38d0e2f73181",
+    "expired": false,
+    "expires_at": "2026-10-11T10:00:12Z",
+    "id": 8275475362,
+    "name": "anosecurekit-ubuntu-gcc-release-install-only-packages",
+    "node_id": "MDg6QXJ0aWZhY3Q4Mjc1NDc1MzYy",
+    "size_in_bytes": 658657,
+    "updated_at": "2026-07-13T10:00:57Z",
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/artifacts/8275475362",
+    "workflow_run": {
+      "head_branch": "main",
+      "head_repository_id": 1293496855,
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "id": 29241168496,
+      "repository_id": 1293496855
+    }
+  }
+]

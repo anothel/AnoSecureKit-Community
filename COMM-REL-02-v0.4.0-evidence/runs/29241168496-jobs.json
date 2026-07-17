@@ -1,0 +1,1153 @@
+[
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310929",
+    "completed_at": "2026-07-13T10:01:18Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310929",
+    "id": 86787310929,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest clang Debug sanitizers",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1FUQ",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003927,
+    "runner_name": "GitHub Actions 1000003927",
+    "started_at": "2026-07-13T10:00:15Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:17Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:29Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:30Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:29Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:41Z",
+        "conclusion": "success",
+        "name": "Configure CMake",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:30Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:16Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:41Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:16Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 11,
+        "started_at": "2026-07-13T10:01:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:16Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 12,
+        "started_at": "2026-07-13T10:01:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:17Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 13,
+        "started_at": "2026-07-13T10:01:16Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310929",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310931",
+    "completed_at": "2026-07-13T10:13:05Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310931",
+    "id": 86787310931,
+    "labels": [
+      "windows-latest"
+    ],
+    "name": "windows-latest msvc Release shared",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1FUw",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003929,
+    "runner_name": "GitHub Actions 1000003929",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:24Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:10:03Z",
+        "conclusion": "success",
+        "name": "Install Windows dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:24Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:10:07Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 4,
+        "started_at": "2026-07-13T10:10:03Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:10:32Z",
+        "conclusion": "success",
+        "name": "Configure CMake",
+        "number": 5,
+        "started_at": "2026-07-13T10:10:07Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:11:50Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 6,
+        "started_at": "2026-07-13T10:10:32Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:55Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 7,
+        "started_at": "2026-07-13T10:11:50Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:57Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 8,
+        "started_at": "2026-07-13T10:12:55Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:58Z",
+        "conclusion": "success",
+        "name": "Verify shared package files",
+        "number": 9,
+        "started_at": "2026-07-13T10:12:57Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:13:01Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 17,
+        "started_at": "2026-07-13T10:12:58Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:13:03Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 18,
+        "started_at": "2026-07-13T10:13:01Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:13:03Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 19,
+        "started_at": "2026-07-13T10:13:03Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310931",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310934",
+    "completed_at": "2026-07-13T10:01:20Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310934",
+    "id": 86787310934,
+    "labels": [
+      "macos-latest"
+    ],
+    "name": "macos-latest appleclang Release package",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1FVg",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003930,
+    "runner_name": "GitHub Actions 1000003930",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:19Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:21Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:19Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:25Z",
+        "conclusion": "success",
+        "name": "Install macOS dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:21Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:27Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:25Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:36Z",
+        "conclusion": "success",
+        "name": "Configure CMake",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:27Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:58Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:36Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:15Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 7,
+        "started_at": "2026-07-13T10:00:58Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:16Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 8,
+        "started_at": "2026-07-13T10:01:15Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:17Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 15,
+        "started_at": "2026-07-13T10:01:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:17Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 16,
+        "started_at": "2026-07-13T10:01:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:18Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 17,
+        "started_at": "2026-07-13T10:01:17Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310934",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310940",
+    "completed_at": "2026-07-13T10:01:13Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310940",
+    "id": 86787310940,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest gcc Release static",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1FXA",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003932,
+    "runner_name": "GitHub Actions 1000003932",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:17Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:27Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:28Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:27Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:33Z",
+        "conclusion": "success",
+        "name": "Configure CMake",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:28Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:56Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:33Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:10Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 7,
+        "started_at": "2026-07-13T10:00:56Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 8,
+        "started_at": "2026-07-13T10:01:10Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Verify static package files",
+        "number": 9,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 17,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 18,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 19,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310940",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310959",
+    "completed_at": "2026-07-13T10:01:15Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310959",
+    "id": 86787310959,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest gcc Debug",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1Fbw",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003931,
+    "runner_name": "GitHub Actions 1000003931",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:33Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:33Z",
+        "conclusion": "skipped",
+        "name": "Install Windows dependencies",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:33Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:34Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:33Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:41Z",
+        "conclusion": "success",
+        "name": "Configure CMake (GCC)",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:34Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:41Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (Clang)",
+        "number": 7,
+        "started_at": "2026-07-13T10:00:41Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:41Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (MSVC)",
+        "number": 8,
+        "started_at": "2026-07-13T10:00:41Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:59Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 9,
+        "started_at": "2026-07-13T10:00:41Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:12Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 10,
+        "started_at": "2026-07-13T10:00:59Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:13Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 11,
+        "started_at": "2026-07-13T10:01:12Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:13Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 21,
+        "started_at": "2026-07-13T10:01:13Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:14Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 22,
+        "started_at": "2026-07-13T10:01:13Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:14Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 23,
+        "started_at": "2026-07-13T10:01:14Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310959",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310980",
+    "completed_at": "2026-07-13T10:12:40Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310980",
+    "id": 86787310980,
+    "labels": [
+      "windows-latest"
+    ],
+    "name": "windows-latest msvc Release",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1FhA",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003936,
+    "runner_name": "GitHub Actions 1000003936",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:19Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:24Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:19Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:24Z",
+        "conclusion": "skipped",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:24Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:09:38Z",
+        "conclusion": "success",
+        "name": "Install Windows dependencies",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:24Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:09:42Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 5,
+        "started_at": "2026-07-13T10:09:38Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:09:42Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (GCC)",
+        "number": 6,
+        "started_at": "2026-07-13T10:09:42Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:09:42Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (Clang)",
+        "number": 7,
+        "started_at": "2026-07-13T10:09:42Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:10:09Z",
+        "conclusion": "success",
+        "name": "Configure CMake (MSVC)",
+        "number": 8,
+        "started_at": "2026-07-13T10:09:42Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:11:36Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 9,
+        "started_at": "2026-07-13T10:10:09Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:34Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 10,
+        "started_at": "2026-07-13T10:11:36Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:36Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 11,
+        "started_at": "2026-07-13T10:12:34Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:36Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 21,
+        "started_at": "2026-07-13T10:12:36Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:39Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 22,
+        "started_at": "2026-07-13T10:12:36Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:12:39Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 23,
+        "started_at": "2026-07-13T10:12:39Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310980",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787310987",
+    "completed_at": "2026-07-13T10:01:00Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787310987",
+    "id": 86787310987,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest gcc Release install-only",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1Fiw",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003935,
+    "runner_name": "GitHub Actions 1000003935",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:19Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:29Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:19Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:31Z",
+        "conclusion": "success",
+        "name": "Configure CMake",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:29Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:55Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:31Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:57Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:55Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:57Z",
+        "conclusion": "success",
+        "name": "Verify package files",
+        "number": 7,
+        "started_at": "2026-07-13T10:00:57Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:57Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 14,
+        "started_at": "2026-07-13T10:00:57Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:57Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 15,
+        "started_at": "2026-07-13T10:00:57Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787310987",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787311000",
+    "completed_at": "2026-07-13T10:01:12Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787311000",
+    "id": 86787311000,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest gcc Release",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1FmA",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003933,
+    "runner_name": "GitHub Actions 1000003933",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:17Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:27Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:27Z",
+        "conclusion": "skipped",
+        "name": "Install Windows dependencies",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:27Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:28Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:27Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:33Z",
+        "conclusion": "success",
+        "name": "Configure CMake (GCC)",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:28Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:33Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (Clang)",
+        "number": 7,
+        "started_at": "2026-07-13T10:00:33Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:33Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (MSVC)",
+        "number": 8,
+        "started_at": "2026-07-13T10:00:33Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:56Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 9,
+        "started_at": "2026-07-13T10:00:33Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:10Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 10,
+        "started_at": "2026-07-13T10:00:56Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 11,
+        "started_at": "2026-07-13T10:01:10Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 21,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 22,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:11Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 23,
+        "started_at": "2026-07-13T10:01:11Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787311000",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86787311018",
+    "completed_at": "2026-07-13T10:01:24Z",
+    "conclusion": "success",
+    "created_at": "2026-07-13T10:00:13Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86787311018",
+    "id": 86787311018,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "ubuntu-latest clang Release",
+    "node_id": "CR_kwDOTRkyF88AAAAUNO1Fqg",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
+    "runner_id": 1000003934,
+    "runner_name": "GitHub Actions 1000003934",
+    "started_at": "2026-07-13T10:00:16Z",
+    "status": "completed",
+    "steps": [
+      {
+        "completed_at": "2026-07-13T10:00:17Z",
+        "conclusion": "success",
+        "name": "Set up job",
+        "number": 1,
+        "started_at": "2026-07-13T10:00:16Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:18Z",
+        "conclusion": "success",
+        "name": "Checkout",
+        "number": 2,
+        "started_at": "2026-07-13T10:00:17Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:27Z",
+        "conclusion": "success",
+        "name": "Install Linux dependencies",
+        "number": 3,
+        "started_at": "2026-07-13T10:00:18Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:27Z",
+        "conclusion": "skipped",
+        "name": "Install Windows dependencies",
+        "number": 4,
+        "started_at": "2026-07-13T10:00:27Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:28Z",
+        "conclusion": "success",
+        "name": "Cache GoogleTest",
+        "number": 5,
+        "started_at": "2026-07-13T10:00:27Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:28Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (GCC)",
+        "number": 6,
+        "started_at": "2026-07-13T10:00:28Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:36Z",
+        "conclusion": "success",
+        "name": "Configure CMake (Clang)",
+        "number": 7,
+        "started_at": "2026-07-13T10:00:28Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:00:36Z",
+        "conclusion": "skipped",
+        "name": "Configure CMake (MSVC)",
+        "number": 8,
+        "started_at": "2026-07-13T10:00:36Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:02Z",
+        "conclusion": "success",
+        "name": "Build and test",
+        "number": 9,
+        "started_at": "2026-07-13T10:00:36Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:22Z",
+        "conclusion": "success",
+        "name": "Package check",
+        "number": 10,
+        "started_at": "2026-07-13T10:01:02Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:23Z",
+        "conclusion": "success",
+        "name": "Upload package artifacts",
+        "number": 11,
+        "started_at": "2026-07-13T10:01:22Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:23Z",
+        "conclusion": "success",
+        "name": "Post Cache GoogleTest",
+        "number": 21,
+        "started_at": "2026-07-13T10:01:23Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:23Z",
+        "conclusion": "success",
+        "name": "Post Checkout",
+        "number": 22,
+        "started_at": "2026-07-13T10:01:23Z",
+        "status": "completed"
+      },
+      {
+        "completed_at": "2026-07-13T10:01:23Z",
+        "conclusion": "success",
+        "name": "Complete job",
+        "number": 23,
+        "started_at": "2026-07-13T10:01:23Z",
+        "status": "completed"
+      }
+    ],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86787311018",
+    "workflow_name": "AnoSecureKit CI"
+  },
+  {
+    "check_run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/check-runs/86789804488",
+    "completed_at": "2026-07-13T10:13:05Z",
+    "conclusion": "skipped",
+    "created_at": "2026-07-13T10:13:06Z",
+    "head_branch": "main",
+    "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496/job/86789804488",
+    "id": 86789804488,
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "name": "GitHub Release",
+    "node_id": "CR_kwDOTRkyF88AAAAUNRNRyA",
+    "run_attempt": 1,
+    "run_id": 29241168496,
+    "run_url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/runs/29241168496",
+    "runner_group_id": null,
+    "runner_group_name": null,
+    "runner_id": null,
+    "runner_name": null,
+    "started_at": "2026-07-13T10:13:06Z",
+    "status": "completed",
+    "steps": [],
+    "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/actions/jobs/86789804488",
+    "workflow_name": "AnoSecureKit CI"
+  }
+]

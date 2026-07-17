@@ -1,0 +1,165 @@
+{
+  "repository": "anothel/AnoSecureKit-Community",
+  "tag": "v0.4.0",
+  "expected_release_commit": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+  "resolved_release_commit": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+  "main_sha": "b6dde65db44679fe91428663f98662a429b93cd6",
+  "compare": {
+    "status": "ahead",
+    "ahead_by": 2,
+    "behind_by": 0,
+    "total_commits": 2
+  },
+  "release_api_state": "RELEASE_OBJECT_FOUND",
+  "release": {
+    "id": 353079074,
+    "name": "AnoSecureKit Community v0.4.0",
+    "tag_name": "v0.4.0",
+    "target_commitish": "main",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2026-07-13T10:13:50Z",
+    "published_at": "2026-07-13T10:26:47Z",
+    "html_url": "https://github.com/anothel/AnoSecureKit-Community/releases/tag/v0.4.0",
+    "asset_count": 20
+  },
+  "inventory_status": "PASS",
+  "inventory_errors": [],
+  "workflow_contract_status": "PASS",
+  "workflow_contract_errors": [],
+  "sha256_status": "PASS",
+  "sbom_status": "PASS",
+  "github_digest_status": "PASS",
+  "attestation_status": "DEFERRED_GH_VERSION",
+  "actions_run_count": 6,
+  "actions_runs": [
+    {
+      "id": 29459387103,
+      "name": "github_actions in /. - Update #1462577323",
+      "event": "dynamic",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "head_branch": "main",
+      "run_attempt": 1,
+      "created_at": "2026-07-15T23:43:27Z",
+      "updated_at": "2026-07-15T23:43:56Z",
+      "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29459387103"
+    },
+    {
+      "id": 29334006653,
+      "name": "Fuzz",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "head_branch": "main",
+      "run_attempt": 1,
+      "created_at": "2026-07-14T12:49:55Z",
+      "updated_at": "2026-07-14T12:50:32Z",
+      "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29334006653"
+    },
+    {
+      "id": 29250834413,
+      "name": "CodeQL",
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "head_branch": "main",
+      "run_attempt": 1,
+      "created_at": "2026-07-13T12:41:53Z",
+      "updated_at": "2026-07-13T12:44:11Z",
+      "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29250834413"
+    },
+    {
+      "id": 29242038502,
+      "name": "AnoSecureKit CI",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "head_branch": "v0.4.0",
+      "run_attempt": 1,
+      "created_at": "2026-07-13T10:14:11Z",
+      "updated_at": "2026-07-13T10:26:51Z",
+      "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29242038502"
+    },
+    {
+      "id": 29241168496,
+      "name": "AnoSecureKit CI",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "head_branch": "main",
+      "run_attempt": 1,
+      "created_at": "2026-07-13T10:00:12Z",
+      "updated_at": "2026-07-13T10:13:06Z",
+      "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496"
+    },
+    {
+      "id": 29241168471,
+      "name": "CodeQL",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "head_branch": "main",
+      "run_attempt": 1,
+      "created_at": "2026-07-13T10:00:12Z",
+      "updated_at": "2026-07-13T10:02:06Z",
+      "html_url": "https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168471"
+    }
+  ],
+  "job_count": 24,
+  "codeql_exact_commit_count": 2,
+  "codeql_exact_commit": [
+    {
+      "analysis_key": ".github/workflows/codeql.yml:analyze",
+      "category": "/language:cpp",
+      "commit_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "created_at": "2026-07-13T12:43:57Z",
+      "deletable": false,
+      "environment": "{\"language\":\"cpp\"}",
+      "error": "",
+      "id": 1471719182,
+      "ref": "refs/heads/main",
+      "results_count": 19,
+      "rules_count": 179,
+      "sarif_id": "8394da42-7eb8-11f1-8104-7d1e000ef86d",
+      "tool": {
+        "guid": null,
+        "name": "CodeQL",
+        "version": "2.26.0"
+      },
+      "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1471719182",
+      "warning": ""
+    },
+    {
+      "analysis_key": ".github/workflows/codeql.yml:analyze",
+      "category": "/language:cpp",
+      "commit_sha": "694459ebe497d15ba75ef76a52fa7c36ddd7bcce",
+      "created_at": "2026-07-13T10:01:54Z",
+      "deletable": false,
+      "environment": "{\"language\":\"cpp\"}",
+      "error": "",
+      "id": 1471089159,
+      "ref": "refs/heads/main",
+      "results_count": 19,
+      "rules_count": 179,
+      "sarif_id": "e050ed46-7ea1-11f1-8f6b-e2edd0d80b1b",
+      "tool": {
+        "guid": null,
+        "name": "CodeQL",
+        "version": "2.26.0"
+      },
+      "url": "https://api.github.com/repos/anothel/AnoSecureKit-Community/code-scanning/analyses/1471089159",
+      "warning": ""
+    }
+  ],
+  "platform_evidence": {
+    "windows": "PASS",
+    "macos": "PASS"
+  }
+}

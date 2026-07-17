@@ -1,0 +1,33 @@
+
+✓ main AnoSecureKit CI · 29241168496
+Triggered via push about 3 days ago
+
+JOBS
+✓ ubuntu-latest clang Debug sanitizers in 1m3s (ID 86787310929)
+✓ windows-latest msvc Release shared in 12m49s (ID 86787310931)
+✓ macos-latest appleclang Release package in 1m4s (ID 86787310934)
+✓ ubuntu-latest gcc Release static in 57s (ID 86787310940)
+✓ ubuntu-latest gcc Debug in 59s (ID 86787310959)
+✓ windows-latest msvc Release in 12m24s (ID 86787310980)
+✓ ubuntu-latest gcc Release install-only in 44s (ID 86787310987)
+✓ ubuntu-latest gcc Release in 56s (ID 86787311000)
+✓ ubuntu-latest clang Release in 1m8s (ID 86787311018)
+- GitHub Release (ID 86789804488)
+
+ANNOTATIONS
+- The macos-latest label will migrate to macOS 26 beginning June 15, 2026. For more information see https://github.com/actions/runner-images/issues/14167
+macos-latest appleclang Release package: .github#1
+
+
+ARTIFACTS
+anosecurekit-windows-msvc-release-shared-packages
+anosecurekit-windows-latest-msvc-Release-packages
+anosecurekit-ubuntu-latest-clang-Release-packages
+anosecurekit-macos-clang-release-packages
+anosecurekit-ubuntu-latest-gcc-Debug-packages
+anosecurekit-ubuntu-latest-gcc-Release-packages
+anosecurekit-ubuntu-gcc-release-static-packages
+anosecurekit-ubuntu-gcc-release-install-only-packages
+
+For more information about a job, try: gh run view --job=<job-id>
+View this run on GitHub: https://github.com/anothel/AnoSecureKit-Community/actions/runs/29241168496
