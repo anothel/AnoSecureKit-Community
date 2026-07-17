@@ -3,7 +3,7 @@
 # AnoSecureKit Community Current Status
 
 Status: CURRENT
-Audit date: 2026-07-17 (Asia/Seoul)
+Audit date: 2026-07-18 (Asia/Seoul)
 Scope: AnoSecureKit Community only
 
 ## Repository And Release Baselines
@@ -12,7 +12,7 @@ Scope: AnoSecureKit Community only
 product: AnoSecureKit Community
 license: MPL-2.0
 language: C++20
-audited repository baseline: a6b7b634214ea4db55efb7a69cd2e663ea052d61
+audited repository baseline: 1d933eb0cace1fe899e9432f314bff9026f5f69c
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
 release tag: v0.4.0
 release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
@@ -59,10 +59,22 @@ fallback.
 | General CTest after fuzz fix | PASS LOCAL | 124/124 |
 | Package/install/export after fuzz fix | PASS LOCAL | package-check and consumers passed |
 | Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
-| Current provider parity rerun | PASS LOCAL WITH EXECUTION CAVEATS | OpenSSL 124/124 and external 124/124; identical ordered inventory; CTest/JUnit retained |
-| Declared GoogleTest v1.14.0 parity rerun | DEFERRED_EXTERNAL_DEPENDENCY | Execution environment could not obtain the upstream package/source |
+| Exact GoogleTest v1.14.0 provider parity | PASS LOCAL EXACT | Exact detached `1d933eb` worktree; OpenSSL and external 124/124; identical inventory; CTest/JUnit retained |
+| Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
 | Repository EOL policy | PASS | `.gitattributes` defines deterministic LF policy |
 | Source evidence exclusion | PASS | CPack and package-check reject repository-external evidence paths |
+
+```text
+COMM-VER-02: COMPLETE LOCAL EXACT
+source checkout: exact 1d933eb detached Git worktree
+GoogleTest v1.14.0 official source: verified and executed
+OpenSSL: 124/124 PASS
+external: 124/124 PASS
+inventory: identical
+COMM-VER-01 harness/source caveats: superseded
+hosted confirmation: DEFERRED_EXTERNAL_BILLING
+evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa978
+```
 
 The CodeQL triage verdict is a repository-security assessment, not a GitHub alert
 state mutation. The 19 alerts remain open until a separately authorized

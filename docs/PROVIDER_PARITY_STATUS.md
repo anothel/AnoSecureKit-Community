@@ -3,49 +3,55 @@
 # AnoSecureKit Provider Parity Status
 
 Status: CURRENT
-Task: `COMM-VER-01`
-Repository reference: `a6b7b634214ea4db55efb7a69cd2e663ea052d61`
+Task: `COMM-VER-02`
+Repository reference: `1d933eb0cace1fe899e9432f314bff9026f5f69c`
 
 ## Result
 
 ```text
-OpenSSL assembly: 124/124 PASS
-external assembly: 124/124 PASS
-ordered CTest inventory: identical
-external-backend-parity-check: PASS
-backend-boundary-check: PASS
-external-backend-hook-check: PASS
+COMM-VER-02: COMPLETE LOCAL EXACT
+source checkout: exact 1d933eb detached Git worktree
+GoogleTest v1.14.0 official source: verified and executed
+OpenSSL: 124/124 PASS
+external: 124/124 PASS
+inventory: identical
+COMM-VER-01 harness/source caveats: superseded
+hosted confirmation: DEFERRED_EXTERNAL_BILLING
 ```
 
-The evidence retains CTest inventory JSON, JUnit XML, command logs, environment
-versions, implementation-input hashes, and built artifact hashes.
+The built-in `external-backend-parity-check`, `backend-boundary-check`, and
+`external-backend-hook-check` targets passed. The external evidence archive
+retains CTest inventory JSON and JUnit XML for both assemblies, command logs,
+environment data, and internal file hashes.
 
 ## Execution Source Provenance
 
-The shell environment could not clone the current repository. The executed source
-was reconstructed from the uploaded `b6dde65...` snapshot plus the exact
-implementation delta `c3872c1` and CMake hygiene delta `e8ff924`. The later
-`a72aa8e` and `a6b7b63` revisions contain line-ending or documentation-only
-changes. Input-file hashes are retained in the evidence archive.
+The run used an exact clean detached Git worktree at
+`1d933eb0cace1fe899e9432f314bff9026f5f69c`. The official GoogleTest v1.14.0
+source archive was accepted only after this SHA-256 matched:
 
-## Harness Boundary
+```text
+8ad598c73ad796e0d8280b082cebd82a630d73e73cd3c70057938a6501bba5d7
+```
 
-The isolated execution environment had no installed GoogleTest package and could
-not reach the declared v1.14.0 FetchContent repository. Community test sources
-were not edited. They were compiled with a temporary external compatibility
-runner implementing only the GoogleTest macros and discovery arguments present
-in the repository.
+The pinned GoogleTest release commit is
+`f8d7d77c06936315286eb55f8de22cd23c188571`.
 
-Accordingly:
+## Evidence
 
-- provider behavior and identical test inventory: `PASS LOCAL WITH EXECUTION CAVEATS`;
-- exact upstream GoogleTest v1.14.0 reproduction: `DEFERRED_EXTERNAL_DEPENDENCY`;
-- hosted current-main confirmation: `DEFERRED_EXTERNAL_BILLING`.
+```text
+evidence archive: COMM-VER-02-evidence.zip
+evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa978
+retention: external to the repository
+```
 
-This limitation must remain visible. Do not promote the result to an exact
-upstream-framework pass until COMM-VER-02 reproduces it from an exact clean checkout with GoogleTest v1.14.0.
+COMM-VER-01 remains historical evidence. Its
+`COMM-VER-01-evidence.zip` SHA-256 is
+`5dc4e449ee0a57ba7a53ab256d2196c4e10ba076ff125e5cdff90fe7af63091b`.
+Its reconstruction and temporary compatibility-runner caveats are superseded
+for current provider parity by COMM-VER-02; the historical record is not altered.
 
 ## Compatibility
 
-No Community public API, CLI, CMake identity, provider contract, fixture, or
-`SKT1`/`SKF1`/`SKP1` v1 meaning was changed.
+No Community test source, production code, provider selection, public API, CLI,
+CMake identity, fixture, or `SKT1`/`SKF1`/`SKP1` v1 meaning was changed.

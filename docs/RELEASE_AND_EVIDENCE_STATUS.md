@@ -2,7 +2,7 @@
 
 # AnoSecureKit Release and Evidence Status
 
-Status date: 2026-07-17 (Asia/Seoul)
+Status date: 2026-07-18 (Asia/Seoul)
 Current release code/tag baseline: `v0.4.0`
 
 ## Evidence Labels
@@ -22,7 +22,7 @@ while naming a material execution limitation that must not be omitted.
 ## Repository And Release Identity
 
 ```text
-audited repository baseline: a6b7b634214ea4db55efb7a69cd2e663ea052d61
+audited repository baseline: 1d933eb0cace1fe899e9432f314bff9026f5f69c
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
 implementation subject: fix: normalize hex fixtures in fuzz adapter
 current main identity: resolve from Git at audit time
@@ -191,6 +191,34 @@ hosted confirmation: DEFERRED_EXTERNAL_BILLING
 upstream GoogleTest rerun: DEFERRED_EXTERNAL_DEPENDENCY
 ```
 
+## COMM-VER-02 Exact Provider Parity Result
+
+COMM-VER-02 supersedes the COMM-VER-01 harness and source-provenance caveats for
+current provider parity. It executed the official GoogleTest v1.14.0 source from
+an exact clean detached worktree at
+`1d933eb0cace1fe899e9432f314bff9026f5f69c`.
+
+```text
+COMM-VER-02: COMPLETE LOCAL EXACT
+source checkout: exact 1d933eb detached Git worktree
+GoogleTest v1.14.0 official source: verified and executed
+GoogleTest archive SHA-256: 8ad598c73ad796e0d8280b082cebd82a630d73e73cd3c70057938a6501bba5d7
+OpenSSL: 124/124 PASS
+external: 124/124 PASS
+inventory: identical
+backend-boundary-check: PASS
+external-backend-hook-check: PASS
+external-backend-parity-check: PASS
+COMM-VER-01 harness/source caveats: superseded
+hosted confirmation: DEFERRED_EXTERNAL_BILLING
+evidence archive: COMM-VER-02-evidence.zip
+evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa978
+```
+
+Machine-readable CTest inventory JSON and JUnit XML are retained for both
+assemblies in the external evidence archive. COMM-VER-01 remains unchanged as
+historical evidence.
+
 ## Current Evidence Matrix
 
 | Evidence | Status | Current statement |
@@ -214,8 +242,9 @@ upstream GoogleTest rerun: DEFERRED_EXTERNAL_DEPENDENCY
 | Historical scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
 | Fuzz adapter fix | PASS LOCAL | `c3872c1`; focused and full local fuzz smoke passed |
 | Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
-| Provider parity behavior and inventory | PASS LOCAL WITH EXECUTION CAVEATS | OpenSSL 124/124; external 124/124; ordered inventory identical; JUnit retained |
-| Declared GoogleTest v1.14.0 parity rerun | DEFERRED_EXTERNAL_DEPENDENCY | Isolated environment could not obtain upstream package/source |
+| Provider parity behavior and inventory | PASS LOCAL EXACT | Exact detached `1d933eb` worktree; OpenSSL 124/124; external 124/124; ordered inventory identical; JSON/JUnit retained |
+| Declared GoogleTest v1.14.0 parity rerun | PASS LOCAL EXACT | Official source archive SHA-256 verified before build and execution |
+| Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
 
 ## Evidence Archive Identity
 

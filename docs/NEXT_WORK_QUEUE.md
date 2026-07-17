@@ -16,6 +16,7 @@ Baseline: post-`v0.4.0`
 - `COMM-CODEQL-01`: exact-commit CodeQL static triage — COMPLETE
 - `COMM-CODEQL-02`: alert disposition and status documentation — COMPLETE
 - `COMM-VER-01`: provider parity machine-readable local reproduction — COMPLETE LOCAL WITH HARNESS CAVEAT
+- `COMM-VER-02`: exact GoogleTest provider parity — COMPLETE LOCAL EXACT
 
 ### COMM-FUZZ-01 Closeout
 
@@ -74,15 +75,25 @@ because the declared GoogleTest v1.14.0 dependency was also unavailable. This
 closes local provider behavior and inventory parity only with those execution
 caveats.
 
-## COMM-VER-02 — Re-run Parity With Declared GoogleTest v1.14.0
+### COMM-VER-02 Closeout
 
-Priority: P1 / `DEFERRED_EXTERNAL_DEPENDENCY` in the current execution environment
+```text
+COMM-VER-02: COMPLETE LOCAL EXACT
+source checkout: exact 1d933eb detached Git worktree
+GoogleTest v1.14.0 official source: verified and executed
+OpenSSL: 124/124 PASS
+external: 124/124 PASS
+inventory: identical
+backend-boundary-check: PASS
+external-backend-hook-check: PASS
+external-backend-parity-check: PASS
+COMM-VER-01 harness/source caveats: superseded
+hosted confirmation: DEFERRED_EXTERNAL_BILLING
+evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa978
+```
 
-Repeat the same OpenSSL/external inventory and JUnit collection from an exact clean
-checkout using the declared upstream GoogleTest v1.14.0 package or FetchContent
-source. The result must retain
-124 identical test names and 124/124 success through both assemblies. Do not
-change Community test sources to satisfy this proof step.
+COMM-VER-01 remains historical evidence. COMM-VER-02 supersedes only its current
+harness and source-provenance caveats.
 
 ## COMM-REL-03 — Make Publication Evidence Self-Contained
 
