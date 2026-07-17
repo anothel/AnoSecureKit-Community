@@ -3,12 +3,12 @@
 # AnoSecureKit Release and Evidence Status
 
 Status date: 2026-07-17 (Asia/Seoul)
-Current code/tag baseline: `v0.4.0`
+Current release code/tag baseline: `v0.4.0`
 
 ## Evidence Labels
 
-- `PASS`: executed successfully in the stated environment and retained for the
-  stated revision.
+- `PASS`: executed or resolved successfully with retained evidence for the stated
+  revision.
 - `RECORDED`: a release-preparation record reports success, but the complete
   evidence was not retained or independently re-run in the current audit.
 - `UNVERIFIED`: the evidence was not available or could not be confirmed.
@@ -16,25 +16,54 @@ Current code/tag baseline: `v0.4.0`
   platform, service, or authorization was unavailable.
 - `FAIL`: executed and did not meet the gate.
 
-A tag, documentation statement, workflow definition, or generated command is not
-by itself proof that a release asset or hosted run exists.
+A tag, documentation statement, workflow definition, expected filename, or
+generated command is not by itself proof that a GitHub Release object, published
+asset, digest, SBOM, attestation, or hosted run exists.
 
-## v0.4.0 Revision Identity
+## Repository And Release Revision Identity
 
 ```text
-branch: main
-commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
-tag: v0.4.0
-project version: 0.4.0
+current main HEAD: 2fa66fb2fc7d5449d57f615dbc3543c34e5077d9
+current main subject: docs: establish Community current-only documentation
+main compared with v0.4.0: ahead by 1, behind by 0
+post-tag change class: documentation only
+release tag: v0.4.0
+annotated tag object: a2dfd3b79335062ffe73ebfb520b4aac7f590e3d
+release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
+annotated tag time: 2026-07-13T19:13:50+09:00
+annotated tag subject: AnoSecureKit Community v0.4.0
+project version at tag: 0.4.0
 ```
 
-The tag and `main` resolve to the same audited commit.
+Tag/version alignment is `PASS`. The current `main` branch no longer resolves to
+the release commit because `COMM-DOC-01` added one documentation-only commit.
+The release tag remains unchanged and must not be moved or recreated.
+
+## COMM-REL-01 Acquisition Result
+
+The audit confirmed the commit and branch comparison through the connected
+GitHub repository data and confirmed the annotated tag from the uploaded Git
+object database.
+
+The audit environment did not expose a release-specific GitHub REST action for
+listing the `v0.4.0` Release object and assets. The available public HTML snapshot
+still displayed the older `v0.3.0` release and an older repository state, so it
+was not current enough to prove either presence or absence of `v0.4.0`.
+
+The available commit status interface returned no legacy statuses, and the
+available commit-workflow lookup returned no pull-request-triggered runs. Those
+results are not sufficient to prove that a tag-push workflow did not run.
+Accordingly, publication and hosted results remain `UNVERIFIED`, not `FAIL`.
+No tag, Release, asset, workflow, or repository content was created or modified
+by this audit.
 
 ## Current Evidence Matrix
 
 | Evidence | Status | Current statement |
 | --- | --- | --- |
-| Tag/version alignment | PASS | `v0.4.0` matches CMake `0.4.0` |
+| Current `main` identity | PASS | `2fa66fb2...`; one documentation-only commit after `v0.4.0` |
+| Tag/version alignment | PASS | `v0.4.0` resolves to `694459ebe...`; CMake version is `0.4.0` |
+| Annotated tag identity | PASS | Tag object, subject and 2026-07-13 19:13:50 KST timestamp recovered |
 | Local OpenSSL build and CLI version | PASS | Executed during 2026-07-17 audit |
 | Install/export and consumer checks | PASS | Executed locally |
 | CPack source/binary and source rebuild | PASS | Executed locally |
@@ -42,33 +71,85 @@ The tag and `main` resolve to the same audited commit.
 | OpenSSL 124-test inventory/run | RECORDED | Release notes report 124/124 |
 | External assembly 124-test inventory/run | RECORDED | Release notes report parity and 124/124 |
 | Current audit 124-test/parity rerun | DEFERRED | GoogleTest package/cache unavailable |
-| GitHub Release object for v0.4.0 | UNVERIFIED | Not confirmed by retained audit evidence |
-| Published release asset names and sizes | UNVERIFIED | Not confirmed |
-| Published `SHA256SUMS.txt` | UNVERIFIED | Not confirmed |
-| Published SPDX release SBOM | UNVERIFIED | Not confirmed |
-| GitHub artifact attestations | UNVERIFIED | Not confirmed |
-| Hosted CI for tag commit | UNVERIFIED | No retained run evidence confirmed |
-| Hosted CodeQL for tag commit | UNVERIFIED | No retained run evidence confirmed |
-| Windows/macOS current tag validation | UNVERIFIED | Not executed in the audit environment |
+| GitHub Release object for v0.4.0 | UNVERIFIED | Release-specific API result not recovered |
+| Release title, body and publication timestamp | UNVERIFIED | Expected title is known; actual object was not recovered |
+| Published release asset names and sizes | UNVERIFIED | Expected workflow contract is listed below |
+| Published asset digests | UNVERIFIED | No authoritative release asset response or download |
+| Published `SHA256SUMS.txt` verification | UNVERIFIED | File not recovered from a v0.4.0 Release |
+| Published SPDX release SBOM | UNVERIFIED | File not recovered from a v0.4.0 Release |
+| GitHub artifact attestations | UNVERIFIED | No `gh attestation verify` result retained |
+| Hosted CI for tag push | UNVERIFIED | Exact tag-run URL and conclusion not recovered |
+| Hosted CodeQL for release commit | UNVERIFIED | Exact main-push/scheduled analysis for `694459e...` not recovered |
+| Windows tag package/consumer evidence | UNVERIFIED | Workflow lanes exist; run and artifacts not recovered |
+| macOS tag package/consumer evidence | UNVERIFIED | Workflow lane exists; run and artifacts not recovered |
 
-## Required Publication Evidence
+## Expected v0.4.0 Workflow Asset Contract
 
-A Community release may be described as published and verified only after the
-following are retained for the exact tag commit:
+The tag workflow requires the following publication shape before its release job
+can upload assets:
 
-1. GitHub Release identity and publication timestamp;
-2. complete asset inventory with names and sizes;
-3. `SHA256SUMS.txt` and verified digest results;
-4. `anosecurekit-X.Y.Z-release.spdx.json`;
-5. GitHub artifact attestation verification results;
-6. hosted CI and CodeQL run URLs/conclusions;
-7. source and binary consumer verification where claimed;
-8. release notes matching `docs/RELEASE_NOTES.md`.
+```text
+2 source archives
+16 binary archives: 8 artifact families × ZIP/TGZ
+1 SPDX release SBOM
+1 SHA256SUMS.txt
+= 20 expected uploaded files
+```
 
-Store a compact machine-readable or Markdown evidence manifest under a versioned
-`artifacts/vX.Y.Z-...` directory only after the evidence is collected. Do not
-copy credentials, private runner data, or proprietary product information into
-Community.
+Exact source and metadata names:
+
+```text
+anosecurekit-0.4.0-source.zip
+anosecurekit-0.4.0-source.tar.gz
+anosecurekit-0.4.0-release.spdx.json
+SHA256SUMS.txt
+```
+
+Binary asset families, each requiring one `.zip` and one `.tar.gz` file whose
+package filename starts with `anosecurekit-0.4.0-`:
+
+```text
+anosecurekit-ubuntu-latest-gcc-Release-packages
+anosecurekit-ubuntu-latest-clang-Release-packages
+anosecurekit-ubuntu-latest-gcc-Debug-packages
+anosecurekit-windows-latest-msvc-Release-packages
+anosecurekit-ubuntu-gcc-release-install-only-packages
+anosecurekit-ubuntu-gcc-release-static-packages
+anosecurekit-windows-msvc-release-shared-packages
+anosecurekit-macos-clang-release-packages
+```
+
+The workflow-derived expected title is:
+
+```text
+AnoSecureKit Community v0.4.0
+```
+
+The workflow creates generated notes for a new Release and does not itself prove
+that the published body matches `docs/RELEASE_NOTES.md`.
+
+The preceding list is an expected contract only. It does not supply actual asset
+sizes, final platform suffixes, GitHub-provided `digest` values, or downloaded
+SHA-256 results. Do not manufacture those values from local packages or the
+older v0.3.0 evidence directory.
+
+## Authoritative Completion Procedure
+
+Use the read-only `collect_v0.4.0-publication-evidence.sh` handoff script in an
+authenticated GitHub CLI environment. It collects:
+
+1. tag and current-main resolution;
+2. the REST Release object or an authoritative 404;
+3. full asset names, sizes, content types and GitHub digest fields;
+4. downloaded assets and `SHA256SUMS.txt` verification;
+5. SPDX SBOM package/checksum comparison;
+6. GitHub artifact-attestation verification;
+7. Actions runs, check runs and commit statuses for the release commit;
+8. CodeQL analyses associated with the exact release commit where available.
+
+Only that evidence, or equivalent authenticated API output, may change the
+publication rows above from `UNVERIFIED` to `PASS`, `FAIL`, `NOT_PUBLISHED`, or a
+specific `DEFERRED` external-blocker result.
 
 ## Local Release Gate
 
