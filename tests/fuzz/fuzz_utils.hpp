@@ -62,9 +62,10 @@ inline bool canonical_hex_fixture(std::string_view input)
 
 inline bytes raw_or_decoded_fixture(const std::uint8_t *data, std::size_t size)
 {
-	const std::string input = string_from_data(data, size);
+	std::string input = string_from_data(data, size);
 	if (canonical_hex_fixture(input))
 	{
+		std::erase_if(input, is_ascii_space);
 		return hex_decode(input);
 	}
 	return bytes_from_data(data, size);
