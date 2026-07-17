@@ -15,6 +15,7 @@ Baseline: post-`v0.4.0`
 - `COMM-HYG-01`: line-ending and evidence-retention hygiene — COMPLETE
 - `COMM-CODEQL-01`: exact-commit CodeQL static triage — COMPLETE
 - `COMM-CODEQL-02`: alert disposition and status documentation — COMPLETE
+- `COMM-VER-01`: provider parity machine-readable local reproduction — COMPLETE LOCAL WITH HARNESS CAVEAT
 
 ### COMM-FUZZ-01 Closeout
 
@@ -53,15 +54,35 @@ Alerts `#1`, `#18`, and `#19` are non-security correctness or maintainability
 results. All GitHub alerts remain open; no dismissal or state update was
 performed.
 
-## COMM-VER-01 — Reproduce Provider Parity Evidence
+### COMM-VER-01 Closeout
 
-Priority: P1
+```text
+repository reference: a6b7b634214ea4db55efb7a69cd2e663ea052d61
+OpenSSL inventory/run: 124/124 PASS
+external inventory/run: 124/124 PASS
+inventory names/order: identical
+external-backend-parity-check: PASS
+backend-boundary-check: PASS
+external-backend-hook-check: PASS
+```
 
-Run the same discovered test inventory through the shipped OpenSSL assembly and
-the externally injected assembly. Retain machine-readable CTest/JUnit evidence,
-exact toolchain/OpenSSL versions, inventory comparison, and command transcript.
-Hosted execution may remain `DEFERRED_EXTERNAL` while billing is blocked, but a
-local reproducible run can close the evidence gap.
+CTest inventory JSON, JUnit XML, toolchain data, command logs, and hashes were
+retained. The executed source was reconstructed from a known uploaded baseline and
+exact implementation/CMake deltas because a current clone was unavailable. The
+unchanged tests used a temporary external GoogleTest API compatibility runner
+because the declared GoogleTest v1.14.0 dependency was also unavailable. This
+closes local provider behavior and inventory parity only with those execution
+caveats.
+
+## COMM-VER-02 — Re-run Parity With Declared GoogleTest v1.14.0
+
+Priority: P1 / `DEFERRED_EXTERNAL_DEPENDENCY` in the current execution environment
+
+Repeat the same OpenSSL/external inventory and JUnit collection from an exact clean
+checkout using the declared upstream GoogleTest v1.14.0 package or FetchContent
+source. The result must retain
+124 identical test names and 124/124 success through both assemblies. Do not
+change Community test sources to satisfy this proof step.
 
 ## COMM-REL-03 — Make Publication Evidence Self-Contained
 

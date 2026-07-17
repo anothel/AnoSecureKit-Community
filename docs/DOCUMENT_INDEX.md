@@ -16,6 +16,7 @@ Status: CURRENT
   v0.4.0 evidence state.
 - `docs/NEXT_WORK_QUEUE.md`: active post-v0.4.0 Community work.
 - `docs/CODEQL_TRIAGE_STATUS.md`: exact-commit CodeQL alert normalization, static verdicts, and alert-state boundary.
+- `docs/PROVIDER_PARITY_STATUS.md`: current OpenSSL/external inventory and execution evidence, including the local harness caveat.
 
 ## User-Facing Contracts
 
@@ -67,6 +68,7 @@ outside the source tree.
 - `artifacts/v0.4.0-post-publication-audit/README.md`: compact COMM-REL-02
   publication summary and external archive identity.
 - `artifacts/v0.4.0-codeql-triage/README.md`: compact CodeQL triage identity and external evidence archive SHA-256.
+- `artifacts/v0.4.0-provider-parity/README.md`: compact COMM-VER-01 parity evidence identity and limitation.
 
 A historical directory does not prove a later release, and a publication audit
 does not replace current fuzz, provider-parity, or security-review work.

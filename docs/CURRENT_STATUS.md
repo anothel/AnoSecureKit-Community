@@ -12,7 +12,7 @@ Scope: AnoSecureKit Community only
 product: AnoSecureKit Community
 license: MPL-2.0
 language: C++20
-audited repository baseline: a72aa8e96de6e9e312f13aabbb8baa1a17c36a4b
+audited repository baseline: a6b7b634214ea4db55efb7a69cd2e663ea052d61
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
 release tag: v0.4.0
 release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
@@ -59,7 +59,8 @@ fallback.
 | General CTest after fuzz fix | PASS LOCAL | 124/124 |
 | Package/install/export after fuzz fix | PASS LOCAL | package-check and consumers passed |
 | Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
-| Current provider parity rerun | DEFERRED | Historical 124/124 remains recorded; machine-readable rerun pending |
+| Current provider parity rerun | PASS LOCAL WITH EXECUTION CAVEATS | OpenSSL 124/124 and external 124/124; identical ordered inventory; CTest/JUnit retained |
+| Declared GoogleTest v1.14.0 parity rerun | DEFERRED_EXTERNAL_DEPENDENCY | Execution environment could not obtain the upstream package/source |
 | Repository EOL policy | PASS | `.gitattributes` defines deterministic LF policy |
 | Source evidence exclusion | PASS | CPack and package-check reject repository-external evidence paths |
 

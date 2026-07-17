@@ -16,11 +16,15 @@ Current release code/tag baseline: `v0.4.0`
   service condition.
 - `FAIL`: an executed check did not meet its gate.
 
+Qualified labels such as `PASS LOCAL WITH EXECUTION CAVEATS` retain the base status
+while naming a material execution limitation that must not be omitted.
+
 ## Repository And Release Identity
 
 ```text
-audited implementation baseline: c3872c196452b561b1a545ee73204dca0df83dc7
-baseline subject: fix: normalize hex fixtures in fuzz adapter
+audited repository baseline: a6b7b634214ea4db55efb7a69cd2e663ea052d61
+implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
+implementation subject: fix: normalize hex fixtures in fuzz adapter
 current main identity: resolve from Git at audit time
 post-tag change classes: documentation/evidence and fuzz adapter maintenance
 release tag: v0.4.0
@@ -153,6 +157,40 @@ checks passed locally. Hosted confirmation is `DEFERRED_EXTERNAL` because GitHub
 Actions billing prevents runner execution. The production strict hex parser was
 not weakened.
 
+
+## COMM-VER-01 Local Provider Parity Result
+
+The existing `external-backend-parity-check` completed successfully for an
+implementation-equivalent reconstruction of repository reference
+`a6b7b634214ea4db55efb7a69cd2e663ea052d61`. The reconstruction used the uploaded
+`b6dde65...` baseline plus exact implementation and CMake deltas; hashes and source
+provenance are retained.
+
+```text
+OpenSSL test inventory: 124
+OpenSSL execution: 124/124 PASS
+external test inventory: 124
+external execution: 124/124 PASS
+ordered inventory comparison: identical
+backend boundary: PASS
+external provider hook: PASS
+```
+
+Machine-readable CTest inventory JSON and JUnit XML were retained for both
+assemblies. The execution environment also could not obtain the declared GoogleTest v1.14.0
+dependency, so unchanged Community test sources used a temporary external
+compatibility runner limited to the exact GoogleTest assertion and discovery
+surface they require. The evidence therefore proves local provider behavior and
+inventory parity with execution caveats. It does not claim that the upstream
+GoogleTest v1.14.0 implementation was executed.
+
+```text
+evidence archive: COMM-VER-01-evidence.zip
+evidence SHA-256: 5dc4e449ee0a57ba7a53ab256d2196c4e10ba076ff125e5cdff90fe7af63091b
+hosted confirmation: DEFERRED_EXTERNAL_BILLING
+upstream GoogleTest rerun: DEFERRED_EXTERNAL_DEPENDENCY
+```
+
 ## Current Evidence Matrix
 
 | Evidence | Status | Current statement |
@@ -176,8 +214,8 @@ not weakened.
 | Historical scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
 | Fuzz adapter fix | PASS LOCAL | `c3872c1`; focused and full local fuzz smoke passed |
 | Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
-| Historical provider parity | RECORDED | 124/124 reported for OpenSSL and external assemblies |
-| Current local provider parity rerun | DEFERRED | Earlier audit lacked GoogleTest package/cache |
+| Provider parity behavior and inventory | PASS LOCAL WITH EXECUTION CAVEATS | OpenSSL 124/124; external 124/124; ordered inventory identical; JUnit retained |
+| Declared GoogleTest v1.14.0 parity rerun | DEFERRED_EXTERNAL_DEPENDENCY | Isolated environment could not obtain upstream package/source |
 
 ## Evidence Archive Identity
 
