@@ -108,9 +108,30 @@ analysis warning: empty
 corresponding Actions runs: success
 ```
 
-The CodeQL execution status is `PASS`. The meaning, severity, deduplication, and
-current disposition of the 19 reported results were not reviewed in COMM-REL-02.
-Do not interpret workflow success as a zero-alert security conclusion.
+The CodeQL execution status is `PASS`.
+
+COMM-CODEQL-01 recovered 19 unique alerts from the two byte-identical SARIF result
+sets and completed static Community triage:
+
+```text
+unique alerts: 19
+state: open 19/19
+severity: warning 19/19
+security severity: high 16, none 3
+confirmed: 0
+needs_review: 0
+not_actionable: 19
+```
+
+Alert `#2` misclassified public SKP1 header metadata as sensitive plaintext.
+Alerts `#3` through `#17` involved paths explicitly selected by a local CLI
+operator, with no supported external-attacker boundary established. Alerts `#1`,
+`#18`, and `#19` were correctness or maintainability results without a demonstrated
+security consequence.
+
+This triage conclusion does not change GitHub alert state. All 19 alerts remain
+open, and no dismissal or update was performed. See
+`docs/CODEQL_TRIAGE_STATUS.md`.
 
 ## Scheduled Fuzz Failure
 
@@ -150,7 +171,8 @@ not weakened.
 | Windows package/consumer lanes | PASS | 4/4 exact-commit jobs succeeded |
 | macOS package/consumer lanes | PASS | 2/2 exact-commit jobs succeeded |
 | Exact-commit CodeQL execution | PASS | Two analyses completed without analysis errors or warnings |
-| CodeQL result triage | UNVERIFIED | `results_count=19` per analysis requires separate review |
+| CodeQL result triage | PASS | 19 unique alerts; 0 confirmed, 0 needs review, 19 not actionable |
+| GitHub CodeQL alert disposition | NOT_RUN | All 19 alerts remain open; no state mutation was authorized |
 | Historical scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
 | Fuzz adapter fix | PASS LOCAL | `c3872c1`; focused and full local fuzz smoke passed |
 | Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |

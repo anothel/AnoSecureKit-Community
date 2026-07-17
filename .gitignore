@@ -50,6 +50,13 @@ release-assets/
 /COMM-REL-*.zip.sha256
 /collect_v*-publication-evidence*.sh
 
+# Authenticated CodeQL triage evidence and local reports.
+/COMM-CODEQL-*-evidence/
+/COMM-CODEQL-*-evidence.zip
+/COMM-CODEQL-*-evidence.zip.sha256
+/COMM-CODEQL-*-TRIAGE.md
+/COMM-CODEQL-*-TRIAGE.json
+
 anosecurekit-cli-*
 
 docs/superpowers/
