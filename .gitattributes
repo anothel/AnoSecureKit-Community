@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: MPL-2.0
+
+# Keep source, documentation, fixtures, and build metadata deterministic across
+# Windows, WSL, Linux, and macOS checkouts.
+* text=auto eol=lf
+
+# Native Windows command scripts may use CRLF when added in the future.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Never apply text conversion to binary artifacts.
+*.7z binary
+*.a binary
+*.dll binary
+*.dylib binary
+*.exe binary
+*.gif binary
+*.gz binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.lib binary
+*.pdf binary
+*.png binary
+*.so binary
+*.tgz binary
+*.zip binary
