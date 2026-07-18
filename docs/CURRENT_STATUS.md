@@ -48,7 +48,8 @@ fallback.
 
 | Surface | Status | Note |
 | --- | --- | --- |
-| v0.4.0 publication and integrity | PASS | 20 assets; checksum, SBOM, digests, attestations verified |
+| v0.4.0 publication and integrity | PASS SELF-CONTAINED | 20 assets; digests, checksum, SBOM, online/offline attestations verified |
+| Release body exact comparison | NOT_EQUAL | Two normalized wording differences; raw inputs and unified diff retained |
 | Hosted v0.4.0 tag CI | PASS | Run `29242038502`; 10/10 jobs succeeded |
 | Windows/macOS release lanes | PASS | Windows 4/4; macOS 2/2 |
 | Exact-commit CodeQL execution | PASS | Analyses `1471089159` and `1471719182` completed |
@@ -63,6 +64,20 @@ fallback.
 | Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
 | Repository EOL policy | PASS | `.gitattributes` defines deterministic LF policy |
 | Source evidence exclusion | PASS | CPack and package-check reject repository-external evidence paths |
+
+```text
+publication evidence archive: PASS SELF-CONTAINED
+asset inventory/integrity/SBOM: PASS
+online asset attestations: PASS 20/20
+offline retained-bundle verification: PASS 20/20
+release body exact comparison: NOT_EQUAL
+hosted current-main reruns: DEFERRED_EXTERNAL_BILLING
+```
+
+Current external evidence archive:
+`COMM-REL-03-v0_4_0-self-contained-evidence.zip`, SHA-256
+`e556263cb971811b980c242e20524c8b42db362dfd0ef1d07ff3633a1868d93c`.
+The prior `COMM-REL-02-v0_4_0-evidence.zip` identity remains historical.
 
 ```text
 COMM-VER-02: COMPLETE LOCAL EXACT

@@ -42,6 +42,34 @@ The tag remains unchanged. The current maintenance line is not the source revisi
 used to build the v0.4.0 assets. Source-controlled documents record an audited
 baseline rather than chasing their own resulting commit SHA.
 
+## COMM-REL-03 Self-Contained Publication Result
+
+Fresh authenticated collection at repository HEAD
+`68f7540ba76200592216986c0a0fa9517a0bd1ee` confirmed that the unchanged annotated
+tag object `a2dfd3b79335062ffe73ebfb520b4aac7f590e3d` resolves to release commit
+`694459ebe497d15ba75ef76a52fa7c36ddd7bcce` locally and through the GitHub API.
+
+```text
+publication evidence archive: PASS SELF-CONTAINED
+asset inventory/integrity/SBOM: PASS
+online asset attestations: PASS 20/20
+offline retained-bundle verification: PASS 20/20
+release body exact comparison: NOT_EQUAL
+hosted current-main reruns: DEFERRED_EXTERNAL_BILLING
+```
+
+All 20 GitHub asset digests matched local SHA-256 values;
+`SHA256SUMS.txt` passed 19/19; the SPDX release SBOM passed 18/18. Strict
+attestation policy enforced repository, source commit, source ref, and signer
+workflow online and with the 20 retained bundles plus retained trusted root.
+
+After only line-ending normalization and exactly one terminal LF, the GitHub
+Release body differs from the v0.4.0 `docs/RELEASE_NOTES.md` section in two wording
+changes: `shipped` became `official`, and `provider` became `provider or adapter`.
+The retained release workflow used `gh release create --generate-notes`; this is
+`NOT_EQUAL`, not parity or evidence corruption. The normalized inputs and unified
+diff are retained.
+
 ## COMM-REL-02 Authenticated Publication Result
 
 Authenticated read-only collection recovered the Release object, all assets,
@@ -226,13 +254,13 @@ historical evidence.
 | Tag/version alignment | PASS | `v0.4.0` resolves to `694459ebe...`; CMake version is `0.4.0` |
 | GitHub Release object | PASS | Public, non-draft, non-prerelease Release recovered |
 | Release title and published time | PASS | Exact title and 2026-07-13 19:26:47 KST confirmed |
-| Release body parity | UNVERIFIED | Exact body comparison was not reported |
+| Release body exact comparison | NOT_EQUAL | Two normalized wording differences; raw bytes and unified diff retained |
 | Asset inventory and sizes | PASS | 20-file contract and API/download inventory matched |
 | `SHA256SUMS.txt` | PASS | 19/19 verified |
 | SPDX release SBOM | PASS | 18/18 package/checksum entries matched |
 | GitHub asset digests | PASS | 20/20 matched |
-| Artifact attestations | PASS | Supplementary `gh 2.95.0` serial verification passed 20/20 |
-| Collector-manifest attestation | DEFERRED | `gh 2.46.0` lacked attestation verification |
+| Online asset attestations | PASS | Strict repository/commit/ref/workflow policy passed 20/20 |
+| Offline retained-bundle verification | PASS | Retained bundles and trusted root passed 20/20 |
 | Hosted v0.4.0 CI | PASS | Tag run `29242038502`; 10/10 jobs succeeded |
 | Windows package/consumer lanes | PASS | 4/4 exact-commit jobs succeeded |
 | macOS package/consumer lanes | PASS | 2/2 exact-commit jobs succeeded |
@@ -249,15 +277,26 @@ historical evidence.
 ## Evidence Archive Identity
 
 ```text
-evidence archive: COMM-REL-02-v0_4_0-evidence.zip
-evidence archive SHA-256: 76782f2d8840a183fc91cae0b6268e33d8f77e38f05c2b5dd9e426bb176ca356
-collector SHA-256: f5629c8a52d1ad354b702cc6389798b95937e129cfda3af89f48b47d5649d2c2
+evidence archive: COMM-REL-03-v0_4_0-self-contained-evidence.zip
+evidence archive SHA-256: e556263cb971811b980c242e20524c8b42db362dfd0ef1d07ff3633a1868d93c
+original supplied collector SHA-256: 7b931563f6ed4e1fba1529670f4a955f2c4ecbb60fb8215601f0ab9a08787e9d
+executed collector SHA-256: b821eac309a8a4d5cb16c7988895e1c86d6b38147a0bbd9a3baa093f7b3f8a2c
+publication evidence archive: PASS SELF-CONTAINED
 repository mutation during collection: none
 ```
 
-The successful supplementary attestation output should be retained next to the
-archive or included in a new evidence bundle before treating the archive itself
-as self-contained.
+The executed collector differs only by setting child-process working directory to
+the current PowerShell location; the original, executed copy, and diff are
+retained. The final archive was independently extracted, its 222 internal file
+hashes rechecked, and all 20 retained-bundle attestations rerun successfully.
+
+Historical archive identity retained, but superseded as the current evidence
+pointer:
+
+```text
+historical evidence archive: COMM-REL-02-v0_4_0-evidence.zip
+historical evidence archive SHA-256: 76782f2d8840a183fc91cae0b6268e33d8f77e38f05c2b5dd9e426bb176ca356
+```
 
 ## Source Repository Evidence Retention
 

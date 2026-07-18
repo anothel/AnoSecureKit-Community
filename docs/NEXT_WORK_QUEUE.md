@@ -11,6 +11,7 @@ Baseline: post-`v0.4.0`
 - `COMM-DOC-01`: CURRENT ONLY documentation — COMPLETE
 - `COMM-REL-01`: publication evidence audit — COMPLETE
 - `COMM-REL-02`: authenticated publication evidence recovery — COMPLETE
+- `COMM-REL-03`: self-contained publication evidence — COMPLETE
 - `COMM-FUZZ-01`: SKT1 fuzz invalid-input escape — COMPLETE LOCAL
 - `COMM-HYG-01`: line-ending and evidence-retention hygiene — COMPLETE
 - `COMM-CODEQL-01`: exact-commit CodeQL static triage — COMPLETE
@@ -95,13 +96,22 @@ evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa9
 COMM-VER-01 remains historical evidence. COMM-VER-02 supersedes only its current
 harness and source-provenance caveats.
 
-## COMM-REL-03 — Make Publication Evidence Self-Contained
+### COMM-REL-03 Closeout
 
-Priority: P1
+```text
+publication evidence archive: PASS SELF-CONTAINED
+asset inventory/integrity/SBOM: PASS
+online asset attestations: PASS 20/20
+offline retained-bundle verification: PASS 20/20
+release body exact comparison: NOT_EQUAL
+hosted current-main reruns: DEFERRED_EXTERNAL_BILLING
+evidence archive: COMM-REL-03-v0_4_0-self-contained-evidence.zip
+evidence SHA-256: e556263cb971811b980c242e20524c8b42db362dfd0ef1d07ff3633a1868d93c
+```
 
-Retain the successful `gh 2.95.0` attestation outputs beside the external evidence
-archive and verify Release body parity. Keep only compact repository-safe
-summaries in source control.
+The archive retains all 20 assets, strict online outputs, bundles, trusted root,
+strict offline outputs, exact-commit Actions and CodeQL metadata, raw comparison
+inputs, unified diff, and internal hashes. COMM-REL-02 remains historical.
 
 ## COMM-DOC-02 — Close Website And Repository Drift
 
