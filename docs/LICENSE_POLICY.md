@@ -32,13 +32,12 @@ the file type.
 
 ## External Proprietary Modules
 
-AnoCrypto is an external proprietary cryptographic module managed outside this
-repository. It is not shipped in Community, and Community does not provide an
-AnoCrypto backend, scaffold, or Enterprise license logic. Community remains
-licensed under `MPL-2.0`. AnoCrypto and other external proprietary modules are
-subject to their own separate commercial terms. Using an external module
-alongside Community does not change the `MPL-2.0` license of Community files.
-No external proprietary source is included in this repository.
+AnoSecureKit Enterprise and AnoCrypto-C are separate repositories and products.
+Community does not include Enterprise proprietary source, an AnoCrypto-C adapter,
+or either product's license logic, package, or validation status. Community
+remains licensed under `MPL-2.0`; using separately licensed external products does
+not change the license of Community files. No external proprietary source is
+included in this repository.
 
 ## Not Legal Advice
 

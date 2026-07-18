@@ -58,7 +58,8 @@ extract one source archive, build from that extracted source, install it, and
 run `anosecurekit --version`.
 
 `release-preflight` runs `check`, `package-check`, `release-workflow-check`,
-`spdx-check`, `legacy-name-check`, `backend-boundary-check`,
+`spdx-check`, `legacy-name-check`, `document-alignment-check`,
+`backend-boundary-check`,
 `external-backend-hook-check`, `external-backend-parity-check`, and
 `cli-docs-check`, then checks SemVer
 shape, README and release-checklist version examples, documented local target
@@ -107,9 +108,10 @@ After the tag workflow finishes, check the GitHub Release for:
   name to avoid asset-name collisions.
 - GitHub artifact attestations for `SHA256SUMS.txt` and release archives.
 - Release title `AnoSecureKit Community vX.Y.Z`.
-- Release notes mention the same user-visible changes as `docs/RELEASE_NOTES.md`.
-  Edit GitHub-generated notes when they omit CLI, format, package, SBOM, or
-  provenance changes.
+- Compare the published Release body with the matching version section in
+  `docs/RELEASE_NOTES.md`. If they differ, retain the normalized inputs and diff
+  and do not describe the result as exact parity. Before a future release, prefer
+  a verified canonical notes file over unreviewed generated wording.
 
 Download `SHA256SUMS.txt`, verify checksums, and verify GitHub artifact
 attestations for the checksum file and at least one archive:

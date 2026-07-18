@@ -237,6 +237,12 @@ add_custom_target(legacy-name-check
     -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_legacy_identifiers.cmake
   USES_TERMINAL)
 
+add_custom_target(document-alignment-check
+  COMMAND ${CMAKE_COMMAND}
+    -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_document_alignment.cmake
+  USES_TERMINAL)
+
 add_custom_target(backend-boundary-check
   COMMAND ${CMAKE_COMMAND}
     -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
@@ -603,6 +609,7 @@ elseif(TARGET check AND ANOSECUREKIT_BUILD_CLI AND ANOSECUREKIT_INSTALL_CLI)
       release-workflow-check
       spdx-check
       legacy-name-check
+      document-alignment-check
       backend-boundary-check
       external-backend-hook-check
       external-backend-parity-check

@@ -24,5 +24,5 @@ The check:
 
 Result: no repeated friction recorded.
 
-This run did not require extra public surface. Follow-up work now lives in
-`docs/ROADMAP.md` under `Fix Queue`, with a named check for each item.
+This run did not require extra public surface. Any reproducible follow-up belongs
+in the canonical `docs/NEXT_WORK_QUEUE.md` with a named check and rollback path.

@@ -12,7 +12,7 @@ Scope: AnoSecureKit Community only
 product: AnoSecureKit Community
 license: MPL-2.0
 language: C++20
-audited repository baseline: 1d933eb0cace1fe899e9432f314bff9026f5f69c
+audited repository baseline: 95aef99db715e25251df6a5c01d598f4f4984a7e
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
 release tag: v0.4.0
 release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
@@ -64,6 +64,7 @@ fallback.
 | Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
 | Repository EOL policy | PASS | `.gitattributes` defines deterministic LF policy |
 | Source evidence exclusion | PASS | CPack and package-check reject repository-external evidence paths |
+| Website/canonical documentation alignment | PASS LOCAL | Static Pages, README, compatibility roadmap, and current policy wording aligned; guard added |
 
 ```text
 publication evidence archive: PASS SELF-CONTAINED

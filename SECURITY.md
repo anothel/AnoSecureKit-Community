@@ -59,9 +59,10 @@ Out of scope:
 
 ## Security Claims
 
-AnoSecureKit Community uses OpenSSL 3.x as its default production backend. It
-does not include AnoCrypto, does not provide an AnoCrypto backend, and does not
-make KCMVP, FIPS, certification, validation, or public-sector approval claims.
+AnoSecureKit Community uses OpenSSL 3.x as its only shipped production provider.
+Its external provider seam is build-tree-only. Community does not include
+Enterprise proprietary code or an AnoCrypto-C adapter and makes no KCMVP, FIPS,
+certification, validation, security-audit, or public-sector approval claim.
 
 ## Security Release Notes
 

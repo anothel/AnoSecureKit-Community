@@ -3,7 +3,8 @@
 # AnoSecureKit Web Roadmap
 
 This document tracks only work for the AnoSecureKit GitHub Pages site.
-C++ API, CLI, package, and release work belong in `docs/ROADMAP.md`.
+C++ API, CLI, package, and release work belong in the canonical
+`docs/NEXT_WORK_QUEUE.md`. `docs/ROADMAP.md` is only a compatibility entry point.
 
 Completed work belongs in Git history and, when release-facing, in
 `docs/RELEASE_NOTES.md`.
@@ -23,10 +24,9 @@ The site should:
 
 None.
 
-The site landing page, CLI page, security page, Base64/Base64URL guides,
-SHA-256 guide and tool, random token guide and tool, HMAC-SHA-256 guide and
-tool, AES-GCM guide and text demo are complete enough to stay out of active
-roadmap work.
+The site landing, roadmap, security, license, CLI, and release-verification
+pages are aligned with the current repository boundaries. Browser-local guides
+and tools are complete enough to stay out of active roadmap work.
 
 ### Deferred
 

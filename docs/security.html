@@ -25,9 +25,10 @@
       <p class="eyebrow">Security boundaries</p>
       <h1>Know what AnoSecureKit protects, and what it does not.</h1>
       <p class="lead">
-        AnoSecureKit is a small C++20 utility library with OpenSSL 3.x as the
-        current default crypto backend. It has not had an external security
-        audit and is not a substitute for a full review in high-risk systems.
+        AnoSecureKit Community is a small C++20 utility library with OpenSSL 3.x
+        as its only shipped production provider. It has not had an external
+        security audit and is not a substitute for a full review in high-risk
+        systems.
       </p>
       <div class="actions">
         <a class="button primary" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/SECURITY_MODEL.md">Read security model</a>
@@ -42,8 +43,9 @@
         <h2>Scope</h2>
         <p>
           AnoSecureKit provides byte encoders, SHA-256, HMAC, HKDF, random bytes,
-          AES-256-GCM packets, and chunked file sealing through a private crypto
-          backend boundary. OpenSSL is the current default backend.
+          AES-256-GCM packets, and chunked file sealing through a private provider
+          boundary. OpenSSL 3.x is the only shipped Community production provider;
+          the external seam is build-tree-only.
         </p>
       </article>
 
@@ -73,6 +75,7 @@
         <li>Password hashing for account authentication.</li>
         <li>Caller-selected algorithms or nonces.</li>
         <li>Protection from compromised hosts, filesystems, shells, or build tools.</li>
+        <li>KCMVP, FIPS, certification, validation, or security-audit claims.</li>
       </ul>
     </section>
 

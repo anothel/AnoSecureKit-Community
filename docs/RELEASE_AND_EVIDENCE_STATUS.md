@@ -22,7 +22,7 @@ while naming a material execution limitation that must not be omitted.
 ## Repository And Release Identity
 
 ```text
-audited repository baseline: 1d933eb0cace1fe899e9432f314bff9026f5f69c
+audited repository baseline: 95aef99db715e25251df6a5c01d598f4f4984a7e
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
 implementation subject: fix: normalize hex fixtures in fuzz adapter
 current main identity: resolve from Git at audit time
@@ -247,6 +247,26 @@ Machine-readable CTest inventory JSON and JUnit XML are retained for both
 assemblies in the external evidence archive. COMM-VER-01 remains unchanged as
 historical evidence.
 
+
+## COMM-DOC-02 Documentation Alignment
+
+The GitHub Pages landing, roadmap, security, license, and release-verification
+pages were aligned with the canonical current documents. README and maintainer
+policies now use the same ownership and provider wording:
+
+```text
+OpenSSL 3.x: only shipped Community production provider
+external provider seam: build-tree-only, no fallback
+canonical active queue: docs/NEXT_WORK_QUEUE.md
+docs/ROADMAP.md: compatibility entry point only
+Enterprise proprietary source and AnoCrypto-C adapter: outside Community
+```
+
+`document-alignment-check` rejects the stale candidate-era wording that caused the
+observed drift and is part of `release-preflight`. This documentation maintenance
+does not change production code, public API, CLI, CMake identity, provider
+selection, fixtures, or v1 format meaning.
+
 ## Current Evidence Matrix
 
 | Evidence | Status | Current statement |
@@ -273,6 +293,7 @@ historical evidence.
 | Provider parity behavior and inventory | PASS LOCAL EXACT | Exact detached `1d933eb` worktree; OpenSSL 124/124; external 124/124; ordered inventory identical; JSON/JUnit retained |
 | Declared GoogleTest v1.14.0 parity rerun | PASS LOCAL EXACT | Official source archive SHA-256 verified before build and execution |
 | Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
+| Website/canonical documentation alignment | PASS LOCAL | Pages and repository wording aligned; `document-alignment-check` added to release preflight |
 
 ## Evidence Archive Identity
 

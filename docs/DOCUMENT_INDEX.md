@@ -18,6 +18,8 @@ Status: CURRENT
 - `docs/CODEQL_TRIAGE_STATUS.md`: exact-commit CodeQL alert normalization, static verdicts, and alert-state boundary.
 - `docs/PROVIDER_PARITY_STATUS.md`: current OpenSSL/external inventory and execution evidence, including the local harness caveat.
 
+- `docs/ROADMAP.md`: compatibility entry point to `docs/NEXT_WORK_QUEUE.md`; not an independent queue.
+
 ## User-Facing Contracts
 
 - `README.md`: project overview, build, API, CLI, package, and release entry points.

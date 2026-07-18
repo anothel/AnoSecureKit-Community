@@ -18,6 +18,7 @@ Baseline: post-`v0.4.0`
 - `COMM-CODEQL-02`: alert disposition and status documentation — COMPLETE
 - `COMM-VER-01`: provider parity machine-readable local reproduction — COMPLETE LOCAL WITH HARNESS CAVEAT
 - `COMM-VER-02`: exact GoogleTest provider parity — COMPLETE LOCAL EXACT
+- `COMM-DOC-02`: GitHub Pages and canonical documentation alignment — COMPLETE
 
 ### COMM-FUZZ-01 Closeout
 
@@ -113,13 +114,30 @@ The archive retains all 20 assets, strict online outputs, bundles, trusted root,
 strict offline outputs, exact-commit Actions and CodeQL metadata, raw comparison
 inputs, unified diff, and internal hashes. COMM-REL-02 remains historical.
 
-## COMM-DOC-02 — Close Website And Repository Drift
+### COMM-DOC-02 Closeout
+
+- GitHub Pages landing, roadmap, security, license, and release-verification
+  wording aligns with the canonical repository boundaries;
+- README points to `docs/NEXT_WORK_QUEUE.md` as the only active queue;
+- `docs/ROADMAP.md` is a compatibility entry point only;
+- candidate-era `v0.4.0` preparation wording and `default backend` wording were
+  removed from current surfaces;
+- Enterprise and AnoCrypto-C naming is consistent;
+- `document-alignment-check` prevents recurrence and runs in release preflight;
+- no production code, public API, CLI, CMake identity, fixture, provider
+  selection, or v1 format meaning changed.
+
+## COMM-REL-04 — Prepare v0.4.1 Maintenance Release
 
 Priority: P1
 
-Align GitHub Pages HTML with canonical Markdown status and replace candidate-era
-wording. Keep `docs/ROADMAP.md` as a compatibility entry point without creating a
-second independent queue.
+Prepare the narrow v0.4.1 maintenance release containing the reviewed fuzz
+adapter fix and completed maintenance/documentation work. Use the matching
+`docs/RELEASE_NOTES.md` section as the canonical Release body input rather than
+unreviewed generated wording. Run the full local release preflight, retain exact
+asset/checksum/SBOM/attestation evidence, and record hosted current-main lanes as
+`DEFERRED_EXTERNAL_BILLING` while runner billing remains blocked. Do not add a new
+public API, ship another Community provider, or reinterpret v1 formats.
 
 ## COMM-CODEQL-03 — Apply GitHub Alert Dispositions
 

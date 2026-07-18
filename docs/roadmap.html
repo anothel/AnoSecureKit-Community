@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AnoSecureKit Roadmap</title>
-  <meta name="description" content="AnoSecureKit roadmap summary, current local work status, external handoffs, and fix queue rules.">
+  <meta name="description" content="AnoSecureKit Community current direction, maintenance-release boundary, and canonical work-queue links.">
   <meta name="color-scheme" content="dark light">
   <link rel="stylesheet" href="./assets/site.css">
 </head>
@@ -23,16 +23,15 @@
     </nav>
 
     <section class="hero-body">
-      <p class="eyebrow">Project roadmap</p>
-      <h1>Future work stays narrow, checked, and tied to real AnoSecureKit surfaces.</h1>
+      <p class="eyebrow">Project direction</p>
+      <h1>Published v0.4.0, then a narrow v0.4.1 maintenance line.</h1>
       <p class="lead">
-        AnoSecureKit keeps completed work in Git history and release notes. Active
-        roadmap items must name a current API, CLI command, serialized format,
-        CMake package surface, release asset, or security-reporting surface.
+        The canonical queue lives in <code>docs/NEXT_WORK_QUEUE.md</code>. This page mirrors
+        the current direction without creating a second planning source.
       </p>
       <div class="actions">
         <a class="button primary" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Read current work queue</a>
-        <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/BACKEND_AND_PROVIDER_CONTRACT.md">Provider contract</a>
+        <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/CURRENT_STATUS.md">Read current status</a>
         <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/WEB_ROADMAP.md">Web roadmap</a>
       </div>
     </section>
@@ -43,26 +42,26 @@
       <article class="card warning">
         <h2>Now</h2>
         <p>
-          The internal backend seam, OpenSSL provider isolation, and build-tree-only
-          external provider hook are verified. The active step is preparing and
-          validating the Community v0.4.0 release while preserving the public API,
-          CLI, packages, and SKT1/SKF1/SKP1 behavior.
+          Prepare a v0.4.1 maintenance release from the reviewed fuzz fix and
+          evidence/documentation work. Do not add a new public API or reinterpret
+          SKT1, SKF1, or SKP1 v1.
         </p>
       </article>
 
       <article class="card">
-        <h2>External handoff</h2>
+        <h2>Verified baseline</h2>
         <p>
-          External security review and package-manager publication remain
-          handoff work until accepted findings or verified package-channel updates exist.
+          v0.4.0 publication evidence is self-contained. Exact OpenSSL/external
+          provider parity passed 124/124 through both assemblies with the same
+          inventory.
         </p>
       </article>
 
       <article class="card">
-        <h2>Fix queue</h2>
+        <h2>Deferred hosted work</h2>
         <p>
-          Accepted external-review findings should become one protected change
-          each, with a focused regression check before implementation.
+          Current-main hosted reruns remain <code>DEFERRED_EXTERNAL_BILLING</code>. Local
+          evidence must not be described as hosted PASS.
         </p>
       </article>
     </section>
@@ -70,25 +69,13 @@
     <section class="section">
       <h2>Roadmap rules</h2>
       <ul>
-        <li>Security, data loss, and format compatibility come first.</li>
-        <li>Keep OpenSSL as the only shipped Community production provider; a generic internal extension hook does not make an external provider a supported Community backend.</li>
-        <li>Keep CMake install/export, the CLI, and package checks as release surfaces.</li>
-        <li>Do not add public API, wire formats, package channels, CI cost, or release ceremony without a written problem, regression check, and rollback plan.</li>
-        <li>Completed items leave the roadmap and belong in Git history or release notes.</li>
+        <li><code>docs/NEXT_WORK_QUEUE.md</code> is the only canonical active queue.</li>
+        <li>Keep OpenSSL 3.x as the only shipped Community production provider.</li>
+        <li>Keep the external provider seam build-tree-only with no silent fallback.</li>
+        <li>Do not copy Enterprise proprietary source or an AnoCrypto-C adapter into Community.</li>
+        <li>Do not reinterpret <code>SKT1</code>, <code>SKF1</code>, or <code>SKP1</code> v1.</li>
+        <li>Completed items belong in release notes, focused status documents, or Git history.</li>
       </ul>
-    </section>
-
-    <section class="section">
-      <h2>Intake rules</h2>
-      <p>
-        Broad audit documents must be split before implementation. Accepted work
-        must map to an existing AnoSecureKit API, CLI command, serialized format,
-        CMake package surface, release asset, or security-reporting surface.
-      </p>
-      <p>
-        Put work in `Now` only when it has a named surface, concrete problem,
-        runnable check, and rollback path.
-      </p>
     </section>
 
     <section class="section">
@@ -96,28 +83,27 @@
       <p>Release-impacting changes must pass the configured release preflight:</p>
       <pre><code>cmake --build build --config Release --target release-preflight</code></pre>
       <p>
-        Before tagging a release, verify package archives, source archives,
-        `SHA256SUMS.txt`, release SPDX SBOM, GitHub artifact attestations, and
-        release notes source of truth.
+        Before publication, verify archives, checksums, SPDX SBOM, attestations,
+        canonical release notes, and the exact Release-body comparison policy.
       </p>
     </section>
 
     <section class="section">
-      <h2>Out of scope unless the project changes</h2>
+      <h2>Out of scope unless the product changes</h2>
       <ul>
-        <li>Novel, unpublished, or project-specific crypto primitives, TLS, networking, or secure key storage.</li>
-        <li>Guaranteed memory erasure claims.</li>
-        <li>Framework middleware, JWT, CSRF, CORS, rate limiting, or web adapter parity.</li>
-        <li>Framework-scale abstractions without real call-site pressure.</li>
+        <li>Novel crypto primitives, TLS, networking, or secure key storage.</li>
+        <li>A second shipped Community provider.</li>
+        <li>Enterprise licensing, activation, customer delivery, or proprietary adapters.</li>
+        <li>KCMVP, FIPS, certification, validation, or security-audit claims without exact evidence.</li>
       </ul>
     </section>
   </main>
 
   <footer class="footer">
     <p>
-      Full details live in
+      Canonical work lives in
       <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">docs/NEXT_WORK_QUEUE.md</a>.
-      Website planning lives in
+      Website-only planning lives in
       <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/WEB_ROADMAP.md">docs/WEB_ROADMAP.md</a>.
     </p>
   </footer>

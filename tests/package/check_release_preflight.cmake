@@ -407,14 +407,16 @@ _anosecurekit_require_terms(
   "do not map to the C++ API, CLI, `SKT1`/`SKF1`/`SKP1`, CMake package"
   "asset, or security-reporting surface"
   "triage input, not implementation scope"
-  "`docs/ROADMAP.md` records the active work queue")
+  "`docs/NEXT_WORK_QUEUE.md` records the canonical active work queue"
+  "`docs/ROADMAP.md` is a compatibility entry point")
 
 _anosecurekit_require_terms(
   "README release notes and internal boundary docs"
   "${_anosecurekit_readme_text}"
   "The release notes source of truth is"
-  "GitHub Release notes should be"
-  "edited to match it"
+  "Compare the published GitHub"
+  "retain any difference as"
+  "do not claim exact parity"
   "ANOSECUREKIT_BUILD_FUZZ"
   "[docs/FUZZING.md](docs/FUZZING.md)"
   "[docs/PUBLIC_API_POLICY.md](docs/PUBLIC_API_POLICY.md)"

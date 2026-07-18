@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AnoSecureKit</title>
-  <meta name="description" content="AnoSecureKit is a small C++20 security utility library with OpenSSL 3.x as the current default crypto backend.">
+  <meta name="description" content="AnoSecureKit Community is a small C++20 security utility library with OpenSSL 3.x as its only shipped production provider.">
   <meta name="color-scheme" content="dark light">
   <link rel="stylesheet" href="./assets/site.css">
 </head>
@@ -24,7 +24,7 @@
     </nav>
 
     <section class="hero-body">
-      <p class="eyebrow">OpenSSL-backed today, backend-neutral by design</p>
+      <p class="eyebrow">OpenSSL 3.x shipped; provider extension stays internal</p>
       <h1>Practical C++20 crypto utilities.</h1>
       <p class="lead">
         AnoSecureKit gives application code a compact byte-oriented API for
@@ -62,8 +62,8 @@
       <article class="card warning">
         <h2>Security status</h2>
         <p>
-          No external security audit yet. Do not use it as a replacement for a
-          full review in high-risk systems.
+          No external security audit yet. CodeQL triage and release evidence do
+          not replace a focused review for high-risk systems.
         </p>
       </article>
       <article class="card">
@@ -119,6 +119,7 @@ cmake --build build --config Release --target check</code></pre>
 
         <article class="doc-group">
           <h3>Reference</h3>
+          <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/CURRENT_STATUS.md">Current status</a>
           <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/FORMAT.md">SKT1, SKF1, and SKP1 formats</a>
           <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/BACKEND_AND_PROVIDER_CONTRACT.md">Backend and provider contract</a>
           <a href="./release-verification.html">Verify release artifacts</a>
@@ -130,8 +131,8 @@ cmake --build build --config Release --target check</code></pre>
     <section class="section callout">
       <h2>Web access plan</h2>
       <p>
-        This site starts as a documentation-first project page with small
-        browser-local tools. Plaintext, keys, passwords, and files should not be
+        This site is a documentation-first project page with small browser-local
+        tools. Plaintext, keys, passwords, and files should not be
         uploaded to a server for routine crypto operations.
       </p>
       <p>
