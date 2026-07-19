@@ -83,6 +83,7 @@ and [docs/CROSS_REPOSITORY_BOUNDARY.md](docs/CROSS_REPOSITORY_BOUNDARY.md).
 - AES-256-GCM key wrapping helpers.
 - Chunked file sealing and opening with path and stream APIs.
 - Password-based chunked file sealing and opening with `SKP1` and scrypt.
+- Verification-only path and stream APIs for `SKF1` and `SKP1` that expose no plaintext output.
 
 ## Which API Should I Use?
 
@@ -91,7 +92,7 @@ and [docs/CROSS_REPOSITORY_BOUNDARY.md](docs/CROSS_REPOSITORY_BOUNDARY.md).
 | Encrypt a small message | `anosecurekit::encrypt` / `anosecurekit::decrypt` | Plaintext is returned only after authentication succeeds. |
 | Seal a file with a raw key | Path-based `anosecurekit::seal_file` / `anosecurekit::open_file` | Open refuses existing outputs, writes a temporary file, and commits only after authentication succeeds. |
 | Seal a file with a password | Path-based `anosecurekit::seal_file_with_password` / `anosecurekit::open_file_with_password` | Uses the fixed `SKP1` scrypt profile and the same path-output safety behavior. |
-| Verify an encrypted file before restore | `anosecurekit verify-file` / `anosecurekit verify-file-password` | Authenticates without creating a plaintext output file. |
+| Verify an encrypted file before restore | `anosecurekit::verify_file` / `anosecurekit::verify_file_with_password` or the matching CLI commands | Authenticates the complete file without a plaintext output parameter. |
 | Process an `SKT1` packet incrementally | `anosecurekit::packet_encryptor` / `anosecurekit::packet_decryptor` | Advanced use only; decrypted chunks are unverified until `finalize()` succeeds. |
 | Stream file data through caller-owned streams | Stream overloads or CLI `--out -` | Advanced use only; caller must discard output if the operation fails. |
 
@@ -601,6 +602,16 @@ void anosecurekit::open_file(
 	const anosecurekit::key256 &key,
 	std::span<const std::byte> aad = {});
 
+void anosecurekit::verify_file(
+	const std::filesystem::path &input,
+	const anosecurekit::key256 &key,
+	std::span<const std::byte> aad = {});
+
+void anosecurekit::verify_file(
+	std::istream &input,
+	const anosecurekit::key256 &key,
+	std::span<const std::byte> aad = {});
+
 void anosecurekit::seal_file_with_password(
 	const std::filesystem::path &input,
 	const std::filesystem::path &output,
@@ -622,6 +633,15 @@ void anosecurekit::open_file_with_password(
 void anosecurekit::open_file_with_password(
 	std::istream &input,
 	std::ostream &output,
+	std::span<const std::byte> password,
+	std::span<const std::byte> aad = {});
+void anosecurekit::verify_file_with_password(
+	const std::filesystem::path &input,
+	std::span<const std::byte> password,
+	std::span<const std::byte> aad = {});
+
+void anosecurekit::verify_file_with_password(
+	std::istream &input,
 	std::span<const std::byte> password,
 	std::span<const std::byte> aad = {});
 ```
@@ -650,6 +670,8 @@ cryptographically secure random bytes. It rejects `byte_size == 0` with
 `anosecurekit::version()` and the numeric version helpers return the package
 version compiled from the CMake project version. The CLI `anosecurekit --version`
 uses the same runtime value.
+
+`verify_file` and `verify_file_with_password` authenticate the complete file while discarding decrypted chunks inside AnoSecureKit. They expose no plaintext output parameter and retain the matching open-function error contract.
 
 The compatibility reference for serialized `SKT1`, `SKF1`, and `SKP1` data is
 [docs/FORMAT.md](docs/FORMAT.md). Security boundaries and operational limits are

@@ -15,8 +15,8 @@ The affected APIs are the public functions and classes listed in README.md:
 - encoders and decoders
 - hash, HMAC, HKDF, compare, random, and token helpers
 - `encrypt`, `decrypt`, `wrap_key`, and `unwrap_key`
-- `seal_file`, `open_file`, `seal_file_with_password`, and
-  `open_file_with_password`
+- `seal_file`, `open_file`, `verify_file`, `seal_file_with_password`,
+  `open_file_with_password`, and `verify_file_with_password`
 - `packet_encryptor` and `packet_decryptor`
 - version helpers
 
@@ -54,3 +54,7 @@ objects. They model the current `SKT1` incremental lifecycle:
 Add another object only when a named current lifecycle state cannot be expressed
 cleanly by free functions and the proposal includes the affected APIs, migration
 cost, rollback path, and regression check.
+
+## File Verification API Review
+
+`verify_file` and `verify_file_with_password` are additive throwing free functions with path and stream overloads. They authenticate complete `SKF1` or `SKP1` inputs, discard decrypted chunks inside the library, and expose no plaintext output parameter. `void` preserves the existing error-code distinctions; a boolean result would collapse malformed input and backend failure into an authentication answer. The CLI verification commands delegate to these APIs. See `docs/PUBLIC_FILE_VERIFICATION_API.md`.

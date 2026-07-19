@@ -41,6 +41,21 @@ ANOSECUREKIT_API void open_file(
     const key256 &key,
     std::span<const std::byte> aad = {});
 
+// Authenticates the complete SKF1 input without creating or exposing plaintext
+// output. Success returns normally; failures use the same error contract as
+// open_file.
+ANOSECUREKIT_API void verify_file(
+    const std::filesystem::path &input,
+    const key256 &key,
+    std::span<const std::byte> aad = {});
+
+// Consumes the complete SKF1 stream and discards authenticated plaintext inside
+// AnoSecureKit. No caller-owned output stream is involved.
+ANOSECUREKIT_API void verify_file(
+    std::istream &input,
+    const key256 &key,
+    std::span<const std::byte> aad = {});
+
 // Password bytes are used exactly as supplied: no trimming, normalization,
 // prompting, encoding conversion, or environment lookup.
 ANOSECUREKIT_API void seal_file_with_password(
@@ -68,6 +83,20 @@ ANOSECUREKIT_API void open_file_with_password(
 ANOSECUREKIT_API void open_file_with_password(
     std::istream &input,
     std::ostream &output,
+    std::span<const std::byte> password,
+    std::span<const std::byte> aad = {});
+
+// Authenticates the complete SKP1 input without creating or exposing plaintext
+// output. Password bytes and failure behavior match open_file_with_password.
+ANOSECUREKIT_API void verify_file_with_password(
+    const std::filesystem::path &input,
+    std::span<const std::byte> password,
+    std::span<const std::byte> aad = {});
+
+// Consumes the complete SKP1 stream and discards authenticated plaintext inside
+// AnoSecureKit. No caller-owned output stream is involved.
+ANOSECUREKIT_API void verify_file_with_password(
+    std::istream &input,
     std::span<const std::byte> password,
     std::span<const std::byte> aad = {});
 

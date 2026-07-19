@@ -154,8 +154,10 @@ Packet and file command options may be supplied in any order, but each command
 must provide exactly one input source and one key source or password source.
 `seal-file`, `open-file`, `seal-file-password`, and `open-file-password` also
 require exactly one output destination. `verify-file` and `verify-file-password`
-take no output option, authenticate the whole file, discard recovered plaintext,
-write nothing to stdout on success, and report success or failure through the
+take no output option, call the matching C++ `verify_file` or
+`verify_file_with_password` API, authenticate the whole file, discard recovered
+plaintext inside AnoSecureKit, write nothing to stdout on success, and report
+success or failure through the
 process exit code: 0 on success, 1 on failure. For `seal-file`, `open-file`,
 `seal-file-password`, and
 `open-file-password`, `--in -` reads from stdin and `--out -` writes raw binary

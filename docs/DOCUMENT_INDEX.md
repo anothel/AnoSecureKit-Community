@@ -24,6 +24,7 @@ Status: CURRENT
 
 - `README.md`: project overview, build, API, CLI, package, and release entry points.
 - `docs/CLI.md`: checked CLI behavior.
+- `docs/PUBLIC_FILE_VERIFICATION_API.md`: reviewed v0.5.0 additive API decision for output-free `SKF1`/`SKP1` verification.
 - `docs/FORMAT.md`: `SKT1`, `SKF1`, and `SKP1` v1 compatibility contract.
 - `docs/SECURITY_MODEL.md`: threat model, non-goals, and output-safety rules.
 - `docs/LICENSE_POLICY.md`: MPL-2.0 project boundary.

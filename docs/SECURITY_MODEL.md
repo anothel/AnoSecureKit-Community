@@ -104,9 +104,12 @@ The same private temporary-output helper is used for CLI-generated keys, wrapped
 key packets, packet encryption/decryption output, and stdin-to-file operations.
 Restrictive file creation does not replace parent-directory access control or
 the caller's responsibility to protect backups and later permission changes.
-- `verify-file` and `verify-file-password` take no output path, discard
-  recovered plaintext, and report authentication success with exit code 0 and
-  failure with exit code 1
+- C++ `verify_file` and `verify_file_with_password` take no output parameter,
+  discard decrypted chunks inside AnoSecureKit, and return only after the complete
+  file authenticates
+- CLI `verify-file` and `verify-file-password` delegate to those public APIs,
+  take no output path, discard recovered plaintext, write no plaintext, and
+  report authentication success with exit code 0 and failure with exit code 1
 
 ## Future Streaming Format Gate
 

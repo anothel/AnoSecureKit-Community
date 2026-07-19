@@ -37,6 +37,7 @@ set(_anosecurekit_license_page "${ANOSECUREKIT_SOURCE_DIR}/docs/license.html")
 set(_anosecurekit_security_model "${ANOSECUREKIT_SOURCE_DIR}/docs/SECURITY_MODEL.md")
 set(_anosecurekit_external_security_review "${ANOSECUREKIT_SOURCE_DIR}/docs/EXTERNAL_SECURITY_REVIEW.md")
 set(_anosecurekit_public_api_policy "${ANOSECUREKIT_SOURCE_DIR}/docs/PUBLIC_API_POLICY.md")
+set(_anosecurekit_public_file_verification_api "${ANOSECUREKIT_SOURCE_DIR}/docs/PUBLIC_FILE_VERIFICATION_API.md")
 set(_anosecurekit_openssl_policy "${ANOSECUREKIT_SOURCE_DIR}/docs/OPENSSL_POLICY.md")
 set(_anosecurekit_kdf_agility "${ANOSECUREKIT_SOURCE_DIR}/docs/KDF_AGILITY.md")
 set(_anosecurekit_fuzzing "${ANOSECUREKIT_SOURCE_DIR}/docs/FUZZING.md")
@@ -87,6 +88,7 @@ foreach(_anosecurekit_required_file IN ITEMS
     "${_anosecurekit_security_model}"
     "${_anosecurekit_external_security_review}"
     "${_anosecurekit_public_api_policy}"
+    "${_anosecurekit_public_file_verification_api}"
     "${_anosecurekit_openssl_policy}"
     "${_anosecurekit_kdf_agility}"
     "${_anosecurekit_fuzzing}"
@@ -140,6 +142,7 @@ file(READ "${_anosecurekit_license_page}" _anosecurekit_license_page_text)
 file(READ "${_anosecurekit_security_model}" _anosecurekit_security_model_text)
 file(READ "${_anosecurekit_external_security_review}" _anosecurekit_external_security_review_text)
 file(READ "${_anosecurekit_public_api_policy}" _anosecurekit_public_api_policy_text)
+file(READ "${_anosecurekit_public_file_verification_api}" _anosecurekit_public_file_verification_api_text)
 file(READ "${_anosecurekit_openssl_policy}" _anosecurekit_openssl_policy_text)
 file(READ "${_anosecurekit_kdf_agility}" _anosecurekit_kdf_agility_text)
 file(READ "${_anosecurekit_fuzzing}" _anosecurekit_fuzzing_text)
@@ -701,13 +704,24 @@ _anosecurekit_require_terms(
   "${_anosecurekit_file_header_text}"
   "seal_file"
   "open_file"
+  "verify_file"
   "seal_file_with_password"
   "open_file_with_password"
+  "verify_file_with_password"
   "refuses an existing output path"
   "temporary file"
   "Stream overload writes to caller-owned output"
   "Password bytes are used exactly as supplied"
   "no trimming, normalization")
+_anosecurekit_require_terms(
+  "public file verification API decision"
+  "${_anosecurekit_public_file_verification_api_text}"
+  "Status: REVIEWED IMPLEMENTATION CANDIDATE"
+  "Target: v0.5.0"
+  "verify_file"
+  "verify_file_with_password"
+  "No plaintext output path or output stream is accepted"
+  "Do not merge this feature into the v0.4.1 maintenance release line")
 _anosecurekit_require_terms(
   "public version header API mapping"
   "${_anosecurekit_version_header_text}"

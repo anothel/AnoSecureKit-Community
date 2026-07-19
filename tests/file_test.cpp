@@ -984,6 +984,74 @@ TEST(File, RoundTripsMultiChunkFile)
 	std::filesystem::remove(opened_path);
 }
 
+TEST(File, VerifiesRawKeyFilesWithoutPlaintextOutput)
+{
+	const auto plain_path = test_path("verify-raw-plain.bin");
+	const auto sealed_path = test_path("verify-raw-sealed.skf");
+	std::filesystem::remove(plain_path);
+	std::filesystem::remove(sealed_path);
+	const auto plaintext = patterned_bytes((1024u * 1024u) + 17u, 41u);
+	const auto aad = bytes_from_text("verify:raw:aad");
+	const auto key = key_from_seed(0x41);
+	const auto wrong_key = key_from_seed(0x42);
+	write_file(plain_path, plaintext);
+	anosecurekit::seal_file(plain_path, sealed_path, key, aad);
+	EXPECT_NO_THROW(anosecurekit::verify_file(sealed_path, key, aad));
+	expect_generic_authentication_failure([&] { anosecurekit::verify_file(sealed_path, wrong_key, aad); });
+	expect_generic_authentication_failure([&] { anosecurekit::verify_file(sealed_path, key, bytes_from_text("verify:wrong:aad")); });
+	std::istringstream stream_input(string_from_bytes(read_file(sealed_path)), std::ios::binary);
+	EXPECT_NO_THROW(anosecurekit::verify_file(stream_input, key, aad));
+	std::filesystem::remove(plain_path);
+	std::filesystem::remove(sealed_path);
+}
+
+TEST(File, VerifiesPasswordFilesWithoutPlaintextOutput)
+{
+	const auto plain_path = test_path("verify-password-plain.bin");
+	const auto sealed_path = test_path("verify-password-sealed.skp");
+	std::filesystem::remove(plain_path);
+	std::filesystem::remove(sealed_path);
+	const auto plaintext = patterned_bytes((1024u * 1024u) + 23u, 43u);
+	const auto password = bytes_from_text("verify password");
+	const auto wrong_password = bytes_from_text("wrong verify password");
+	const auto aad = bytes_from_text("verify:password:aad");
+	write_file(plain_path, plaintext);
+	anosecurekit::seal_file_with_password(plain_path, sealed_path, password, aad);
+	EXPECT_NO_THROW(anosecurekit::verify_file_with_password(sealed_path, password, aad));
+	expect_generic_authentication_failure([&] { anosecurekit::verify_file_with_password(sealed_path, wrong_password, aad); });
+	expect_generic_authentication_failure([&] { anosecurekit::verify_file_with_password(sealed_path, password, bytes_from_text("verify:wrong:aad")); });
+	std::istringstream stream_input(string_from_bytes(read_file(sealed_path)), std::ios::binary);
+	EXPECT_NO_THROW(anosecurekit::verify_file_with_password(stream_input, password, aad));
+	std::filesystem::remove(plain_path);
+	std::filesystem::remove(sealed_path);
+}
+
+TEST(File, VerificationRejectsMalformedFilesAndUsesExistingErrors)
+{
+	const auto plain_path = test_path("verify-malformed-plain.bin");
+	const auto raw_path = test_path("verify-malformed.skf");
+	const auto password_path = test_path("verify-malformed.skp");
+	const auto missing_path = test_path("verify-missing.skf");
+	std::filesystem::remove(plain_path);
+	std::filesystem::remove(raw_path);
+	std::filesystem::remove(password_path);
+	std::filesystem::remove(missing_path);
+	const auto key = key_from_seed(0x45);
+	const auto password = bytes_from_text("verify malformed password");
+	write_file(plain_path, bytes_from_text("verification malformed input"));
+	anosecurekit::seal_file(plain_path, raw_path, key);
+	anosecurekit::seal_file_with_password(plain_path, password_path, password);
+	auto raw = read_file(raw_path); raw.pop_back(); write_file(raw_path, raw);
+	auto packet = read_file(password_path); packet.push_back(std::byte{0x00}); write_file(password_path, packet);
+	expect_invalid_packet([&] { anosecurekit::verify_file(raw_path, key); });
+	expect_invalid_packet([&] { anosecurekit::verify_file_with_password(password_path, password); });
+	expect_error([&] { anosecurekit::verify_file(missing_path, key); }, anosecurekit::error_code::backend_failure);
+	expect_error([&] { anosecurekit::verify_file_with_password(password_path, {}); }, anosecurekit::error_code::invalid_input);
+	std::filesystem::remove(plain_path);
+	std::filesystem::remove(raw_path);
+	std::filesystem::remove(password_path);
+}
+
 TEST(File, PasswordRoundTripsSmallFile)
 {
 	const auto plain_path = test_path("password-plain-small.bin");

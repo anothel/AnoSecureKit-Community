@@ -101,6 +101,7 @@ anosecurekit open-file --in plain.bin.skf --out restored.bin --key-file key.hex 
 anosecurekit::key256 key = anosecurekit::generate_key();
 
 anosecurekit::seal_file("plain.bin", "plain.bin.skf", key);
+anosecurekit::verify_file("plain.bin.skf", key);
 anosecurekit::open_file("plain.bin.skf", "restored.bin", key);</code></pre>
     </section>
 

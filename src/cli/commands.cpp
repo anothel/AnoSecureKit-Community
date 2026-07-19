@@ -1086,41 +1086,6 @@ void run_streaming_file_command(const Options &options, Operation operation)
 	}
 }
 
-class discard_stream_buffer final : public std::streambuf
-{
-protected:
-	std::streamsize xsputn(const char *, std::streamsize count) override
-	{
-		return count;
-	}
-
-	int overflow(int ch) override
-	{
-		return traits_type::not_eof(ch);
-	}
-};
-
-template <typename Options, typename Operation>
-void run_verify_file_command(const Options &options, Operation operation)
-{
-	if (options.input_is_stdin)
-	{
-		set_stdin_binary();
-	}
-
-	std::ifstream input_file;
-	std::istream *input = &std::cin;
-	if (!options.input_is_stdin)
-	{
-		input_file = open_cli_input_file(options.input);
-		input = &input_file;
-	}
-
-	discard_stream_buffer buffer;
-	std::ostream output(&buffer);
-	operation(*input, output);
-}
-
 wrap_key_options parse_wrap_key_options(int argc, char **argv)
 {
 	if (argc < 6 || ((argc - 2) % 2) != 0)
@@ -1618,9 +1583,15 @@ int run(int argc, char **argv)
 			}
 			else
 			{
-				run_verify_file_command(options, [&](std::istream &input, std::ostream &output) {
-					anosecurekit::open_file(input, output, options.key, options.aad);
-				});
+				if (options.input_is_stdin)
+				{
+					set_stdin_binary();
+					anosecurekit::verify_file(std::cin, options.key, options.aad);
+				}
+				else
+				{
+					anosecurekit::verify_file(options.input, options.key, options.aad);
+				}
 			}
 			return 0;
 		}
@@ -1659,9 +1630,15 @@ int run(int argc, char **argv)
 			}
 			else
 			{
-				run_verify_file_command(options, [&](std::istream &input, std::ostream &output) {
-					anosecurekit::open_file_with_password(input, output, options.password, options.aad);
-				});
+				if (options.input_is_stdin)
+				{
+					set_stdin_binary();
+					anosecurekit::verify_file_with_password(std::cin, options.password, options.aad);
+				}
+				else
+				{
+					anosecurekit::verify_file_with_password(options.input, options.password, options.aad);
+				}
 			}
 			return 0;
 		}

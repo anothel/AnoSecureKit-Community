@@ -11,6 +11,7 @@
 #include <limits>
 #include <ostream>
 #include <span>
+#include <streambuf>
 
 #include "anosecurekit/error.hpp"
 
@@ -20,6 +21,20 @@ namespace
 {
 
 using namespace anosecurekit::detail;
+
+class discard_stream_buffer final : public std::streambuf
+{
+protected:
+	std::streamsize xsputn(const char *, std::streamsize count) override
+	{
+		return count;
+	}
+
+	int overflow(int ch) override
+	{
+		return traits_type::not_eof(ch);
+	}
+};
 
 template <typename Output>
 void seal_stream_payload(
@@ -233,6 +248,28 @@ void open_file(std::istream &input, std::ostream &output, const key256 &key, std
 	open_file_payload(input, output, header.serialized, header.nonce_prefix, file_key, aad);
 }
 
+void verify_file(const std::filesystem::path &input, const key256 &key, std::span<const std::byte> aad)
+{
+	std::ifstream in = open_input(input);
+	verify_file(in, key, aad);
+}
+
+void verify_file(std::istream &input, const key256 &key, std::span<const std::byte> aad)
+{
+	std::array<std::byte, kHeaderSize> header_bytes{};
+	if (!read_exact(input, header_bytes.data(), header_bytes.size()))
+	{
+		throw_invalid_packet();
+	}
+	const FileHeader header = parse_header(header_bytes);
+	key256 file_key = derive_file_key(key, header);
+	const internal::wipe_on_exit wipe_file_key{std::span<std::byte>(file_key)};
+
+	discard_stream_buffer buffer;
+	std::ostream output(&buffer);
+	open_file_payload(input, output, header.serialized, header.nonce_prefix, file_key, aad);
+}
+
 void seal_file_with_password(
     const std::filesystem::path &input,
     const std::filesystem::path &output,
@@ -313,6 +350,36 @@ void open_file_with_password(
 	key256 file_key = derive_password_file_key(password, header);
 	const internal::wipe_on_exit wipe_file_key{std::span<std::byte>(file_key)};
 
+	open_file_payload(input, output, header.serialized, header.nonce_prefix, file_key, aad);
+}
+
+void verify_file_with_password(
+    const std::filesystem::path &input,
+    std::span<const std::byte> password,
+    std::span<const std::byte> aad)
+{
+	require_non_empty_password(password);
+	std::ifstream in = open_input(input);
+	verify_file_with_password(in, password, aad);
+}
+
+void verify_file_with_password(
+    std::istream &input,
+    std::span<const std::byte> password,
+    std::span<const std::byte> aad)
+{
+	require_non_empty_password(password);
+	std::array<std::byte, kPasswordHeaderSize> header_bytes{};
+	if (!read_exact(input, header_bytes.data(), header_bytes.size()))
+	{
+		throw_invalid_packet();
+	}
+	const PasswordFileHeader header = parse_password_header(header_bytes);
+	key256 file_key = derive_password_file_key(password, header);
+	const internal::wipe_on_exit wipe_file_key{std::span<std::byte>(file_key)};
+
+	discard_stream_buffer buffer;
+	std::ostream output(&buffer);
 	open_file_payload(input, output, header.serialized, header.nonce_prefix, file_key, aad);
 }
 
