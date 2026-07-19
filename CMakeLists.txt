@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(
   anosecurekit
-  VERSION 0.4.0
+  VERSION 0.4.1
   DESCRIPTION "AnoSecureKit Community security utilities"
   LANGUAGES CXX)
 
@@ -419,6 +419,14 @@ else()
     USES_TERMINAL)
 endif()
 
+add_custom_target(release-notes-check
+  COMMAND ${CMAKE_COMMAND}
+    -DANOSECUREKIT_RELEASE_NOTES_FILE=${CMAKE_CURRENT_SOURCE_DIR}/docs/RELEASE_NOTES.md
+    -DANOSECUREKIT_RELEASE_VERSION:STRING=${PROJECT_VERSION}
+    -DANOSECUREKIT_RELEASE_NOTES_OUTPUT=${CMAKE_CURRENT_BINARY_DIR}/release-notes/anosecurekit-v${PROJECT_VERSION}.md
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/extract_release_notes.cmake
+  USES_TERMINAL)
+
 add_custom_target(release-workflow-check
   COMMAND ${CMAKE_COMMAND}
     -DANOSECUREKIT_WORKFLOW_FILE=${CMAKE_CURRENT_SOURCE_DIR}/.github/workflows/anosecurekit-ci.yml
@@ -607,6 +615,7 @@ elseif(TARGET check AND ANOSECUREKIT_BUILD_CLI AND ANOSECUREKIT_INSTALL_CLI)
       examples-check
       dogfood-check
       release-workflow-check
+      release-notes-check
       spdx-check
       legacy-name-check
       document-alignment-check

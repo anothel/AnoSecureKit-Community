@@ -12,13 +12,15 @@ hosted run conclusions for the tagged commit, then update
 
 ## 1. Choose The Version
 
-- Decide the next semantic version, for example `0.4.0`.
+- Decide the next semantic version, for example `0.4.1`.
 - Update `project(... VERSION x.y.z)` in `CMakeLists.txt`.
 - Confirm `SECURITY.md`, `docs/FORMAT.md`, and `docs/SECURITY_MODEL.md` still
   match the shipped behavior.
 - Confirm `docs/RELEASE_NOTES.md` is the release notes source of truth for the
-  version being tagged. Do not introduce a separate `CHANGELOG.md` unless the
-  release policy changes first.
+  version being tagged. The workflow must extract exactly the matching
+  `## vX.Y.Z` section and pass it to both release creation and release reruns
+  through `--notes-file`; unreviewed generated notes are prohibited. Do not
+  introduce a separate `CHANGELOG.md` unless the release policy changes first.
 - Confirm the private vulnerability reporting path in `SECURITY.md` still works.
 - Use the matching tag name `vx.y.z`.
 - Do not push the tag until the version change is already on `main`.
@@ -58,7 +60,8 @@ extract one source archive, build from that extracted source, install it, and
 run `anosecurekit --version`.
 
 `release-preflight` runs `check`, `package-check`, `release-workflow-check`,
-`spdx-check`, `legacy-name-check`, `document-alignment-check`,
+`release-notes-check`, `spdx-check`, `legacy-name-check`,
+`document-alignment-check`,
 `backend-boundary-check`,
 `external-backend-hook-check`, `external-backend-parity-check`, and
 `cli-docs-check`, then checks SemVer
@@ -90,11 +93,11 @@ Do not create the version tag from an unverified commit.
 Create the tag on the verified `main` commit:
 
 ```sh
-git tag v0.4.0
-git push origin v0.4.0
+git tag v0.4.1
+git push origin v0.4.1
 ```
 
-Replace `v0.4.0` with the version chosen in step 1.
+Replace `v0.4.1` with the version chosen in step 1.
 
 ## 6. Verify The GitHub Release
 
@@ -108,10 +111,12 @@ After the tag workflow finishes, check the GitHub Release for:
   name to avoid asset-name collisions.
 - GitHub artifact attestations for `SHA256SUMS.txt` and release archives.
 - Release title `AnoSecureKit Community vX.Y.Z`.
-- Compare the published Release body with the matching version section in
-  `docs/RELEASE_NOTES.md`. If they differ, retain the normalized inputs and diff
-  and do not describe the result as exact parity. Before a future release, prefer
-  a verified canonical notes file over unreviewed generated wording.
+- Confirm the published Release body exactly matches the section extracted from
+  `docs/RELEASE_NOTES.md`. Both `gh release create` and `gh release edit` must use
+  the checked `--notes-file`; generated notes are prohibited. If the bodies
+  differ, retain the normalized inputs and diff and do not describe the result as
+  exact parity. Release notes mention the same user-visible changes as the tagged
+  source and package artifacts.
 
 Download `SHA256SUMS.txt`, verify checksums, and verify GitHub artifact
 attestations for the checksum file and at least one archive:
@@ -119,7 +124,7 @@ attestations for the checksum file and at least one archive:
 ```sh
 sha256sum -c SHA256SUMS.txt
 gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community
-gh attestation verify anosecurekit-0.4.0-source.tar.gz --repo anothel/AnoSecureKit-Community
+gh attestation verify anosecurekit-0.4.1-source.tar.gz --repo anothel/AnoSecureKit-Community
 ```
 
 Replace the archive name with the released version and asset you downloaded.
@@ -151,8 +156,9 @@ If the release workflow fails before assets are uploaded, fix the issue on
 `main`, then create a new version tag for the fixed commit.
 
 If the release already exists but an upload step failed, the workflow is designed
-to edit the release and upload assets with `--clobber` on rerun. Confirm the
-final asset list and checksums after rerunning.
+to edit the release with the same canonical `--notes-file` and upload assets with
+`--clobber` on rerun. Confirm the final body, asset list, and checksums after
+rerunning.
 
 Do not move or delete a published release tag unless the release was never
 consumed and the project owner explicitly chooses that recovery path.

@@ -2,6 +2,56 @@
 
 # AnoSecureKit Release Notes
 
+## v0.4.1
+
+AnoSecureKit Community v0.4.1 is a narrow maintenance release. It contains the
+reviewed fuzz-adapter correction and completed release-evidence, documentation,
+and repository-maintenance work accumulated after v0.4.0.
+
+### Fixed
+
+- Normalized hexadecimal fixture text before fuzz-adapter decoding so trailing
+  line endings and other accepted fixture whitespace do not escape the intended
+  parser path.
+- Kept the correction inside the fuzz harness; production cryptographic and
+  serialization behavior is unchanged.
+
+### Release and Repository Maintenance
+
+- Added deterministic LF policy and source-package exclusions for repository-
+  external evidence.
+- Retained compact, checksum-addressed evidence pointers for v0.4.0 publication,
+  CodeQL triage, and exact provider parity without committing full evidence
+  archives or release binaries.
+- Aligned canonical Markdown, static Pages, compatibility roadmap, provider
+  terminology, and the single active work queue.
+- Added a release-note gate that extracts exactly the matching version section
+  from `docs/RELEASE_NOTES.md`; GitHub Release creation and reruns use that
+  reviewed section through `--notes-file` rather than generated notes.
+
+### Verification
+
+- Passed the full local Release `release-preflight` candidate gate.
+- Passed the 124/124 OpenSSL test inventory and the same 124/124 inventory through
+  the build-tree-only external provider assembly.
+- Passed package, install/export, installed-consumer, library-only consumer,
+  source-rebuild, release-asset, checksum, SPDX SBOM, provider-boundary,
+  release-workflow, release-note, and document-alignment checks.
+- Hosted current-main confirmation remains `DEFERRED_EXTERNAL_BILLING`; this
+  release note does not claim a hosted current-main PASS.
+
+### Compatibility and Claims Boundary
+
+- No breaking public C++ API change.
+- No CLI, include-root, namespace, package, or CMake target change.
+- OpenSSL 3.x remains the only shipped Community production provider.
+- No cryptographic behavior or `SKT1`, `SKF1`, or `SKP1` v1 meaning changed.
+- Preserved the compatibility-sensitive `SKF1` HKDF label
+  `anosecurekit file sealing v1`.
+- No Enterprise proprietary source or AnoCrypto-C adapter is included.
+- No KCMVP, FIPS, certification, validation, or external security-audit claim is
+  made.
+
 ## v0.4.0
 
 AnoSecureKit Community v0.4.0 establishes an internal backend provider seam

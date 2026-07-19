@@ -342,6 +342,22 @@ jobs:
       attestations: write
 
     steps:
+      - name: Checkout release source
+        uses: actions/checkout@v7
+
+      - name: Prepare canonical release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF_NAME#v}"
+          notes_file="$RUNNER_TEMP/anosecurekit-release-notes.md"
+          cmake \
+            -DANOSECUREKIT_RELEASE_NOTES_FILE="$GITHUB_WORKSPACE/docs/RELEASE_NOTES.md" \
+            -DANOSECUREKIT_RELEASE_VERSION="$tag_version" \
+            -DANOSECUREKIT_RELEASE_NOTES_OUTPUT="$notes_file" \
+            -P "$GITHUB_WORKSPACE/cmake/extract_release_notes.cmake"
+          printf 'ANOSECUREKIT_RELEASE_NOTES_FILE=%s\n' "$notes_file" >> "$GITHUB_ENV"
+
       - name: Download package artifacts
         uses: actions/download-artifact@v8
         with:
@@ -482,11 +498,12 @@ jobs:
           set -euo pipefail
           tag="${GITHUB_REF_NAME}"
           title="AnoSecureKit Community ${tag}"
+          notes_file="${ANOSECUREKIT_RELEASE_NOTES_FILE:?}"
 
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --title "$title"
+            gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --title "$title" --notes-file "$notes_file"
           else
-            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$title" --generate-notes
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$title" --notes-file "$notes_file"
           fi
 
       - name: Upload release assets

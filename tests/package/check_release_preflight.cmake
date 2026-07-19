@@ -47,8 +47,10 @@ set(_anosecurekit_dependency_policy "${ANOSECUREKIT_SOURCE_DIR}/docs/DEPENDENCY_
 set(_anosecurekit_verify_release "${ANOSECUREKIT_SOURCE_DIR}/docs/VERIFY_RELEASE.md")
 set(_anosecurekit_dogfooding "${ANOSECUREKIT_SOURCE_DIR}/docs/DOGFOODING.md")
 set(_anosecurekit_release_notes "${ANOSECUREKIT_SOURCE_DIR}/docs/RELEASE_NOTES.md")
+set(_anosecurekit_release_notes_extract "${ANOSECUREKIT_SOURCE_DIR}/cmake/extract_release_notes.cmake")
 set(_anosecurekit_release_checklist "${ANOSECUREKIT_SOURCE_DIR}/docs/RELEASE_CHECKLIST.md")
 set(_anosecurekit_roadmap "${ANOSECUREKIT_SOURCE_DIR}/docs/ROADMAP.md")
+set(_anosecurekit_next_work_queue "${ANOSECUREKIT_SOURCE_DIR}/docs/NEXT_WORK_QUEUE.md")
 set(_anosecurekit_internals "${ANOSECUREKIT_SOURCE_DIR}/docs/INTERNALS.md")
 set(_anosecurekit_package_recipe_check "${ANOSECUREKIT_SOURCE_DIR}/tests/package/check_package_recipes.cmake")
 set(_anosecurekit_fixtures_readme "${ANOSECUREKIT_SOURCE_DIR}/tests/fixtures/README.md")
@@ -95,8 +97,10 @@ foreach(_anosecurekit_required_file IN ITEMS
     "${_anosecurekit_verify_release}"
     "${_anosecurekit_dogfooding}"
     "${_anosecurekit_release_notes}"
+    "${_anosecurekit_release_notes_extract}"
     "${_anosecurekit_release_checklist}"
     "${_anosecurekit_roadmap}"
+    "${_anosecurekit_next_work_queue}"
     "${_anosecurekit_internals}"
     "${_anosecurekit_package_recipe_check}"
     "${_anosecurekit_fixtures_readme}"
@@ -146,8 +150,10 @@ file(READ "${_anosecurekit_dependency_policy}" _anosecurekit_dependency_policy_t
 file(READ "${_anosecurekit_verify_release}" _anosecurekit_verify_release_text)
 file(READ "${_anosecurekit_dogfooding}" _anosecurekit_dogfooding_text)
 file(READ "${_anosecurekit_release_notes}" _anosecurekit_release_notes_text)
+file(READ "${_anosecurekit_release_notes_extract}" _anosecurekit_release_notes_extract_text)
 file(READ "${_anosecurekit_release_checklist}" _anosecurekit_release_checklist_text)
 file(READ "${_anosecurekit_roadmap}" _anosecurekit_roadmap_text)
+file(READ "${_anosecurekit_next_work_queue}" _anosecurekit_next_work_queue_text)
 file(READ "${_anosecurekit_internals}" _anosecurekit_internals_text)
 file(READ "${_anosecurekit_package_recipe_check}" _anosecurekit_package_recipe_check_text)
 file(READ "${_anosecurekit_fixtures_readme}" _anosecurekit_fixtures_readme_text)
@@ -253,6 +259,7 @@ _anosecurekit_require_terms(
   "examples-check"
   "dogfood-check"
   "release-workflow-check"
+  "release-notes-check"
   "spdx-check"
   "legacy-name-check"
   "backend-boundary-check"
@@ -265,6 +272,7 @@ _anosecurekit_require_terms(
   "check_external_backend_hook.cmake"
   "check_external_backend_parity.cmake"
   "check_cli_docs.cmake"
+  "extract_release_notes.cmake"
   "check_package_recipes.cmake")
 
 
@@ -288,60 +296,46 @@ _anosecurekit_forbid_terms(
   "--target release-workflow-check")
 
 _anosecurekit_require_terms(
-  "roadmap scope guard"
+  "roadmap compatibility entry point"
   "${_anosecurekit_roadmap_text}"
+  "Status: COMPATIBILITY ENTRY POINT"
+  "docs/NEXT_WORK_QUEUE.md"
+  "must not carry a second"
+  "## Current Direction"
+  "Prepare `v0.4.1` as a maintenance release"
+  "OpenSSL 3.x as the only shipped Community production provider"
+  "DEFERRED_EXTERNAL_BILLING"
+  "## Release Verification Entry Point"
+  "--target release-preflight"
   "## Intake Rules"
+  "a runnable check"
+  "rollback path")
+_anosecurekit_forbid_regex(
+  "roadmap independent work queue"
+  "${_anosecurekit_roadmap_text}"
+  "COMM-[A-Z]+-[0-9]+[ ]+—")
+_anosecurekit_forbid_terms(
+  "roadmap stale active queue"
+  "${_anosecurekit_roadmap_text}"
   "## Current Plan"
-  "dogfood-check"
-  "no repeated friction"
-  "Release-impacting work"
   "Fix Queue"
-  "Do not leave accepted fixes deferred"
-  "Keep v0.x public API changes minimal"
-  "Active roadmap items must name an existing AnoSecureKit surface"
-  "External audit or roadmap notes are triage input only"
-  "Node.js"
-  "backend middleware"
   "Package Publishing"
-  "Package-manager recipe publication"
-  "rollback")
+  "Recently Finished")
 
 _anosecurekit_require_terms(
-  "roadmap repository-specific candidates"
-  "${_anosecurekit_roadmap_text}"
-  "Package-manager recipe publication"
-  "consumer project builds against each published recipe")
-_anosecurekit_forbid_terms(
-  "roadmap completed benchmark or fixture queue items"
-  "${_anosecurekit_roadmap_text}"
-  "Add benchmarks for crypto/file paths"
-  "Expand negative compatibility fixtures")
-_anosecurekit_forbid_terms(
-  "roadmap completed public review queue items"
-  "${_anosecurekit_roadmap_text}"
-  "Public error/API shape review"
-  "Public object-lifecycle review"
-  "OpenSSL provider policy")
-
-_anosecurekit_forbid_terms(
-  "roadmap analysis dump"
-  "${_anosecurekit_roadmap_text}"
-  "| Audit theme | AnoSecureKit handling | Required check |"
-  "| Analysis item | Disposition | Reason / gate |"
-  "anosecurekit_analysis_2026-06-28.md"
-  "anosecurekit_full_analysis_2026-06-28.md"
-  "Already resolved"
-  "Already resolved, keep guarded"
-  "Accepted as release-confidence work"
-  "These are blocked candidates")
-_anosecurekit_forbid_regex(
-  "roadmap deferred-work section"
-  "${_anosecurekit_roadmap_text}"
-  "## [Pp]arked|[Pp]arked|## Not[ ]Planned")
-_anosecurekit_forbid_regex(
-  "roadmap completed-work section"
-  "${_anosecurekit_roadmap_text}"
-  "## Recently[ ]Finished|Recently[ ]Finished")
+  "canonical next work queue"
+  "${_anosecurekit_next_work_queue_text}"
+  "Status: CURRENT"
+  "COMM-DOC-02"
+  "COMM-REL-04 — Prepare v0.4.1 Maintenance Release"
+  "matching"
+  "docs/RELEASE_NOTES.md"
+  "full local release preflight"
+  "DEFERRED_EXTERNAL_BILLING"
+  "Do not add a new"
+  "public API"
+  "OpenSSL"
+  "v1 formats")
 
 _anosecurekit_require_terms(
   "dogfooding record"
@@ -356,8 +350,8 @@ _anosecurekit_require_terms(
   "open-file-password"
   "C++ consumer"
   "no repeated friction recorded"
-  "Follow-up work now lives in"
-  "Fix Queue")
+  "canonical `docs/NEXT_WORK_QUEUE.md`"
+  "named check and rollback path")
 
 _anosecurekit_require_terms(
   "contributor one-command local checks"
@@ -414,9 +408,14 @@ _anosecurekit_require_terms(
   "README release notes and internal boundary docs"
   "${_anosecurekit_readme_text}"
   "The release notes source of truth is"
-  "Compare the published GitHub"
-  "retain any difference as"
-  "do not claim exact parity"
+  "matching `## vX.Y.Z` section"
+  "`gh release create`"
+  "`gh release edit`"
+  "`--notes-file`"
+  "Generated release"
+  "notes are not used"
+  "Publication evidence must compare"
+  "must not claim exact parity"
   "ANOSECUREKIT_BUILD_FUZZ"
   "[docs/FUZZING.md](docs/FUZZING.md)"
   "[docs/PUBLIC_API_POLICY.md](docs/PUBLIC_API_POLICY.md)"
@@ -781,7 +780,7 @@ _anosecurekit_forbid_terms(
   "rate limiting"
   "diagnostic routes")
 
-foreach(_anosecurekit_target_name IN ITEMS check package-check release-workflow-check)
+foreach(_anosecurekit_target_name IN ITEMS check package-check release-workflow-check release-notes-check)
   _anosecurekit_require_text(
     "README local target ${_anosecurekit_target_name}"
     "${_anosecurekit_readme_text}"
@@ -850,7 +849,12 @@ _anosecurekit_require_terms(
   "gh attestation verify SHA256SUMS.txt --repo anothel/AnoSecureKit-Community"
   "sha256sum -c SHA256SUMS.txt"
   "docs/RELEASE_NOTES.md"
-  "Do not introduce a separate `CHANGELOG.md`"
+  "matching"
+  "`## vX.Y.Z` section"
+  "`--notes-file`"
+  "generated notes are prohibited"
+  "Do not"
+  "introduce a separate `CHANGELOG.md`"
   "Release notes mention the same user-visible changes"
   "run `fuzz-smoke`"
   "extra parser smoke check"
@@ -882,34 +886,56 @@ _anosecurekit_require_terms(
   "release provenance attestation wiring")
 
 _anosecurekit_require_terms(
+  "README canonical release notes policy"
+  "${_anosecurekit_readme_text}"
+  "matching `## vX.Y.Z` section"
+  "`gh release create`"
+  "`gh release edit`"
+  "`--notes-file`"
+  "Generated release"
+  "notes are not used")
+
+_anosecurekit_require_terms(
+  "release notes extractor policy"
+  "${_anosecurekit_release_notes_extract_text}"
+  "ANOSECUREKIT_RELEASE_NOTES_FILE"
+  "ANOSECUREKIT_RELEASE_VERSION"
+  "ANOSECUREKIT_RELEASE_NOTES_OUTPUT"
+  "Release notes contain duplicate"
+  "Release notes section"
+  "file(WRITE")
+
+_anosecurekit_require_terms(
   "current release notes"
   "${_anosecurekit_release_notes_text}"
   "## v${ANOSECUREKIT_PROJECT_VERSION}"
-  "internal backend provider seam"
-  "OpenSSL 3.x as the only shipped Community production provider"
-  "secure wiping"
-  "src/backend/crypto_backend_openssl.cpp"
-  "src/backend/crypto_backend.hpp"
-  "build-tree-only external provider hook"
-  "non-imported `OBJECT_LIBRARY`"
-  "no proprietary provider is included or shipped"
-  "fail closed at configure time"
-  "backend-boundary-check"
-  "external-backend-hook-check"
-  "external-backend-parity-check"
-  "same 124-test inventory"
-  "124/124 configured tests"
-  "package, install/export, installed-consumer, library-only consumer"
-  "source-rebuild, release-asset, checksum, SBOM"
+  "narrow maintenance release"
+  "fuzz-adapter correction"
+  "hexadecimal fixture text"
+  "production cryptographic and"
+  "serialization behavior is unchanged"
+  "deterministic LF policy"
+  "source-package exclusions"
+  "checksum-addressed evidence pointers"
+  "single active work queue"
+  "matching version section"
+  "`--notes-file`"
+  "rather than generated notes"
+  "full local Release `release-preflight`"
+  "124/124 OpenSSL test inventory"
+  "same 124/124 inventory"
+  "package, install/export, installed-consumer"
+  "library-only consumer"
+  "source-rebuild, release-asset, checksum, SPDX SBOM"
+  "release-workflow, release-note, and document-alignment checks"
+  "DEFERRED_EXTERNAL_BILLING"
   "No breaking public C++ API change."
-  "No CLI, package, namespace, include-root, or CMake target change."
-  "No cryptographic behavior change."
-  "No `SKT1`, `SKF1`, or `SKP1` format change."
+  "No CLI, include-root, namespace, package, or CMake target change."
+  "OpenSSL 3.x remains the only shipped Community production provider."
+  "No cryptographic behavior or `SKT1`, `SKF1`, or `SKP1` v1 meaning changed."
   "`anosecurekit file sealing v1`"
-  "compatibility-sensitive `SKF1` HKDF label"
-  "not a second supported Community backend"
-  "No AnoCrypto-C implementation is included"
-  "no KCMVP or FIPS validation")
+  "No Enterprise proprietary source or AnoCrypto-C adapter is included."
+  "No KCMVP, FIPS, certification, validation, or external security-audit claim")
 
 _anosecurekit_require_terms(
   "license policy docs"
@@ -919,12 +945,13 @@ _anosecurekit_require_terms(
   "Commercial use is allowed"
   "Closed-source application use is allowed"
   "file-level copyleft"
-  "external proprietary cryptographic module"
-  "managed outside this"
-  "not shipped in Community"
-  "separate commercial terms"
-  "does not change the `MPL-2.0` license of Community files"
-  "No external proprietary source is included in this repository")
+  "AnoSecureKit Enterprise and AnoCrypto-C are separate repositories and products"
+  "Community does not include Enterprise proprietary source"
+  "an AnoCrypto-C adapter"
+  "using separately licensed external products does"
+  "not change the license of Community files"
+  "No external proprietary source is"
+  "included in this repository")
 
 _anosecurekit_require_terms(
   "documentation guide"
@@ -942,11 +969,11 @@ _anosecurekit_require_terms(
   "AnoSecureKit License"
   "MPL-2.0"
   "Modified files"
-  "External proprietary module boundary"
-  "separate commercial"
-  "not included in Community"
-  "using an external module does not change"
-  "license of Community files")
+  "Separate product boundary"
+  "AnoSecureKit Enterprise and AnoCrypto-C"
+  "Community includes neither proprietary source nor an AnoCrypto-C"
+  "using separately licensed products does not change the"
+  "MPL-2.0 license of Community files")
 
 _anosecurekit_require_terms(
   "release hygiene scripts"

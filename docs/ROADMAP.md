@@ -22,6 +22,15 @@ independent task list. Website-only planning lives in
 - Record hosted current-main checks as `DEFERRED_EXTERNAL_BILLING` while runner
   billing is blocked.
 
+## Release Verification Entry Point
+
+The canonical active task details remain in `docs/NEXT_WORK_QUEUE.md`. The local
+release gate is executed with:
+
+```sh
+cmake --build build --config Release --target release-preflight
+```
+
 ## Intake Rules
 
 New work belongs in `docs/NEXT_WORK_QUEUE.md` only when it names a current public
