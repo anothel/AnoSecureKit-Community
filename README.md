@@ -797,14 +797,16 @@ AnoSecureKit does not scrub, lock, or otherwise guarantee erasure of key materia
 derived keys, plaintext, or intermediate buffers from process memory.
 
 Path-based file APIs and CLI file commands refuse existing output paths and
-remove AnoSecureKit-owned temporary output after failures. Path-based file APIs
-flush AnoSecureKit-owned temporary output before committing it and use platform
-commit syncing where practical, but they do not guarantee survival across power
-loss or storage-device failure. If a post-commit directory sync fails on a
-platform that supports it, AnoSecureKit reports `backend_failure` and the output
-path may already exist. Stream overloads and standard-stream CLI usage operate
-on caller-provided streams, so callers remain responsible for discarding
-untrusted output when an operation fails.
+remove AnoSecureKit-owned temporary output after failures. They create temporary
+output with an operating-system exclusive open; POSIX files are created with
+owner read/write permissions only (`0600`). Path-based file APIs flush
+AnoSecureKit-owned temporary output before committing it and use platform commit
+syncing where practical, but they do not guarantee survival across power loss or
+storage-device failure. If a post-commit directory sync fails on a platform that
+supports it, AnoSecureKit reports `backend_failure` and the output path may
+already exist. Stream overloads and standard-stream CLI usage operate on caller-
+provided streams, so callers remain responsible for discarding untrusted output
+when an operation fails.
 
 Applications remain responsible for key lifecycle, provider configuration,
 process isolation, persistence, backups, logging policy, and threat modeling.

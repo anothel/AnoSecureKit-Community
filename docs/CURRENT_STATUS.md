@@ -3,7 +3,7 @@
 # AnoSecureKit Community Current Status
 
 Status: CURRENT
-Audit date: 2026-07-18 (Asia/Seoul)
+Audit date: 2026-07-19 (Asia/Seoul)
 Scope: AnoSecureKit Community only
 
 ## Repository And Release Baselines
@@ -12,8 +12,9 @@ Scope: AnoSecureKit Community only
 product: AnoSecureKit Community
 license: MPL-2.0
 language: C++20
-audited repository baseline: 95aef99db715e25251df6a5c01d598f4f4984a7e
+audited repository baseline: ba710b3f618db0b21664dde892e1f048c43218a4
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
+prepared project version: 0.4.1
 release tag: v0.4.0
 release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
 release published time: 2026-07-13T19:26:47+09:00
@@ -65,6 +66,7 @@ fallback.
 | Repository EOL policy | PASS | `.gitattributes` defines deterministic LF policy |
 | Source evidence exclusion | PASS | CPack and package-check reject repository-external evidence paths |
 | Website/canonical documentation alignment | PASS LOCAL | Static Pages, README, compatibility roadmap, and current policy wording aligned; guard added |
+| Secure CLI output creation | PASS LOCAL CANDIDATE | Exclusive temporary create; POSIX mode 0600; key, packet, plaintext, and stdin-to-file regressions passed |
 
 ```text
 publication evidence archive: PASS SELF-CONTAINED
@@ -98,6 +100,10 @@ maintenance action changes their GitHub disposition.
 
 The billing blocker does not invalidate completed local fuzz verification, but
 hosted confirmation must not be reported as PASS.
+
+The CLI output hardening was validated from the `ba710b3` maintenance source.
+Source-controlled status records that audited input rather than predicting the
+resulting commit SHA; resolve the exact revision from Git after commit.
 
 ## Repository Boundaries
 

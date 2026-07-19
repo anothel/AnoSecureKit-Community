@@ -2,7 +2,7 @@
 
 # AnoSecureKit Release and Evidence Status
 
-Status date: 2026-07-18 (Asia/Seoul)
+Status date: 2026-07-19 (Asia/Seoul)
 Current release code/tag baseline: `v0.4.0`
 
 ## Evidence Labels
@@ -22,11 +22,12 @@ while naming a material execution limitation that must not be omitted.
 ## Repository And Release Identity
 
 ```text
-audited repository baseline: 95aef99db715e25251df6a5c01d598f4f4984a7e
+audited repository baseline: ba710b3f618db0b21664dde892e1f048c43218a4
 implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
 implementation subject: fix: normalize hex fixtures in fuzz adapter
 current main identity: resolve from Git at audit time
-post-tag change classes: documentation/evidence and fuzz adapter maintenance
+prepared project version: 0.4.1
+post-tag change classes: fuzz adapter, CLI output hardening, documentation/evidence and release maintenance
 release tag: v0.4.0
 annotated tag object: a2dfd3b79335062ffe73ebfb520b4aac7f590e3d
 release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
@@ -267,6 +268,32 @@ observed drift and is part of `release-preflight`. This documentation maintenanc
 does not change production code, public API, CLI, CMake identity, provider
 selection, fixtures, or v1 format meaning.
 
+## COMM-HARD-02 Secure CLI Output Creation
+
+A product capability audit reproduced generic CLI file outputs with POSIX mode
+`0644` under `umask 022`, including generated keys and recovered packet
+plaintext. The library path APIs already used exclusive mode-`0600` temporary
+files; the CLI generic output helper did not.
+
+The prepared correction uses an operating-system exclusive open for every CLI
+temporary file, requests POSIX mode `0600`, flushes before close, preserves
+existing-destination rejection and commit-after-success behavior, and removes
+temporary output after failure. Focused regression coverage includes key
+generation, key wrap/unwrap, packet encrypt/decrypt, and stdin-to-file seal/open.
+
+```text
+input source reference: ba710b3f618db0b21664dde892e1f048c43218a4
+local full release-preflight: PASS
+OpenSSL: 124/124 PASS
+external provider: 124/124 PASS
+ordered inventory: identical
+hosted confirmation: DEFERRED_EXTERNAL_BILLING
+exact resulting commit: resolve from Git after commit
+```
+
+No public API, CLI syntax, CMake identity, production provider, or v1 format
+meaning changed.
+
 ## Current Evidence Matrix
 
 | Evidence | Status | Current statement |
@@ -289,6 +316,7 @@ selection, fixtures, or v1 format meaning.
 | GitHub CodeQL alert disposition | NOT_RUN | All 19 alerts remain open; no state mutation was authorized |
 | Historical scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
 | Fuzz adapter fix | PASS LOCAL | `c3872c1`; focused and full local fuzz smoke passed |
+| Secure CLI output creation | PASS LOCAL CANDIDATE | Exclusive create and POSIX mode 0600 verified for key, packet, plaintext, and stdin-to-file outputs |
 | Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
 | Provider parity behavior and inventory | PASS LOCAL EXACT | Exact detached `1d933eb` worktree; OpenSSL 124/124; external 124/124; ordered inventory identical; JSON/JUnit retained |
 | Declared GoogleTest v1.14.0 parity rerun | PASS LOCAL EXACT | Official source archive SHA-256 verified before build and execution |

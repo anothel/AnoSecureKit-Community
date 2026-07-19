@@ -3,7 +3,9 @@
 
 #include "anosecurekit/anosecurekit.hpp"
 
+#include <algorithm>
 #include <array>
+#include <cerrno>
 #include <charconv>
 #include <cstddef>
 #include <cstdio>
@@ -12,6 +14,8 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <limits>
+#include <memory>
 #include <span>
 #include <stdexcept>
 #include <streambuf>
@@ -22,6 +26,11 @@
 #ifdef _WIN32
 #include <fcntl.h>
 #include <io.h>
+#include <share.h>
+#include <sys/stat.h>
+#else
+#include <fcntl.h>
+#include <unistd.h>
 #endif
 
 namespace
@@ -768,23 +777,195 @@ void remove_file_quietly(const std::filesystem::path &path)
 	(void)std::filesystem::remove(path, ec);
 }
 
-void open_cli_output_file(const std::filesystem::path &output, std::filesystem::path &temp_path, std::ofstream &stream)
+enum class exclusive_open_result
+{
+	opened,
+	already_exists,
+	failed,
+};
+
+exclusive_open_result try_open_cli_output_exclusive(const std::filesystem::path &path, int &descriptor)
+{
+#ifdef _WIN32
+	descriptor = -1;
+	const errno_t result = _wsopen_s(
+	    &descriptor,
+	    path.c_str(),
+	    _O_WRONLY | _O_CREAT | _O_EXCL | _O_BINARY | _O_NOINHERIT,
+	    _SH_DENYNO,
+	    _S_IREAD | _S_IWRITE);
+	if (result == EEXIST)
+	{
+		return exclusive_open_result::already_exists;
+	}
+	return result == 0 ? exclusive_open_result::opened : exclusive_open_result::failed;
+#else
+	int flags = O_WRONLY | O_CREAT | O_EXCL;
+#ifdef O_CLOEXEC
+	flags |= O_CLOEXEC;
+#endif
+	descriptor = ::open(path.c_str(), flags, 0600);
+	if (descriptor == -1)
+	{
+		return errno == EEXIST ? exclusive_open_result::already_exists : exclusive_open_result::failed;
+	}
+	return exclusive_open_result::opened;
+#endif
+}
+
+class exclusive_output_stream_buffer final : public std::streambuf
+{
+public:
+	explicit exclusive_output_stream_buffer(int descriptor)
+	    : descriptor_(descriptor)
+	{
+	}
+
+	exclusive_output_stream_buffer(const exclusive_output_stream_buffer &) = delete;
+	exclusive_output_stream_buffer &operator=(const exclusive_output_stream_buffer &) = delete;
+
+	~exclusive_output_stream_buffer() override
+	{
+		close_quietly();
+	}
+
+	bool close()
+	{
+		if (descriptor_ == -1)
+		{
+			return true;
+		}
+
+		const int descriptor = descriptor_;
+		descriptor_ = -1;
+#ifdef _WIN32
+		return _close(descriptor) == 0;
+#else
+		return ::close(descriptor) == 0;
+#endif
+	}
+
+protected:
+	std::streamsize xsputn(const char *data, std::streamsize count) override
+	{
+		std::streamsize total = 0;
+		while (total < count)
+		{
+			const std::streamsize remaining = count - total;
+#ifdef _WIN32
+			const auto chunk = static_cast<unsigned int>(std::min<std::streamsize>(
+			    remaining, static_cast<std::streamsize>(std::numeric_limits<int>::max())));
+			const int written = _write(descriptor_, data + total, chunk);
+			if (written <= 0)
+			{
+				break;
+			}
+#else
+			const auto chunk = static_cast<std::size_t>(std::min<std::streamsize>(
+			    remaining, static_cast<std::streamsize>(std::numeric_limits<ssize_t>::max())));
+			const ssize_t written = ::write(descriptor_, data + total, chunk);
+			if (written == -1 && errno == EINTR)
+			{
+				continue;
+			}
+			if (written <= 0)
+			{
+				break;
+			}
+#endif
+			total += static_cast<std::streamsize>(written);
+		}
+		return total;
+	}
+
+	int_type overflow(int_type ch) override
+	{
+		if (traits_type::eq_int_type(ch, traits_type::eof()))
+		{
+			return traits_type::not_eof(ch);
+		}
+
+		const char value = traits_type::to_char_type(ch);
+		return xsputn(&value, 1) == 1 ? ch : traits_type::eof();
+	}
+
+	int sync() override
+	{
+#ifdef _WIN32
+		return _commit(descriptor_) == 0 ? 0 : -1;
+#else
+		return ::fsync(descriptor_) == 0 ? 0 : -1;
+#endif
+	}
+
+private:
+	void close_quietly() noexcept
+	{
+		if (descriptor_ == -1)
+		{
+			return;
+		}
+#ifdef _WIN32
+		(void)_close(descriptor_);
+#else
+		(void)::close(descriptor_);
+#endif
+		descriptor_ = -1;
+	}
+
+	int descriptor_ = -1;
+};
+
+class exclusive_output_stream final : public std::ostream
+{
+public:
+	explicit exclusive_output_stream(int descriptor)
+	    : std::ostream(nullptr), buffer_(descriptor)
+	{
+		rdbuf(&buffer_);
+	}
+
+	bool close()
+	{
+		flush();
+		const bool stream_ok = static_cast<bool>(*this);
+		return buffer_.close() && stream_ok;
+	}
+
+private:
+	exclusive_output_stream_buffer buffer_;
+};
+
+std::unique_ptr<exclusive_output_stream> open_cli_output_file(
+    const std::filesystem::path &output, std::filesystem::path &temp_path)
 {
 	constexpr int kMaxAttempts = 32;
 	for (int attempt = 0; attempt < kMaxAttempts; ++attempt)
 	{
 		temp_path = temporary_output_path_for(output);
-		std::error_code ec;
-		if (std::filesystem::exists(temp_path, ec) || ec)
+		int descriptor = -1;
+		const exclusive_open_result result = try_open_cli_output_exclusive(temp_path, descriptor);
+		if (result == exclusive_open_result::already_exists)
 		{
 			continue;
 		}
-
-		stream.open(temp_path, std::ios::binary | std::ios::trunc);
-		if (stream)
+		if (result == exclusive_open_result::opened)
 		{
-			return;
+			try
+			{
+				return std::make_unique<exclusive_output_stream>(descriptor);
+			}
+			catch (...)
+			{
+#ifdef _WIN32
+				(void)_close(descriptor);
+#else
+				(void)::close(descriptor);
+#endif
+				throw;
+			}
 		}
+		break;
 	}
 	throw std::runtime_error("failed to open output file");
 }
@@ -811,29 +992,26 @@ void write_new_output_file(const std::filesystem::path &path, Writer writer)
 {
 	ensure_output_file_does_not_exist(path);
 
-	std::ofstream out;
+	std::unique_ptr<exclusive_output_stream> out;
 	std::filesystem::path temp_path;
 	try
 	{
-		open_cli_output_file(path, temp_path, out);
-		writer(out);
-		if (!out)
+		out = open_cli_output_file(path, temp_path);
+		writer(*out);
+		if (!*out)
 		{
 			throw std::runtime_error("failed to write output file");
 		}
-		out.close();
-		if (!out)
+		if (!out->close())
 		{
 			throw std::runtime_error("failed to write output file");
 		}
+		out.reset();
 		commit_output_file(temp_path, path);
 	}
 	catch (...)
 	{
-		if (out.is_open())
-		{
-			out.close();
-		}
+		out.reset();
 		if (!temp_path.empty())
 		{
 			remove_file_quietly(temp_path);
@@ -855,7 +1033,7 @@ void run_streaming_file_command(const Options &options, Operation operation)
 	}
 
 	std::ifstream input_file;
-	std::ofstream output_file;
+	std::unique_ptr<exclusive_output_stream> output_file;
 	std::filesystem::path temp_path;
 	bool uses_temp_output = false;
 
@@ -872,9 +1050,9 @@ void run_streaming_file_command(const Options &options, Operation operation)
 		if (!options.output_is_stdout)
 		{
 			ensure_output_file_does_not_exist(options.output);
-			open_cli_output_file(options.output, temp_path, output_file);
+			output_file = open_cli_output_file(options.output, temp_path);
 			uses_temp_output = true;
-			output = &output_file;
+			output = output_file.get();
 		}
 
 		operation(*input, *output);
@@ -889,20 +1067,17 @@ void run_streaming_file_command(const Options &options, Operation operation)
 			return;
 		}
 
-		output_file.close();
-		if (!output_file)
+		if (!output_file->close())
 		{
 			throw std::runtime_error("failed to write output file");
 		}
+		output_file.reset();
 		commit_output_file(temp_path, options.output);
 		uses_temp_output = false;
 	}
 	catch (...)
 	{
-		if (output_file.is_open())
-		{
-			output_file.close();
-		}
+		output_file.reset();
 		if (uses_temp_output)
 		{
 			remove_file_quietly(temp_path);

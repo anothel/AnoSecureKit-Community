@@ -49,6 +49,92 @@ function(run_cli_no_stdout)
   endif()
 endfunction()
 
+function(assert_private_output_file path)
+  if(NOT EXISTS "${path}")
+    message(FATAL_ERROR "Expected private output file to exist: ${path}")
+  endif()
+
+  if(UNIX)
+    if(APPLE)
+      execute_process(
+        COMMAND stat -f %Lp "${path}"
+        RESULT_VARIABLE stat_result
+        OUTPUT_VARIABLE mode
+        ERROR_VARIABLE stat_stderr)
+    else()
+      execute_process(
+        COMMAND stat -c %a "${path}"
+        RESULT_VARIABLE stat_result
+        OUTPUT_VARIABLE mode
+        ERROR_VARIABLE stat_stderr)
+    endif()
+
+    if(NOT stat_result EQUAL 0)
+      message(FATAL_ERROR "Failed to inspect output permissions: ${path}. stderr=${stat_stderr}")
+    endif()
+    string(STRIP "${mode}" mode)
+    if(NOT mode STREQUAL "600")
+      message(FATAL_ERROR "Expected POSIX mode 600 for ${path}, got ${mode}")
+    endif()
+  endif()
+endfunction()
+
+function(run_cli_private_output output_file)
+  if(UNIX)
+    execute_process(
+      COMMAND sh -c "umask 022; exec \"$@\"" sh "${ANOSECUREKIT_CLI}" ${ARGN}
+      RESULT_VARIABLE result
+      OUTPUT_VARIABLE stdout
+      ERROR_VARIABLE stderr)
+  else()
+    execute_process(
+      COMMAND "${ANOSECUREKIT_CLI}" ${ARGN}
+      RESULT_VARIABLE result
+      OUTPUT_VARIABLE stdout
+      ERROR_VARIABLE stderr)
+  endif()
+
+  if(NOT result EQUAL 0)
+    message(FATAL_ERROR "Expected private-output command to pass, got ${result}. stderr=${stderr}")
+  endif()
+  if(NOT stdout STREQUAL "")
+    message(FATAL_ERROR "Private-output command should not write stdout. stdout=[${stdout}]")
+  endif()
+  if(NOT stderr STREQUAL "")
+    message(FATAL_ERROR "Private-output command should not write stderr. stderr=[${stderr}]")
+  endif()
+  assert_private_output_file("${output_file}")
+endfunction()
+
+function(run_cli_stdin_private_output input_file output_file)
+  if(UNIX)
+    execute_process(
+      COMMAND sh -c "umask 022; exec \"$@\"" sh "${ANOSECUREKIT_CLI}" ${ARGN}
+      INPUT_FILE "${input_file}"
+      RESULT_VARIABLE result
+      OUTPUT_VARIABLE stdout
+      ERROR_VARIABLE stderr)
+  else()
+    execute_process(
+      COMMAND "${ANOSECUREKIT_CLI}" ${ARGN}
+      INPUT_FILE "${input_file}"
+      RESULT_VARIABLE result
+      OUTPUT_VARIABLE stdout
+      ERROR_VARIABLE stderr)
+  endif()
+
+  if(NOT result EQUAL 0)
+    message(FATAL_ERROR "Expected stdin private-output command to pass, got ${result}. stderr=${stderr}")
+  endif()
+  if(NOT stdout STREQUAL "")
+    message(FATAL_ERROR "Stdin private-output command should not write stdout. stdout=[${stdout}]")
+  endif()
+  if(NOT stderr STREQUAL "")
+    message(FATAL_ERROR "Stdin private-output command should not write stderr. stderr=[${stderr}]")
+  endif()
+  assert_private_output_file("${output_file}")
+endfunction()
+
 function(run_cli_pipe input_file output_file)
   execute_process(
     COMMAND "${ANOSECUREKIT_CLI}" ${ARGN}
@@ -288,6 +374,7 @@ set(pipe_sealed "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-pipe.skf")
 set(pipe_opened "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-pipe-opened.txt")
 set(stdin_file_sealed "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-stdin-file.skf")
 set(stdin_file_sealed_legacy_temp "${stdin_file_sealed}.anosecurekit.tmp")
+set(stdin_file_opened "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-stdin-file-opened.txt")
 set(reordered_key_file_sealed "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-reordered-key-file.skf")
 set(reordered_key_file_opened "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-reordered-key-file-opened.txt")
 set(reordered_key_hex_sealed "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-reordered-key-hex.skf")
@@ -359,6 +446,7 @@ file(REMOVE "${pipe_sealed}")
 file(REMOVE "${pipe_opened}")
 file(REMOVE "${stdin_file_sealed}")
 file(REMOVE "${stdin_file_sealed_legacy_temp}")
+file(REMOVE "${stdin_file_opened}")
 file(REMOVE "${reordered_key_file_sealed}")
 file(REMOVE "${reordered_key_file_opened}")
 file(REMOVE "${reordered_key_hex_sealed}")
@@ -409,14 +497,14 @@ run_cli(0 "${key_to_wrap}\n" unwrap-key --packet-hex "${wrapped_key_packet}" --w
 run_cli_failure("AEAD authentication failed\n" unwrap-key --packet-hex "${wrapped_key_packet}" --wrapping-key-hex "${wrong_file_key}")
 run_cli_failure("hex input must contain an even number of characters\n" unwrap-key --packet-hex 123 --wrapping-key-hex "${wrapping_key}")
 
-run_cli_no_stdout(wrap-key --key-file "${key_to_wrap_file}" --wrapping-key-file "${wrapping_key_file}" --out "${wrapped_key_file}")
+run_cli_private_output("${wrapped_key_file}" wrap-key --key-file "${key_to_wrap_file}" --wrapping-key-file "${wrapping_key_file}" --out "${wrapped_key_file}")
 file(READ "${wrapped_key_file}" wrapped_key_file_hex HEX)
 string(LENGTH "${wrapped_key_file_hex}" wrapped_key_file_hex_length)
 if(NOT wrapped_key_file_hex_length EQUAL 130 OR NOT wrapped_key_file_hex MATCHES "^534b543101[0-9a-f]+$")
   message(FATAL_ERROR "wrap-key --out did not write a binary SKT1 packet")
 endif()
 
-run_cli_no_stdout(unwrap-key --packet-file "${wrapped_key_file}" --wrapping-key-file "${wrapping_key_file}" --out "${unwrapped_key_file}")
+run_cli_private_output("${unwrapped_key_file}" unwrap-key --packet-file "${wrapped_key_file}" --wrapping-key-file "${wrapping_key_file}" --out "${unwrapped_key_file}")
 file(READ "${unwrapped_key_file}" unwrapped_key_text)
 if(NOT unwrapped_key_text STREQUAL "${key_to_wrap}\n")
   message(FATAL_ERROR "unwrap-key --out did not write a key-file compatible hex key. got=[${unwrapped_key_text}]")
@@ -479,14 +567,14 @@ string(STRIP "${packet_aad_stdout}" packet_aad_hex_packet)
 run_cli(0 "aad packet\n" decrypt --packet-hex "${packet_aad_hex_packet}" --key-file "${packet_key_file}" --aad-hex "${packet_aad_hex}")
 run_cli_failure("AEAD authentication failed\n" decrypt --packet-hex "${packet_aad_hex_packet}" --key-file "${packet_key_file}")
 
-run_cli_no_stdout(encrypt --in "${packet_input_file}" --out "${packet_file}" --key-file "${packet_key_file}" --aad-text record:v1)
+run_cli_private_output("${packet_file}" encrypt --in "${packet_input_file}" --out "${packet_file}" --key-file "${packet_key_file}" --aad-text record:v1)
 file(READ "${packet_file}" packet_file_hex HEX)
 string(LENGTH "${packet_file_hex}" packet_file_hex_length)
 if(packet_file_hex_length LESS 66 OR NOT packet_file_hex MATCHES "^534b543101[0-9a-f]+$")
   message(FATAL_ERROR "encrypt --out did not write a binary SKT1 packet")
 endif()
 
-run_cli_no_stdout(decrypt --packet-file "${packet_file}" --out "${packet_opened_file}" --key-file "${packet_key_file}" --aad-text record:v1)
+run_cli_private_output("${packet_opened_file}" decrypt --packet-file "${packet_file}" --out "${packet_opened_file}" --key-file "${packet_key_file}" --aad-text record:v1)
 file(READ "${packet_opened_file}" packet_opened_text)
 if(NOT packet_opened_text STREQUAL "packet file plaintext\n")
   message(FATAL_ERROR "decrypt --out did not recover plaintext. got=[${packet_opened_text}]")
@@ -561,7 +649,7 @@ if(NOT temp_collision_text STREQUAL "existing temp")
 endif()
 file(REMOVE "${temp_collision_opened_temp}")
 
-run_cli_no_stdout(keygen --out "${generated_key_file}")
+run_cli_private_output("${generated_key_file}" keygen --out "${generated_key_file}")
 file(READ "${generated_key_file}" generated_key)
 string(STRIP "${generated_key}" generated_key_text)
 string(LENGTH "${generated_key_text}" generated_key_length)
@@ -613,7 +701,7 @@ endif()
 run_cli_stdin_no_stdout("${pipe_sealed}" verify-file --in - --key-file "${generated_key_file}" --aad-text record:v1)
 
 file(WRITE "${stdin_file_sealed_legacy_temp}" "existing temp")
-run_cli_stdin_no_stdout("${plain_file}" seal-file --in - --out "${stdin_file_sealed}" --key-file "${generated_key_file}")
+run_cli_stdin_private_output("${plain_file}" "${stdin_file_sealed}" seal-file --in - --out "${stdin_file_sealed}" --key-file "${generated_key_file}")
 if(NOT EXISTS "${stdin_file_sealed}")
   message(FATAL_ERROR "seal-file --in - did not create file output")
 endif()
@@ -622,6 +710,12 @@ if(NOT stdin_file_temp_text STREQUAL "existing temp")
   message(FATAL_ERROR "seal-file --in - changed existing legacy temporary output")
 endif()
 file(REMOVE "${stdin_file_sealed_legacy_temp}")
+
+run_cli_stdin_private_output("${stdin_file_sealed}" "${stdin_file_opened}" open-file --in - --out "${stdin_file_opened}" --key-file "${generated_key_file}")
+file(READ "${stdin_file_opened}" stdin_file_opened_text)
+if(NOT stdin_file_opened_text STREQUAL "file command plaintext\n")
+  message(FATAL_ERROR "open-file --in - did not recover plaintext to a private file. got=[${stdin_file_opened_text}]")
+endif()
 
 run_cli_failure("hex input must contain an even number of characters\n" seal-file --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/invalid-aad-hex.skf" --key-hex "${file_key}" --aad-hex abc)
 run_cli_failure("${expected_verify_file_help}" verify-file --in "${sealed_file}")

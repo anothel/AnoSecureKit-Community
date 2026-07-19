@@ -15,6 +15,12 @@ and repository-maintenance work accumulated after v0.4.0.
   parser path.
 - Kept the correction inside the fuzz harness; production cryptographic and
   serialization behavior is unchanged.
+- Hardened every CLI file-output path to create a random temporary file with an
+  operating-system exclusive open before writing. POSIX output files are created
+  with owner read/write permissions only (`0600`).
+- Preserved existing-destination rejection, failure cleanup, and commit-after-
+  success behavior for generated keys, wrapped keys, packets, recovered
+  plaintext, and stdin-to-file operations.
 
 ### Release and Repository Maintenance
 
@@ -37,13 +43,17 @@ and repository-maintenance work accumulated after v0.4.0.
 - Passed package, install/export, installed-consumer, library-only consumer,
   source-rebuild, release-asset, checksum, SPDX SBOM, provider-boundary,
   release-workflow, release-note, and document-alignment checks.
+- Passed focused CLI permission regression coverage for key generation, key
+  unwrap, packet decryption, and stdin-to-file seal/open flows.
 - Hosted current-main confirmation remains `DEFERRED_EXTERNAL_BILLING`; this
   release note does not claim a hosted current-main PASS.
 
 ### Compatibility and Claims Boundary
 
 - No breaking public C++ API change.
-- No CLI, include-root, namespace, package, or CMake target change.
+- No CLI, include-root, namespace, package, or CMake target change. The CLI
+  hardening changes only private output-file creation mechanics; command names,
+  options, output formats, and exit behavior remain compatible.
 - OpenSSL 3.x remains the only shipped Community production provider.
 - No cryptographic behavior or `SKT1`, `SKF1`, or `SKP1` v1 meaning changed.
 - Preserved the compatibility-sensitive `SKF1` HKDF label

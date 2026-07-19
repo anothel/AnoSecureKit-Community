@@ -96,8 +96,14 @@ successfully.
 
 CLI file commands inherit the same distinction:
 
-- path output refuses overwrite and commits after success
+- path output uses an operating-system exclusive temporary-file create, uses
+  mode `0600` on POSIX, refuses overwrite, and commits after success
 - `--out -` writes to stdout and cannot be rolled back
+
+The same private temporary-output helper is used for CLI-generated keys, wrapped
+key packets, packet encryption/decryption output, and stdin-to-file operations.
+Restrictive file creation does not replace parent-directory access control or
+the caller's responsibility to protect backups and later permission changes.
 - `verify-file` and `verify-file-password` take no output path, discard
   recovered plaintext, and report authentication success with exit code 0 and
   failure with exit code 1

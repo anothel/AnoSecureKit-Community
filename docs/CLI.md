@@ -126,6 +126,13 @@ file. `--key-file` reads the same text format, trimming leading and trailing
 ASCII whitespace before strict validation. `--password-file` reads raw bytes
 exactly, without trimming or normalization; empty password files are rejected.
 
+Every CLI command that writes to a file creates a random temporary file with an
+operating-system exclusive open, writes and flushes that file, and commits it to
+the requested path only after the command succeeds. On POSIX systems, CLI output
+files are created with mode `0600`. Existing destinations are never overwritten.
+These protections do not apply to `--out -`, because stdout is owned by the
+caller.
+
 `encrypt` accepts either `--text` or `--in` plus exactly one key source. Without
 `--out`, it writes the resulting `SKT1` packet as lowercase hex. With `--out`,
 it writes the binary packet and refuses to overwrite an existing file. `decrypt`

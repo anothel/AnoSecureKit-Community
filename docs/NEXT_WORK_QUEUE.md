@@ -19,6 +19,9 @@ Baseline: post-`v0.4.0`
 - `COMM-VER-01`: provider parity machine-readable local reproduction — COMPLETE LOCAL WITH HARNESS CAVEAT
 - `COMM-VER-02`: exact GoogleTest provider parity — COMPLETE LOCAL EXACT
 - `COMM-DOC-02`: GitHub Pages and canonical documentation alignment — COMPLETE
+- `COMM-REL-04A`: prepare and commit v0.4.1 maintenance source — COMPLETE LOCAL
+- `COMM-PROD-01`: product capability and gap audit — COMPLETE
+- `COMM-HARD-02`: secure CLI output creation — COMPLETE LOCAL
 
 ### COMM-FUZZ-01 Closeout
 
@@ -127,17 +130,58 @@ inputs, unified diff, and internal hashes. COMM-REL-02 remains historical.
 - no production code, public API, CLI, CMake identity, fixture, provider
   selection, or v1 format meaning changed.
 
-## COMM-REL-04 — Prepare v0.4.1 Maintenance Release
+### COMM-REL-04A Closeout
+
+The v0.4.1 maintenance source was prepared and committed at repository reference
+`ba710b3f618db0b21664dde892e1f048c43218a4`. The project version is `0.4.1`, the
+canonical release-note section is supplied through `--notes-file`, and the full
+local release-preflight passed before the later CLI-output hardening review.
+
+### COMM-PROD-01 Closeout
+
+The product audit organized the existing product into three supported flows:
+
+```text
+Secure Bytes
+Secure Files
+Secure Keys
+```
+
+The audit confirmed that product work remains beyond release operations. It
+identified CLI output creation as a v0.4.1 blocker and retained public
+verification APIs, shared-library symbol control, safer secret input, failure
+injection, product documentation, and distribution as later work.
+
+### COMM-HARD-02 Closeout
+
+The CLI previously created generic file outputs through `std::ofstream`; under a
+POSIX `umask 022`, generated keys and recovered plaintext were observed as mode
+`0644`. The private CLI output helper now:
+
+- creates random temporary output with an operating-system exclusive open;
+- requests owner read/write mode `0600` on POSIX;
+- preserves existing-destination rejection and commit-after-success behavior;
+- removes temporary output after failure;
+- covers key generation, wrap/unwrap, packet encrypt/decrypt, and stdin-to-file
+  seal/open paths with focused permission regression tests.
+
+The public C++ API, CLI syntax, CMake identity, OpenSSL provider, and v1 formats
+remain unchanged. Full local release-preflight and identical 124-test OpenSSL and
+external-provider inventories passed for the prepared patch. Resolve the exact
+current revision from Git after the change is committed.
+
+## COMM-REL-04B — Hosted Validation And Publish v0.4.1
 
 Priority: P1
+Status: `BLOCKED_EXTERNAL_BILLING`
 
-Prepare the narrow v0.4.1 maintenance release containing the reviewed fuzz
-adapter fix and completed maintenance/documentation work. Use the matching
-`docs/RELEASE_NOTES.md` section as the canonical Release body input rather than
-unreviewed generated wording. Run the full local release preflight, retain exact
-asset/checksum/SBOM/attestation evidence, and record hosted current-main lanes as
-`DEFERRED_EXTERNAL_BILLING` while runner billing remains blocked. Do not add a new
-public API, ship another Community provider, or reinterpret v1 formats.
+After billing recovery, verify the final source tree, rerun local release
+preflight, trigger main CI and CodeQL, manually dispatch Fuzz, and require all
+hosted Linux, sanitizer, Windows, macOS, package, CodeQL, and Fuzz lanes to pass
+for the exact final commit. Only then create and push `v0.4.1`, verify the Release
+body against `docs/RELEASE_NOTES.md`, assets, checksums, SPDX SBOM, and
+attestations, and close the release. Hosted results remain
+`DEFERRED_EXTERNAL_BILLING` until that execution occurs.
 
 ## COMM-CODEQL-03 — Apply GitHub Alert Dispositions
 
@@ -155,13 +199,57 @@ Priority: P2 / DEFERRED_EXTERNAL while billing is blocked
 The v0.4.0 Windows/macOS lanes are verified. Re-run current hosted lanes only when
 runner billing is restored or platform requirements change.
 
-## COMM-SEC-01 — Security Review Readiness
+## COMM-SEC-02 — Conduct Focused External Security Review
+
+Priority: OPTIONAL / EXTERNAL
+Status: READY, NOT_STARTED
+
+Use the completed COMM-SEC-01 readiness package if an independent reviewer is
+engaged. The package is an intake artifact and does not constitute a completed
+security audit.
+
+## COMM-DX-01 — Public File Verification APIs
+
+Priority: P1 / TARGET v0.5.0
+
+Design named raw-key and password file-verification APIs that authenticate
+without creating plaintext output. Preserve `SKF1` and `SKP1` compatibility and
+complete public API review before implementation.
+
+## COMM-ABI-01 — Shared Library Symbol Allowlist
+
+Priority: P1 / TARGET v0.5.0
+
+Hide internal ELF/Mach-O symbols by default, export only the reviewed public ABI,
+and add cross-platform shared-package symbol gates.
+
+## COMM-DX-02 — Safe CLI Binary And Secret Input Contract
+
+Priority: P1 / TARGET v0.5.0
+
+Review byte-exact stdout behavior, safer HMAC/HKDF key sources, packet-size
+intent, and compatibility migration without changing existing v1 meanings.
+
+## COMM-TEST-01 — Failure Injection And Concurrency
+
+Priority: P1
+
+Add deterministic backend/filesystem failure coverage and document independent-
+context thread-safety behavior.
+
+## COMM-DOC-03 — Three-Pillar Product Experience
+
+Priority: P1
+
+Reorganize first-contact README, site, and examples around Secure Bytes, Secure
+Files, and Secure Keys while retaining detailed reference material.
+
+## COMM-DIST-01 — Adoption Channels
 
 Priority: P2
 
-After provider parity evidence is current, prepare the public source for focused
-external review. The CodeQL triage found no confirmed Community security finding,
-but this is not an external audit conclusion.
+After the v0.5 public API direction stabilizes, validate and publish selected
+package-manager recipes with retained consumer evidence.
 
 ## Version Direction
 
