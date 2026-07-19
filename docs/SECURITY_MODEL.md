@@ -199,3 +199,13 @@ The OpenSSL provider policy is recorded in `docs/OPENSSL_POLICY.md`.
 - No rollback guarantee for stream outputs.
 - Release assets are checksummed and provenance-attested by GitHub Actions.
 - Release assets include a generated SPDX SBOM.
+
+
+## Shared Library Boundary
+
+A shared AnoSecureKit package exposes only the reviewed public C++ ABI. Internal
+provider operations, parsers, file-I/O helpers, and secure wipe remain hidden so
+consumers cannot accidentally depend on implementation symbols that bypass the
+public validation and compatibility boundary. Public exception RTTI remains
+exported so `anosecurekit::error` can be caught across the shared-library
+boundary.

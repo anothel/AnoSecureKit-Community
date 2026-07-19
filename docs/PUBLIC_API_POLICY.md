@@ -58,3 +58,12 @@ cost, rollback path, and regression check.
 ## File Verification API Review
 
 `verify_file` and `verify_file_with_password` are additive throwing free functions with path and stream overloads. They authenticate complete `SKF1` or `SKP1` inputs, discard decrypted chunks inside the library, and expose no plaintext output parameter. `void` preserves the existing error-code distinctions; a boolean result would collapse malformed input and backend failure into an authentication answer. The CLI verification commands delegate to these APIs. See `docs/PUBLIC_FILE_VERIFICATION_API.md`.
+
+
+## Shared Library ABI Review
+
+Shared builds hide symbols by default and export only declarations marked with
+`ANOSECUREKIT_API`. The reviewed ABI includes the public functions and lifecycle
+classes above plus `anosecurekit::error` RTTI required for cross-library
+exception handling. Internal provider, file-I/O, parsing, and secure-wipe symbols
+are not supported ABI. See `docs/SHARED_LIBRARY_ABI.md`.

@@ -55,7 +55,9 @@ int int_size(std::size_t size, const char *name)
 {
 	if (size > static_cast<std::size_t>(std::numeric_limits<int>::max()))
 	{
-		throw anosecurekit::error(anosecurekit::error_code::invalid_input, std::string(name) + " exceeds OpenSSL update limit");
+		std::string message(name);
+		message.append(" exceeds OpenSSL update limit");
+		throw anosecurekit::error(anosecurekit::error_code::invalid_input, std::move(message));
 	}
 	return static_cast<int>(size);
 }

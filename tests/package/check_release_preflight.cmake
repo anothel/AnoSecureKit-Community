@@ -38,6 +38,11 @@ set(_anosecurekit_security_model "${ANOSECUREKIT_SOURCE_DIR}/docs/SECURITY_MODEL
 set(_anosecurekit_external_security_review "${ANOSECUREKIT_SOURCE_DIR}/docs/EXTERNAL_SECURITY_REVIEW.md")
 set(_anosecurekit_public_api_policy "${ANOSECUREKIT_SOURCE_DIR}/docs/PUBLIC_API_POLICY.md")
 set(_anosecurekit_public_file_verification_api "${ANOSECUREKIT_SOURCE_DIR}/docs/PUBLIC_FILE_VERIFICATION_API.md")
+set(_anosecurekit_shared_library_abi "${ANOSECUREKIT_SOURCE_DIR}/docs/SHARED_LIBRARY_ABI.md")
+set(_anosecurekit_shared_symbol_allowlist "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist.txt")
+set(_anosecurekit_shared_symbol_annotations_check "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_shared_symbol_annotations.cmake")
+set(_anosecurekit_shared_symbols_check "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_shared_symbols.cmake")
+set(_anosecurekit_shared_package_check "${ANOSECUREKIT_SOURCE_DIR}/tests/package/check_shared_package.cmake")
 set(_anosecurekit_openssl_policy "${ANOSECUREKIT_SOURCE_DIR}/docs/OPENSSL_POLICY.md")
 set(_anosecurekit_kdf_agility "${ANOSECUREKIT_SOURCE_DIR}/docs/KDF_AGILITY.md")
 set(_anosecurekit_fuzzing "${ANOSECUREKIT_SOURCE_DIR}/docs/FUZZING.md")
@@ -89,6 +94,11 @@ foreach(_anosecurekit_required_file IN ITEMS
     "${_anosecurekit_external_security_review}"
     "${_anosecurekit_public_api_policy}"
     "${_anosecurekit_public_file_verification_api}"
+    "${_anosecurekit_shared_library_abi}"
+    "${_anosecurekit_shared_symbol_allowlist}"
+    "${_anosecurekit_shared_symbol_annotations_check}"
+    "${_anosecurekit_shared_symbols_check}"
+    "${_anosecurekit_shared_package_check}"
     "${_anosecurekit_openssl_policy}"
     "${_anosecurekit_kdf_agility}"
     "${_anosecurekit_fuzzing}"
@@ -143,6 +153,8 @@ file(READ "${_anosecurekit_security_model}" _anosecurekit_security_model_text)
 file(READ "${_anosecurekit_external_security_review}" _anosecurekit_external_security_review_text)
 file(READ "${_anosecurekit_public_api_policy}" _anosecurekit_public_api_policy_text)
 file(READ "${_anosecurekit_public_file_verification_api}" _anosecurekit_public_file_verification_api_text)
+file(READ "${_anosecurekit_shared_library_abi}" _anosecurekit_shared_library_abi_text)
+file(READ "${_anosecurekit_shared_symbol_allowlist}" _anosecurekit_shared_symbol_allowlist_text)
 file(READ "${_anosecurekit_openssl_policy}" _anosecurekit_openssl_policy_text)
 file(READ "${_anosecurekit_kdf_agility}" _anosecurekit_kdf_agility_text)
 file(READ "${_anosecurekit_fuzzing}" _anosecurekit_fuzzing_text)
@@ -263,6 +275,8 @@ _anosecurekit_require_terms(
   "dogfood-check"
   "release-workflow-check"
   "release-notes-check"
+  "shared-symbol-annotation-check"
+  "shared-package-check"
   "spdx-check"
   "legacy-name-check"
   "backend-boundary-check"
@@ -276,7 +290,10 @@ _anosecurekit_require_terms(
   "check_external_backend_parity.cmake"
   "check_cli_docs.cmake"
   "extract_release_notes.cmake"
-  "check_package_recipes.cmake")
+  "check_package_recipes.cmake"
+  "check_shared_symbol_annotations.cmake"
+  "check_shared_symbols.cmake"
+  "check_shared_package.cmake")
 
 
 _anosecurekit_require_terms(
@@ -1279,3 +1296,24 @@ foreach(_anosecurekit_checksum_line IN LISTS _anosecurekit_checksum_lines)
     message(FATAL_ERROR "Release asset checksum mismatch: ${_anosecurekit_checksum_asset_name}")
   endif()
 endforeach()
+
+_anosecurekit_require_terms(
+  "shared ABI policy hidden visibility"
+  "${_anosecurekit_cmakelists_text}"
+  "CXX_VISIBILITY_PRESET hidden"
+  "VISIBILITY_INLINES_HIDDEN YES"
+  "shared-symbol-annotation-check"
+  "shared-package-check")
+_anosecurekit_require_terms(
+  "shared ABI documentation"
+  "${_anosecurekit_shared_library_abi_text}"
+  "export only the reviewed public C++ ABI"
+  "anosecurekit::error"
+  "shared-package-check")
+_anosecurekit_require_terms(
+  "shared ABI allowlist"
+  "${_anosecurekit_shared_symbol_allowlist_text}"
+  "verify_file"
+  "verify_file_with_password"
+  "packet_encryptor"
+  "typeinfo for anosecurekit::error")

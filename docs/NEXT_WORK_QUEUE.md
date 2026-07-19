@@ -216,12 +216,19 @@ Design named raw-key and password file-verification APIs that authenticate
 without creating plaintext output. Preserve `SKF1` and `SKP1` compatibility and
 complete public API review before implementation.
 
-## COMM-ABI-01 — Shared Library Symbol Allowlist
+### COMM-ABI-01 Closeout — Shared Library Symbol Allowlist
 
-Priority: P1 / TARGET v0.5.0
+Status: COMPLETE LOCAL FEATURE CANDIDATE / TARGET v0.5.0
 
-Hide internal ELF/Mach-O symbols by default, export only the reviewed public ABI,
-and add cross-platform shared-package symbol gates.
+Shared builds now hide symbols by default and export only the reviewed public
+ABI. The measured ELF dynamic surface fell from 137 entries to 59 entries, or 52
+unique demangled public symbols after constructor/destructor normalization.
+Internal provider, parser, file-I/O, and secure-wipe symbols are hidden.
+
+`shared-symbol-annotation-check`, binary `shared-symbol-check`, and clean installed
+`shared-package-check` gates were added. `anosecurekit::error` is class-exported
+to preserve cross-DSO exception RTTI. This work remains isolated with COMM-DX-01
+on the v0.5.0 development line and must not enter v0.4.1.
 
 ## COMM-DX-02 — Safe CLI Binary And Secret Input Contract
 

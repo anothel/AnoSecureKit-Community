@@ -39,7 +39,9 @@ inline void check_update_size(std::size_t size, const char *name)
 {
 	if (size > static_cast<std::size_t>(std::numeric_limits<int>::max()))
 	{
-		throw error(error_code::invalid_input, std::string(name) + " exceeds backend update limit");
+		std::string message(name);
+		message.append(" exceeds backend update limit");
+		throw error(error_code::invalid_input, std::move(message));
 	}
 }
 

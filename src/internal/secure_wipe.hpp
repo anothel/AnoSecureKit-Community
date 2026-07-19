@@ -12,7 +12,7 @@
 namespace anosecurekit::internal
 {
 
-ANOSECUREKIT_API void secure_wipe(std::span<std::byte> data) noexcept;
+void secure_wipe(std::span<std::byte> data) noexcept;
 
 template <std::size_t Size>
 inline void secure_wipe(std::array<std::byte, Size> &data) noexcept
