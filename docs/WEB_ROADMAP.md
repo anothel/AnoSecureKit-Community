@@ -2,7 +2,9 @@
 
 # AnoSecureKit Web Roadmap
 
-This document tracks only work for the AnoSecureKit GitHub Pages site.
+Status: CLOSED; no active web roadmap
+
+This document preserves deferred work notes for the AnoSecureKit GitHub Pages site.
 C++ API, CLI, package, and release work belong in the canonical
 `docs/NEXT_WORK_QUEUE.md`. `docs/ROADMAP.md` is only a compatibility entry point.
 
@@ -29,6 +31,9 @@ pages are aligned with the current repository boundaries. Browser-local guides
 and tools are complete enough to stay out of active roadmap work.
 
 ### Deferred
+
+The following ideas are not selected work. Reopening any item requires a new
+explicit product decision.
 
 File sealing browser tool:
 

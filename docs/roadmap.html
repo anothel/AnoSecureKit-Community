@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AnoSecureKit Roadmap</title>
-  <meta name="description" content="AnoSecureKit Community current direction, maintenance-release boundary, and canonical work-queue links.">
+  <meta name="description" content="AnoSecureKit Community closeout state, frozen baselines, and closed work-queue links.">
   <meta name="color-scheme" content="dark light">
   <link rel="stylesheet" href="./assets/site.css">
 </head>
@@ -18,19 +18,20 @@
         <a href="./cli.html">CLI</a>
         <a href="./security.html">Security</a>
         <a href="./release-verification.html">Verify releases</a>
-        <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Current work queue</a>
+        <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Closeout queue</a>
       </div>
     </nav>
 
     <section class="hero-body">
-      <p class="eyebrow">Project direction</p>
-      <h1>Published v0.4.0, then a narrow v0.4.1 maintenance line.</h1>
+      <p class="eyebrow">Project closeout</p>
+      <h1>Published v0.4.0. Public development closed.</h1>
       <p class="lead">
-        The canonical queue lives in <code>docs/NEXT_WORK_QUEUE.md</code>. This page mirrors
-        the current direction without creating a second planning source.
+        The canonical queue in <code>docs/NEXT_WORK_QUEUE.md</code> is closed.
+        Source version v0.4.1 and the v0.5.0 feature candidate are unpublished
+        and parked.
       </p>
       <div class="actions">
-        <a class="button primary" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Read current work queue</a>
+        <a class="button primary" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Read closeout queue</a>
         <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/CURRENT_STATUS.md">Read current status</a>
         <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/WEB_ROADMAP.md">Web roadmap</a>
       </div>
@@ -40,11 +41,10 @@
   <main>
     <section class="cards" aria-label="Roadmap status">
       <article class="card warning">
-        <h2>Now</h2>
+        <h2>Closed</h2>
         <p>
-          Prepare a v0.4.1 maintenance release from the reviewed fuzz fix and
-          evidence/documentation work. Do not add a new public API or reinterpret
-          SKT1, SKF1, or SKP1 v1.
+          Active next work, roadmap, and release actions are none. Reopening
+          requires a new explicit product decision.
         </p>
       </article>
 
@@ -53,15 +53,15 @@
         <p>
           v0.4.0 publication evidence is self-contained. Exact OpenSSL/external
           provider parity passed 124/124 through both assemblies with the same
-          inventory.
+          inventory. Main hosted CI, CodeQL, and scheduled Fuzz passed.
         </p>
       </article>
 
       <article class="card">
-        <h2>Deferred hosted work</h2>
+        <h2>Parked snapshots</h2>
         <p>
-          Current-main hosted reruns remain <code>DEFERRED_EXTERNAL_BILLING</code>. Local
-          evidence must not be described as hosted PASS.
+          v0.4.1 has no tag, Release, assets, SBOM, or v0.4.1 attestations.
+          <code>develop/v0.5.0</code> is unmerged and is not a public surface.
         </p>
       </article>
     </section>
@@ -69,7 +69,7 @@
     <section class="section">
       <h2>Roadmap rules</h2>
       <ul>
-        <li><code>docs/NEXT_WORK_QUEUE.md</code> is the only canonical active queue.</li>
+        <li><code>docs/NEXT_WORK_QUEUE.md</code> is the canonical closed queue.</li>
         <li>Keep OpenSSL 3.x as the only shipped Community production provider.</li>
         <li>Keep the external provider seam build-tree-only with no silent fallback.</li>
         <li>Do not copy Enterprise proprietary source or an AnoCrypto-C adapter into Community.</li>
@@ -79,12 +79,13 @@
     </section>
 
     <section class="section">
-      <h2>Release-impacting work</h2>
-      <p>Release-impacting changes must pass the configured release preflight:</p>
+      <h2>If work is reopened</h2>
+      <p>Any new release decision must restore and pass the configured release preflight:</p>
       <pre><code>cmake --build build --config Release --target release-preflight</code></pre>
       <p>
-        Before publication, verify archives, checksums, SPDX SBOM, attestations,
-        canonical release notes, and the exact Release-body comparison policy.
+        No release is active. A future authorized publication must verify
+        archives, checksums, SPDX SBOM, attestations, canonical release notes,
+        and the exact Release-body comparison policy.
       </p>
     </section>
 
@@ -101,9 +102,9 @@
 
   <footer class="footer">
     <p>
-      Canonical work lives in
+      Closeout state lives in
       <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">docs/NEXT_WORK_QUEUE.md</a>.
-      Website-only planning lives in
+      Deferred website notes live in
       <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/WEB_ROADMAP.md">docs/WEB_ROADMAP.md</a>.
     </p>
   </footer>

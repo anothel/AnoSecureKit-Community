@@ -2,7 +2,8 @@
 
 # AnoSecureKit Release and Evidence Status
 
-Status date: 2026-07-19 (Asia/Seoul)
+Status date: 2026-07-25 (Asia/Seoul)
+Engineering status: `CLOSED_AND_FROZEN`
 Current release code/tag baseline: `v0.4.0`
 
 ## Evidence Labels
@@ -22,11 +23,12 @@ while naming a material execution limitation that must not be omitted.
 ## Repository And Release Identity
 
 ```text
-audited repository baseline: ba710b3f618db0b21664dde892e1f048c43218a4
-implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
-implementation subject: fix: normalize hex fixtures in fuzz adapter
-current main identity: resolve from Git at audit time
-prepared project version: 0.4.1
+public release baseline: v0.4.0@694459ebe497d15ba75ef76a52fa7c36ddd7bcce
+unpublished maintenance baseline: df1936777843415022a97f775c6e61eea6d99cb0
+maintenance source version: 0.4.1
+maintenance release state: UNPUBLISHED_AND_PARKED
+parked feature baseline: develop/v0.5.0@9fe79dc1e0f8b9951e86c2707c70469611ab43e4
+feature branch state: PARKED_NOT_MERGED
 post-tag change classes: fuzz adapter, CLI output hardening, documentation/evidence and release maintenance
 release tag: v0.4.0
 annotated tag object: a2dfd3b79335062ffe73ebfb520b4aac7f590e3d
@@ -43,6 +45,11 @@ The tag remains unchanged. The current maintenance line is not the source revisi
 used to build the v0.4.0 assets. Source-controlled documents record an audited
 baseline rather than chasing their own resulting commit SHA.
 
+v0.4.1 has no tag, GitHub Release, release assets, release SBOM, or v0.4.1
+attestations. Its tag-triggered Release job was not run, and publication is not
+approved or scheduled. The parked `develop/v0.5.0` candidate is not a current
+public surface.
+
 ## COMM-REL-03 Self-Contained Publication Result
 
 Fresh authenticated collection at repository HEAD
@@ -56,13 +63,17 @@ asset inventory/integrity/SBOM: PASS
 online asset attestations: PASS 20/20
 offline retained-bundle verification: PASS 20/20
 release body exact comparison: NOT_EQUAL
-hosted current-main reruns: DEFERRED_EXTERNAL_BILLING
+hosted current-main reruns at evidence collection: DEFERRED_EXTERNAL_BILLING (historical)
 ```
 
 All 20 GitHub asset digests matched local SHA-256 values;
 `SHA256SUMS.txt` passed 19/19; the SPDX release SBOM passed 18/18. Strict
 attestation policy enforced repository, source commit, source ref, and signer
 workflow online and with the 20 retained bundles plus retained trusted root.
+
+The retained collection-time hosted status above is historical. Current
+maintenance-baseline hosted results are PASS: main CI run `29679908885`, CodeQL
+run `29679908924`, and scheduled Fuzz run `29832291273`.
 
 After only line-ending normalization and exactly one terminal LF, the GitHub
 Release body differs from the v0.4.0 `docs/RELEASE_NOTES.md` section in two wording
@@ -102,6 +113,10 @@ attestation conclusion is therefore `PASS`, provided the supplementary verifier
 output is retained with the evidence archive. The original archive alone must
 not be described as containing the successful attestation output.
 
+GitHub Actions artifact attestations are not maintainer GPG signatures. The
+v0.4.0 annotated tag and release commit are unsigned; no maintainer GPG signing
+is claimed.
+
 ### Release Body
 
 The Release title, publication time, draft state, prerelease state, assets, and
@@ -125,6 +140,14 @@ Six runs and 24 jobs were associated with the exact release commit.
 The successful tag workflow proves the hosted v0.4.0 build/package/release lanes
 completed. It does not erase the later scheduled fuzz failure on the same source
 revision.
+
+Current maintenance-baseline hosted results:
+
+| Run | Workflow | Event | Conclusion | Relevant result |
+| --- | --- | --- | --- | --- |
+| `29679908885` | `AnoSecureKit CI` | main push | success | Nine build jobs succeeded; Release job skipped |
+| `29679908924` | `CodeQL` | main push | success | C++ analysis job succeeded |
+| `29832291273` | `Fuzz` | schedule | success | All configured fuzz smoke targets succeeded |
 
 ## CodeQL Exact-Commit Evidence
 
@@ -182,9 +205,8 @@ path: src/hex.cpp:60
 No crash artifact file was retained under `fuzz-artifacts/`. The adapter defect was
 fixed by commit `c3872c196452b561b1a545ee73204dca0df83dc7`. The exact fixture,
 existing odd-length seed, all five fuzz targets, general CTest 124/124, and package
-checks passed locally. Hosted confirmation is `DEFERRED_EXTERNAL` because GitHub
-Actions billing prevents runner execution. The production strict hex parser was
-not weakened.
+checks passed locally. Scheduled Fuzz later passed on the maintenance baseline in
+run `29832291273`. The production strict hex parser was not weakened.
 
 
 ## COMM-VER-01 Local Provider Parity Result
@@ -216,7 +238,7 @@ GoogleTest v1.14.0 implementation was executed.
 ```text
 evidence archive: COMM-VER-01-evidence.zip
 evidence SHA-256: 5dc4e449ee0a57ba7a53ab256d2196c4e10ba076ff125e5cdff90fe7af63091b
-hosted confirmation: DEFERRED_EXTERNAL_BILLING
+hosted confirmation in COMM-VER-01 evidence: DEFERRED_EXTERNAL_BILLING (historical)
 upstream GoogleTest rerun: DEFERRED_EXTERNAL_DEPENDENCY
 ```
 
@@ -239,14 +261,16 @@ backend-boundary-check: PASS
 external-backend-hook-check: PASS
 external-backend-parity-check: PASS
 COMM-VER-01 harness/source caveats: superseded
-hosted confirmation: DEFERRED_EXTERNAL_BILLING
+hosted confirmation in retained COMM-VER-02 evidence: DEFERRED_EXTERNAL_BILLING (historical)
 evidence archive: COMM-VER-02-evidence.zip
 evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa978
 ```
 
 Machine-readable CTest inventory JSON and JUnit XML are retained for both
 assemblies in the external evidence archive. COMM-VER-01 remains unchanged as
-historical evidence.
+historical evidence. Closeout validation on maintenance baseline `df193677...`
+again passed OpenSSL 124/124, external-provider 124/124, and identical ordered
+inventory. There is no separate hosted external-provider parity claim.
 
 
 ## COMM-DOC-02 Documentation Alignment
@@ -258,7 +282,7 @@ policies now use the same ownership and provider wording:
 ```text
 OpenSSL 3.x: only shipped Community production provider
 external provider seam: build-tree-only, no fallback
-canonical active queue: docs/NEXT_WORK_QUEUE.md
+canonical closed queue: docs/NEXT_WORK_QUEUE.md
 docs/ROADMAP.md: compatibility entry point only
 Enterprise proprietary source and AnoCrypto-C adapter: outside Community
 ```
@@ -283,16 +307,20 @@ generation, key wrap/unwrap, packet encrypt/decrypt, and stdin-to-file seal/open
 
 ```text
 input source reference: ba710b3f618db0b21664dde892e1f048c43218a4
-local full release-preflight: PASS
+exact maintenance baseline: df1936777843415022a97f775c6e61eea6d99cb0
+historical local full release-preflight: PASS
+closeout local executable validation: PASS
 OpenSSL: 124/124 PASS
 external provider: 124/124 PASS
 ordered inventory: identical
-hosted confirmation: DEFERRED_EXTERNAL_BILLING
-exact resulting commit: resolve from Git after commit
+hosted main CI: PASS run 29679908885
+hosted CodeQL: PASS run 29679908924
+hosted scheduled Fuzz: PASS run 29832291273
 ```
 
 No public API, CLI syntax, CMake identity, production provider, or v1 format
-meaning changed.
+meaning changed. The correction is not included in published v0.4.0; that Release
+retains the generic CLI-output `0644` limitation.
 
 ## Current Evidence Matrix
 
@@ -316,11 +344,18 @@ meaning changed.
 | GitHub CodeQL alert disposition | NOT_RUN | All 19 alerts remain open; no state mutation was authorized |
 | Historical scheduled fuzz smoke | FAIL | Run `29334006653`; uncaught invalid-input exception |
 | Fuzz adapter fix | PASS LOCAL | `c3872c1`; focused and full local fuzz smoke passed |
+| Current-main hosted CI | PASS | Run `29679908885`; nine build jobs succeeded and Release job skipped |
+| Current-main CodeQL | PASS | Run `29679908924`; C++ analysis succeeded |
+| Current-main scheduled fuzz | PASS | Run `29832291273`; configured fuzz smoke succeeded |
 | Secure CLI output creation | PASS LOCAL CANDIDATE | Exclusive create and POSIX mode 0600 verified for key, packet, plaintext, and stdin-to-file outputs |
-| Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
 | Provider parity behavior and inventory | PASS LOCAL EXACT | Exact detached `1d933eb` worktree; OpenSSL 124/124; external 124/124; ordered inventory identical; JSON/JUnit retained |
 | Declared GoogleTest v1.14.0 parity rerun | PASS LOCAL EXACT | Official source archive SHA-256 verified before build and execution |
-| Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
+| Separate hosted external-provider parity | NOT_RUN | No separate hosted external-provider parity claim |
+| v0.4.1 publication | NOT_RUN | No tag, Release, assets, SBOM, or v0.4.1 attestations |
+| Closeout `package-check` | NOT_RUN_ARTIFACT_CREATION_NOT_AUTHORIZED | Target creates binary and source archives |
+| Closeout `release-preflight` | NOT_RUN_ARTIFACT_CREATION_NOT_AUTHORIZED | Target stages release assets and package recipes |
+| Maintainer GPG signing | NONE | v0.4.0 tag and commit are unsigned; Actions attestations are separate |
+| External security audit | NOT_RUN | No external security-audit claim |
 | Website/canonical documentation alignment | PASS LOCAL | Pages and repository wording aligned; `document-alignment-check` added to release preflight |
 
 ## Evidence Archive Identity

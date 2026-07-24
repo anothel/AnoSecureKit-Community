@@ -6,19 +6,20 @@ Status: CURRENT
 
 ## Current Status and Scope
 
-- `docs/CURRENT_STATUS.md`: exact code/tag baseline, public identity, audit status,
-  and current uncertainty.
+- `docs/CURRENT_STATUS.md`: closeout baselines, public identity, validation state,
+  EOL policy, and repository relations.
 - `docs/CROSS_REPOSITORY_BOUNDARY.md`: Community, Enterprise, and AnoCrypto-C
   ownership and change routing.
 - `docs/BACKEND_AND_PROVIDER_CONTRACT.md`: canonical provider-seam and no-fallback
   contract.
 - `docs/RELEASE_AND_EVIDENCE_STATUS.md`: release evidence taxonomy and current
   v0.4.0 evidence state.
-- `docs/NEXT_WORK_QUEUE.md`: active post-v0.4.0 Community work.
+- `docs/NEXT_WORK_QUEUE.md`: closed canonical queue; active work is none.
 - `docs/CODEQL_TRIAGE_STATUS.md`: exact-commit CodeQL alert normalization, static verdicts, and alert-state boundary.
 - `docs/PROVIDER_PARITY_STATUS.md`: current OpenSSL/external inventory and execution evidence, including the local harness caveat.
 
-- `docs/ROADMAP.md`: compatibility entry point to `docs/NEXT_WORK_QUEUE.md`; not an independent queue.
+- `docs/ROADMAP.md`: compatibility entry point to the closed
+  `docs/NEXT_WORK_QUEUE.md`; no active roadmap.
 
 ## User-Facing Contracts
 
@@ -44,7 +45,7 @@ Status: CURRENT
 - `docs/BENCHMARKS.md`
 - `docs/DOGFOODING.md`
 - `docs/EXTERNAL_SECURITY_REVIEW.md`
-- `docs/WEB_ROADMAP.md`
+- `docs/WEB_ROADMAP.md`: closed web-work record; deferred ideas are not selected.
 - `docs/REPOSITORY_HYGIENE.md`
 
 ## Compatibility Entry Points
@@ -72,8 +73,9 @@ outside the source tree.
 - `artifacts/v0.4.0-codeql-triage/README.md`: compact CodeQL triage identity and external evidence archive SHA-256.
 - `artifacts/v0.4.0-provider-parity/README.md`: compact COMM-VER-01 parity evidence identity and limitation.
 
-A historical directory does not prove a later release, and a publication audit
-does not replace current fuzz, provider-parity, or security-review work.
+A historical directory does not prove a later release. Publication evidence
+does not turn the unpublished v0.4.1 snapshot or parked v0.5.0 feature branch
+into a public release surface.
 
 ## Update Rule
 

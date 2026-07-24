@@ -27,15 +27,27 @@ Include enough information to reproduce and classify the issue:
 
 ## Supported Versions
 
-Security fixes are provided for the latest released version unless the release
-notes state otherwise. Pre-release commits on `main` are supported on a
-best-effort basis until the next release is cut.
+No AnoSecureKit Community version is under active maintenance. The project is
+EOL with archival response only:
+
+- no supported version or response SLA
+- no active security-fix or release plan
+- future fixes, releases, or security response require a new explicit product
+  decision
+- the repository and published v0.4.0 materials remain available as historical
+  references
+
+Published v0.4.0 generic CLI output can create key or plaintext files with mode
+`0644` under a POSIX `umask 022`. The unpublished maintenance snapshot at
+`df1936777843415022a97f775c6e61eea6d99cb0` uses exclusive temporary-file
+creation and mode `0600`. That fix is not in the published v0.4.0 Release;
+v0.4.1 is unpublished, parked, and not scheduled.
 
 ## Disclosure
 
-The maintainer will coordinate disclosure timing after confirming the issue,
-preparing a fix, and deciding whether existing releases are affected. Avoid
-sharing exploit details publicly before a fixed release or advisory is ready.
+Reports may be retained for archival triage, but submission does not promise a
+response, fix, advisory, or release. If security work is explicitly reopened,
+disclosure timing will be coordinated before exploit details are published.
 
 ## Scope
 
@@ -66,6 +78,6 @@ certification, validation, security-audit, or public-sector approval claim.
 
 ## Security Release Notes
 
-Security-impacting releases should mention the affected surface, fixed version,
-upgrade instructions, and whether existing `SKT1`, `SKF1`, or `SKP1` data needs
-to be regenerated.
+If release work is explicitly reopened, security-impacting releases should
+mention the affected surface, fixed version, upgrade instructions, and whether
+existing `SKT1`, `SKF1`, or `SKP1` data needs to be regenerated.

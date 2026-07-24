@@ -30,7 +30,7 @@ TEST(InternalWipe, OverwritesByteBuffer)
 TEST(InternalWipe, OverwritesFixedArray)
 {
 	std::array<std::byte, 4> data{
-		std::byte{0x11}, std::byte{0x22}, std::byte{0x33}, std::byte{0x44}};
+	    std::byte{0x11}, std::byte{0x22}, std::byte{0x33}, std::byte{0x44}};
 
 	anosecurekit::internal::secure_wipe(data);
 

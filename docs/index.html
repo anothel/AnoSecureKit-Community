@@ -24,7 +24,7 @@
     </nav>
 
     <section class="hero-body">
-      <p class="eyebrow">OpenSSL 3.x shipped; provider extension stays internal</p>
+      <p class="eyebrow">Published v0.4.0 · public development closed</p>
       <h1>Practical C++20 crypto utilities.</h1>
       <p class="lead">
         AnoSecureKit gives application code a compact byte-oriented API for
@@ -49,6 +49,16 @@
       </article>
 
       <article class="card">
+        <h2>Project status</h2>
+        <p>
+          Engineering is closed and frozen. v0.4.0 remains the published
+          baseline; source version 0.4.1 and the v0.5.0 feature candidate are
+          unpublished and parked. Security support is EOL with archival
+          response only.
+        </p>
+      </article>
+
+      <article class="card">
         <h2>What it covers</h2>
         <ul>
           <li>Hex, Base64, and Base64URL</li>
@@ -63,7 +73,9 @@
         <h2>Security status</h2>
         <p>
           No external security audit yet. CodeQL triage and release evidence do
-          not replace a focused review for high-risk systems.
+          not replace a focused review for high-risk systems. Published v0.4.0
+          generic CLI output can create key or plaintext files with mode
+          <code>0644</code> under a POSIX <code>umask 022</code>.
         </p>
       </article>
       <article class="card">
@@ -136,16 +148,17 @@ cmake --build build --config Release --target check</code></pre>
         uploaded to a server for routine crypto operations.
       </p>
       <p>
-        Any future web tools should run locally in the browser, avoid third-party
-        scripts on tool pages, and clearly separate documentation or advertising
-        areas from security-sensitive input areas.
+        No web work is active. Any explicitly reopened web tools should run
+        locally in the browser, avoid third-party scripts on tool pages, and
+        clearly separate documentation or advertising areas from
+        security-sensitive input areas.
       </p>
     </section>
   </main>
 
   <footer class="footer">
     <p>
-      Maintained by <a href="https://github.com/anothel">anothel</a>. Source code is available on
+      Published by <a href="https://github.com/anothel">anothel</a>. Source code is available on
       <a href="https://github.com/anothel/AnoSecureKit-Community">GitHub</a>.
     </p>
   </footer>

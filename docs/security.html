@@ -57,11 +57,21 @@
         </p>
       </article>
 
+      <article class="card warning">
+        <h2>Support status</h2>
+        <p>
+          Security support is EOL with archival response only. No version has
+          an active maintenance commitment or response SLA. Reopening requires
+          a new explicit product decision.
+        </p>
+      </article>
+
       <article class="card">
         <h2>Reports</h2>
         <p>
           Do not report vulnerabilities through public issues. Use GitHub
-          Security Advisories or a private maintainer contact path.
+          Security Advisories or a private maintainer contact path. Submission
+          does not promise a response, fix, advisory, or release.
         </p>
       </article>
     </section>
@@ -96,10 +106,12 @@
     <section class="section">
       <h2>File output safety</h2>
       <p>
-        Path-based open commands refuse to overwrite output paths and commit a
-        temporary file only after successful authentication. Stream output and
-        CLI `--out -` cannot be rolled back by AnoSecureKit, so callers must trust
-        output only after the command exits successfully.
+        Published v0.4.0 generic CLI output can create key or plaintext files
+        with mode <code>0644</code> under a POSIX <code>umask 022</code>. The
+        unpublished maintenance snapshot uses exclusive temporary-file creation
+        and mode <code>0600</code>; that correction has not been released.
+        Stream output and CLI <code>--out -</code> cannot be rolled back, so
+        callers must trust output only after the command exits successfully.
       </p>
     </section>
 

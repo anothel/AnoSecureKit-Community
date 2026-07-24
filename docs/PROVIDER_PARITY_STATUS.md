@@ -5,6 +5,7 @@
 Status: CURRENT
 Task: `COMM-VER-02`
 Repository reference: `1d933eb0cace1fe899e9432f314bff9026f5f69c`
+Closeout maintenance baseline: `df1936777843415022a97f775c6e61eea6d99cb0`
 
 ## Result
 
@@ -16,13 +17,20 @@ OpenSSL: 124/124 PASS
 external: 124/124 PASS
 inventory: identical
 COMM-VER-01 harness/source caveats: superseded
-hosted confirmation: DEFERRED_EXTERNAL_BILLING
+closeout main OpenSSL: 124/124 PASS
+closeout main external: 124/124 PASS
+closeout ordered inventory: identical
+main hosted CI: PASS run 29679908885
+separate hosted external-provider parity: NOT_RUN
 ```
 
 The built-in `external-backend-parity-check`, `backend-boundary-check`, and
 `external-backend-hook-check` targets passed. The external evidence archive
 retains CTest inventory JSON and JUnit XML for both assemblies, command logs,
 environment data, and internal file hashes.
+
+The retained COMM-VER-02 archive predates current hosted runs. Current main CI
+passed, but no separate hosted external-provider parity claim is made.
 
 ## Execution Source Provenance
 

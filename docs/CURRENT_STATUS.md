@@ -2,31 +2,71 @@
 
 # AnoSecureKit Community Current Status
 
-Status: CURRENT
-Audit date: 2026-07-19 (Asia/Seoul)
+Status: CURRENT CLOSEOUT
+Audit date: 2026-07-25 (Asia/Seoul)
 Scope: AnoSecureKit Community only
 
-## Repository And Release Baselines
+## Final Closeout State
 
 ```text
-product: AnoSecureKit Community
-license: MPL-2.0
-language: C++20
-audited repository baseline: ba710b3f618db0b21664dde892e1f048c43218a4
-implementation maintenance baseline: c3872c196452b561b1a545ee73204dca0df83dc7
-prepared project version: 0.4.1
-release tag: v0.4.0
-release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
-release published time: 2026-07-13T19:26:47+09:00
-project version at tag: 0.4.0
+PROJECT=AnoSecureKit-Community
+ENGINEERING_STATUS=CLOSED_AND_FROZEN
+REPOSITORY_STATE=PUBLIC_DEVELOPMENT_CLOSED
+
+PUBLIC_RELEASE_BASELINE=
+v0.4.0@694459ebe497d15ba75ef76a52fa7c36ddd7bcce
+
+UNPUBLISHED_MAINTENANCE_BASELINE=
+df1936777843415022a97f775c6e61eea6d99cb0
+
+MAINTENANCE_SOURCE_VERSION=0.4.1
+MAINTENANCE_RELEASE_STATE=UNPUBLISHED_AND_PARKED
+
+PARKED_FEATURE_BASELINE=
+develop/v0.5.0@9fe79dc1e0f8b9951e86c2707c70469611ab43e4
+
+FEATURE_BRANCH_STATE=PARKED_NOT_MERGED
+ACTIVE_NEXT_WORK=NONE
+ACTIVE_RELEASE_ACTION=NONE
+FUTURE_WORK=DEFERRED_NOT_SELECTED
+REOPEN_REQUIRES_NEW_PRODUCT_DECISION
+SECURITY_SUPPORT=EOL_ARCHIVAL_RESPONSE_ONLY
+FINAL_CLOSEOUT_COMMIT=RECORDED_IN_EXTERNAL_CLOSEOUT_EVIDENCE
 ```
 
-The exact current `main` SHA must be read from Git. Source-controlled status
-files record the repository and implementation revisions they audited rather
-than claiming that their own documentation commit is the current `main` SHA.
+## Release Relationships
 
-The released revision remains exactly
-`694459ebe497d15ba75ef76a52fa7c36ddd7bcce`. Do not move or recreate the tag.
+Published product:
+
+```text
+VERSION=0.4.0
+COMMIT=694459ebe497d15ba75ef76a52fa7c36ddd7bcce
+TAG=v0.4.0
+RELEASE=PUBLISHED
+```
+
+Unpublished maintenance snapshot:
+
+```text
+SOURCE_VERSION=0.4.1
+COMMIT=df1936777843415022a97f775c6e61eea6d99cb0
+TAG=NONE
+RELEASE=NONE
+STATE=UNPUBLISHED_AND_PARKED
+```
+
+Parked feature candidate:
+
+```text
+BRANCH=develop/v0.5.0
+COMMIT=9fe79dc1e0f8b9951e86c2707c70469611ab43e4
+STATE=PARKED_NOT_MERGED
+PUBLIC_SURFACE=NO
+```
+
+The C++ file-verification APIs and shared-library ABI allowlist on
+`develop/v0.5.0` are not part of published v0.4.0 or the current public surface
+on `main`.
 
 ## Public Identity And Compatibility
 
@@ -40,73 +80,75 @@ CMake target: anosecurekit::anosecurekit
 
 OpenSSL 3.x remains the only shipped Community production provider. The external
 provider remains a build-tree-only parent integration seam with no silent
-fallback.
-
-`SKT1`, `SKF1`, and `SKP1` v1 meanings and the `SKF1` label
+fallback. `SKT1`, `SKF1`, and `SKP1` v1 meanings and the `SKF1` label
 `anosecurekit file sealing v1` remain unchanged.
 
-## Verification Summary
-
-| Surface | Status | Note |
-| --- | --- | --- |
-| v0.4.0 publication and integrity | PASS SELF-CONTAINED | 20 assets; digests, checksum, SBOM, online/offline attestations verified |
-| Release body exact comparison | NOT_EQUAL | Two normalized wording differences; raw inputs and unified diff retained |
-| Hosted v0.4.0 tag CI | PASS | Run `29242038502`; 10/10 jobs succeeded |
-| Windows/macOS release lanes | PASS | Windows 4/4; macOS 2/2 |
-| Exact-commit CodeQL execution | PASS | Analyses `1471089159` and `1471719182` completed |
-| Exact-commit CodeQL triage | PASS | 19 unique alerts; 0 confirmed, 0 needs review, 19 not actionable |
-| GitHub CodeQL alert disposition | NOT_RUN | All alerts remain open; no dismiss/update authorization was applied |
-| Historical scheduled fuzz run | FAIL | Run `29334006653` exposed an adapter normalization defect |
-| Fuzz adapter fix | PASS LOCAL | Commit `c3872c1`; focused seeds and all 5 fuzz targets passed |
-| General CTest after fuzz fix | PASS LOCAL | 124/124 |
-| Package/install/export after fuzz fix | PASS LOCAL | package-check and consumers passed |
-| Hosted fuzz confirmation after fix | DEFERRED_EXTERNAL | GitHub Actions billing prevents runner execution |
-| Exact GoogleTest v1.14.0 provider parity | PASS LOCAL EXACT | Exact detached `1d933eb` worktree; OpenSSL and external 124/124; identical inventory; CTest/JUnit retained |
-| Hosted current-main provider parity | DEFERRED_EXTERNAL_BILLING | No hosted confirmation was run or claimed |
-| Repository EOL policy | PASS | `.gitattributes` defines deterministic LF policy |
-| Source evidence exclusion | PASS | CPack and package-check reject repository-external evidence paths |
-| Website/canonical documentation alignment | PASS LOCAL | Static Pages, README, compatibility roadmap, and current policy wording aligned; guard added |
-| Secure CLI output creation | PASS LOCAL CANDIDATE | Exclusive temporary create; POSIX mode 0600; key, packet, plaintext, and stdin-to-file regressions passed |
+## Validation And Evidence
 
 ```text
-publication evidence archive: PASS SELF-CONTAINED
-asset inventory/integrity/SBOM: PASS
-online asset attestations: PASS 20/20
-offline retained-bundle verification: PASS 20/20
-release body exact comparison: NOT_EQUAL
-hosted current-main reruns: DEFERRED_EXTERNAL_BILLING
+MAIN_LOCAL_MSVC_RELEASE=PASS
+MAIN_WARNINGS_AS_ERRORS=PASS
+MAIN_OPENSSL_TESTS=124/124_PASS
+MAIN_EXTERNAL_PROVIDER_TESTS=124/124_PASS
+MAIN_ORDERED_TEST_INVENTORY=IDENTICAL
+MAIN_FORMAT_CHECK=PASS
+MAIN_DOCUMENT_AND_POLICY_CHECKS=PASS
+MAIN_SAFE_INSTALL_INSTALLED_CLI_CONSUMER=PASS
+PACKAGE_CHECK=NOT_RUN_ARTIFACT_CREATION_NOT_AUTHORIZED
+RELEASE_PREFLIGHT=NOT_RUN_ARTIFACT_CREATION_NOT_AUTHORIZED
+
+MAIN_HOSTED_CI=PASS run=29679908885
+MAIN_CODEQL=PASS run=29679908924
+MAIN_SCHEDULED_FUZZ=PASS run=29832291273
+
+V0_4_1_RELEASE_JOB=NOT_RUN
+V0_4_1_RELEASE_ASSETS=NONE
+V0_4_1_SBOM_ATTESTATION=NONE
+MAINTAINER_GPG_SIGNING=NONE
+EXTERNAL_SECURITY_AUDIT=NOT_RUN
 ```
 
-Current external evidence archive:
-`COMM-REL-03-v0_4_0-self-contained-evidence.zip`, SHA-256
-`e556263cb971811b980c242e20524c8b42db362dfd0ef1d07ff3633a1868d93c`.
-The prior `COMM-REL-02-v0_4_0-evidence.zip` identity remains historical.
+The published v0.4.0 evidence remains self-contained: 20 assets, checksums,
+SPDX SBOM, and GitHub Actions artifact attestations passed retained
+verification. The v0.4.0 Release body remains `NOT_EQUAL` to canonical notes
+because of two normalized wording differences. GitHub Actions artifact
+attestations do not mean the v0.4.0 tag or commit has a maintainer GPG
+signature; neither is signed.
+
+The 19 CodeQL alerts remain open. Static triage found 0 confirmed,
+0 needs-review, and 19 not-actionable results; no alert state was changed.
+
+## Published v0.4.0 Limitation
+
+Published v0.4.0 generic CLI output can create key or plaintext files with mode
+`0644` under a POSIX `umask 022`. The unpublished maintenance snapshot on
+`main` fixes generic CLI output with exclusive temporary-file creation and mode
+`0600`. That fix is not included in the published v0.4.0 Release. v0.4.1
+publication is not approved or scheduled.
+
+## Security Support
+
+`EOL_ARCHIVAL_RESPONSE_ONLY` means:
+
+- no active maintenance or release plan
+- no supported version or response SLA
+- future fixes, releases, or security response require a new explicit product
+  decision
+- the repository and published v0.4.0 materials remain historical references
+
+## Enterprise Relation
 
 ```text
-COMM-VER-02: COMPLETE LOCAL EXACT
-source checkout: exact 1d933eb detached Git worktree
-GoogleTest v1.14.0 official source: verified and executed
-OpenSSL: 124/124 PASS
-external: 124/124 PASS
-inventory: identical
-COMM-VER-01 harness/source caveats: superseded
-hosted confirmation: DEFERRED_EXTERNAL_BILLING
-evidence SHA-256: d3ae3dfb3d06bd071f6692fe89272ed759f01f55280096c84e13e34f77afa978
+ENTERPRISE_INTEGRATION_BRANCH_MATCH=YES
+ENTERPRISE_DEFAULT_MAIN_MATCH=NO
 ```
 
-The CodeQL triage verdict is a repository-security assessment, not a GitHub alert
-state mutation. The 19 alerts remain open until a separately authorized
-maintenance action changes their GitHub disposition.
-
-The billing blocker does not invalidate completed local fuzz verification, but
-hosted confirmation must not be reported as PASS.
-
-The CLI output hardening was validated from the `ba710b3` maintenance source.
-Source-controlled status records that audited input rather than predicting the
-resulting commit SHA; resolve the exact revision from Git after commit.
+The inspected Enterprise integration branch consumes the exact Community
+v0.4.0 tree. Enterprise default `main` does not. Enterprise alignment is outside
+this Community closeout and must be handled separately.
 
 ## Repository Boundaries
 
-Community does not contain Enterprise proprietary code or an AnoCrypto-C adapter.
-AnoSecureKit Community makes no KCMVP, FIPS, certification, validation, security
-audit, or public-sector approval claim.
+Community does not contain Enterprise proprietary code or an AnoCrypto-C
+adapter. AnoSecureKit Community makes no KCMVP, FIPS, certification, validation,
+security-audit, or public-sector approval claim.

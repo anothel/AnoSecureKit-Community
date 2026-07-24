@@ -100,6 +100,10 @@ CLI file commands inherit the same distinction:
   mode `0600` on POSIX, refuses overwrite, and commits after success
 - `--out -` writes to stdout and cannot be rolled back
 
+This describes the unpublished maintenance snapshot on `main`. Published
+v0.4.0 generic CLI output can create key or plaintext files with mode `0644`
+under a POSIX `umask 022`; the `0600` correction has not been released.
+
 The same private temporary-output helper is used for CLI-generated keys, wrapped
 key packets, packet encryption/decryption output, and stdin-to-file operations.
 Restrictive file creation does not replace parent-directory access control or

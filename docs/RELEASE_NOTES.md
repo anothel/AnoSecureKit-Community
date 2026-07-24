@@ -4,9 +4,11 @@
 
 ## v0.4.1
 
-AnoSecureKit Community v0.4.1 is a narrow maintenance release. It contains the
-reviewed fuzz-adapter correction and completed release-evidence, documentation,
-and repository-maintenance work accumulated after v0.4.0.
+AnoSecureKit Community v0.4.1 is an unpublished and parked maintenance snapshot
+at `df1936777843415022a97f775c6e61eea6d99cb0`. It has no tag, GitHub Release,
+release assets, release SBOM, or v0.4.1 attestations. Publication is not approved
+or scheduled. This section records prepared source changes; it is not a published
+release claim or publication authorization.
 
 ### Fixed
 
@@ -30,14 +32,16 @@ and repository-maintenance work accumulated after v0.4.0.
   CodeQL triage, and exact provider parity without committing full evidence
   archives or release binaries.
 - Aligned canonical Markdown, static Pages, compatibility roadmap, provider
-  terminology, and the single active work queue.
+  terminology, and the closed work queue.
 - Added a release-note gate that extracts exactly the matching version section
   from `docs/RELEASE_NOTES.md`; GitHub Release creation and reruns use that
   reviewed section through `--notes-file` rather than generated notes.
 
 ### Verification
 
-- Passed the full local Release `release-preflight` candidate gate.
+- Historical source-preparation evidence passed the local Release
+  `release-preflight` candidate gate before later CLI-output and closeout
+  changes. Closeout did not rerun archive-producing package targets.
 - Passed the 124/124 OpenSSL test inventory and the same 124/124 inventory through
   the build-tree-only external provider assembly.
 - Passed package, install/export, installed-consumer, library-only consumer,
@@ -45,8 +49,10 @@ and repository-maintenance work accumulated after v0.4.0.
   release-workflow, release-note, and document-alignment checks.
 - Passed focused CLI permission regression coverage for key generation, key
   unwrap, packet decryption, and stdin-to-file seal/open flows.
-- Hosted current-main confirmation remains `DEFERRED_EXTERNAL_BILLING`; this
-  release note does not claim a hosted current-main PASS.
+- The maintenance baseline passed hosted main CI (`29679908885`), CodeQL
+  (`29679908924`), and scheduled Fuzz (`29832291273`).
+- The v0.4.1 tag-triggered Release job was not run. No v0.4.1 publication
+  artifacts or attestations exist.
 
 ### Compatibility and Claims Boundary
 

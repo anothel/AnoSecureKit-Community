@@ -29,6 +29,34 @@ current publication evidence state is recorded in
 [docs/RELEASE_AND_EVIDENCE_STATUS.md](docs/RELEASE_AND_EVIDENCE_STATUS.md). Do not
 treat the project as a substitute for a full security review in high-risk systems.
 
+## Project Status
+
+AnoSecureKit Community engineering is closed and frozen. Public development,
+active release work, and the active roadmap are closed.
+
+```text
+published release: v0.4.0
+release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
+unpublished maintenance snapshot: df1936777843415022a97f775c6e61eea6d99cb0
+maintenance source version: 0.4.1
+maintenance state: unpublished and parked
+parked feature candidate: develop/v0.5.0@9fe79dc1e0f8b9951e86c2707c70469611ab43e4
+active next work: none
+active release action: none
+security support: EOL, archival response only
+```
+
+No version has an active maintenance commitment or response SLA. Future fixes,
+releases, or security response require a new explicit product decision.
+
+### Published v0.4.0 Output-File Limitation
+
+The published v0.4.0 generic CLI output paths can create key or plaintext files
+with mode `0644` under a POSIX `umask 022`. The unpublished maintenance snapshot
+on `main` fixes this with exclusive temporary-file creation and mode `0600`.
+That correction is not part of the published v0.4.0 Release, and publication of
+v0.4.1 is not approved or scheduled.
+
 ## License
 
 AnoSecureKit is licensed under the Mozilla Public License 2.0 (`MPL-2.0`).
@@ -119,7 +147,8 @@ artifacts, release assets, and provenance files before release.
 External audits and roadmap notes are handled through this contract. Items that
 do not map to the C++ API, CLI, `SKT1`/`SKF1`/`SKP1`, CMake package, release
 asset, or security-reporting surface are triage input, not implementation scope.
-`docs/NEXT_WORK_QUEUE.md` records the canonical active work queue; `docs/ROADMAP.md` is a compatibility entry point.
+`docs/NEXT_WORK_QUEUE.md` records the canonical closed queue;
+`docs/ROADMAP.md` is a compatibility entry point.
 
 For the canonical documentation map, see
 [`docs/DOCUMENT_INDEX.md`](docs/DOCUMENT_INDEX.md). The compatibility entry point
@@ -294,8 +323,9 @@ publication. Check [docs/RELEASE_AND_EVIDENCE_STATUS.md](docs/RELEASE_AND_EVIDEN
 before claiming that release assets, checksums, SBOM, attestations, or hosted
 runs exist for a specific revision.
 
-The tag version must match the CMake project version. For example,
-`project(... VERSION 0.4.1)` should be released with tag `v0.4.1`.
+The tag version must match the CMake project version. The current `main` source
+version is `0.4.1`, but it is an unpublished and parked maintenance snapshot
+with no tag or Release.
 
 Local release preflight:
 
@@ -355,7 +385,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   anosecurekit
-  URL https://github.com/anothel/AnoSecureKit-Community/releases/download/v0.4.1/anosecurekit-0.4.1-source.tar.gz
+  URL https://github.com/anothel/AnoSecureKit-Community/releases/download/v0.4.0/anosecurekit-0.4.0-source.tar.gz
   URL_HASH SHA256=<release archive checksum>)
 
 FetchContent_MakeAvailable(anosecurekit)
@@ -796,10 +826,13 @@ AnoSecureKit Community uses OpenSSL 3.x as its only shipped production provider.
 AnoSecureKit does not scrub, lock, or otherwise guarantee erasure of key material,
 derived keys, plaintext, or intermediate buffers from process memory.
 
-Path-based file APIs and CLI file commands refuse existing output paths and
-remove AnoSecureKit-owned temporary output after failures. They create temporary
-output with an operating-system exclusive open; POSIX files are created with
-owner read/write permissions only (`0600`). Path-based file APIs flush
+The current unpublished `main` snapshot's path-based file APIs and CLI file
+commands refuse existing output paths and remove AnoSecureKit-owned temporary
+output after failures. They create temporary output with an operating-system
+exclusive open; POSIX files are created with owner read/write permissions only
+(`0600`). Published v0.4.0 does not include the generic CLI-output hardening and
+can create key or plaintext output with mode `0644` under `umask 022`.
+Path-based file APIs flush
 AnoSecureKit-owned temporary output before committing it and use platform commit
 syncing where practical, but they do not guarantee survival across power loss or
 storage-device failure. If a post-commit directory sync fails on a platform that
@@ -892,9 +925,8 @@ executables with the OpenSSL DLL directory on `PATH`.
 
 ## Roadmap
 
-See [docs/NEXT_WORK_QUEUE.md](docs/NEXT_WORK_QUEUE.md) for the canonical
-post-v0.4.0 queue. [`docs/ROADMAP.md`](docs/ROADMAP.md) is retained only as a
-compatibility entry point and must not become a second queue. Completed work is kept in Git history or release
-notes instead of the active roadmap.
-Website, guide, and browser-local tool planning lives in
+See [docs/NEXT_WORK_QUEUE.md](docs/NEXT_WORK_QUEUE.md) for the closed canonical
+queue. [`docs/ROADMAP.md`](docs/ROADMAP.md) is retained only as a compatibility
+entry point. There is no active roadmap or release action. Completed work remains
+in Git history or release notes; unselected future ideas remain deferred in
 [docs/WEB_ROADMAP.md](docs/WEB_ROADMAP.md).
