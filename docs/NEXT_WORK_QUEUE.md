@@ -2,6 +2,10 @@
 
 # AnoSecureKit Community Next Work Queue
 
+Maintenance resumption (2026-11-15): the active phased queue is now
+[REVIVAL_PLAN.md](REVIVAL_PLAN.md). The frozen queue below is retained as a
+historical record, not the current maintenance instruction.
+
 Status: CLOSED
 
 ```text

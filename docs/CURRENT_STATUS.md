@@ -2,6 +2,10 @@
 
 # AnoSecureKit Community Current Status
 
+Maintenance resumption (2026-11-15): see [REVIVAL_PLAN.md](REVIVAL_PLAN.md) and
+[REVIVAL_PHASE1_RESULTS.md](REVIVAL_PHASE1_RESULTS.md). The closeout record below
+is historical; the resumed scope does not authorize a release or define a new SLA.
+
 Status: CURRENT CLOSEOUT
 Audit date: 2026-07-25 (Asia/Seoul)
 Scope: AnoSecureKit Community only
