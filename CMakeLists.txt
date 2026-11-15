@@ -465,6 +465,7 @@ if(ANOSECUREKIT_BUILD_TESTS)
     tests/compare_test.cpp
     tests/file_test.cpp
     tests/fixture_inventory_test.cpp
+    tests/fuzz_fixture_test.cpp
     tests/hash_test.cpp
     tests/hex_test.cpp
     tests/internal_wipe_test.cpp
@@ -515,6 +516,14 @@ if(ANOSECUREKIT_BUILD_TESTS)
       set_tests_properties(Cli.UtilityCommands PROPERTIES ${_anosecurekit_test_properties})
     endif()
     list(APPEND _anosecurekit_check_dependencies anosecurekit_cli)
+    if(UNIX)
+      find_package(Python3 3.7 REQUIRED COMPONENTS Interpreter)
+      add_test(NAME Cli.OutputSecurity
+        COMMAND ${Python3_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli/check_output_security.py
+          $<TARGET_FILE:anosecurekit_cli>)
+      set_tests_properties(Cli.OutputSecurity PROPERTIES TIMEOUT 180)
+    endif()
   endif()
 
   add_custom_target(check
