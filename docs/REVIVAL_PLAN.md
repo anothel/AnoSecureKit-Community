@@ -27,7 +27,7 @@ Community/Enterprise separation. No merge, publication, tag edits or alert dismi
 - Late authentication failure: no committed file or owned temporary leftovers.
 - stdout: authenticated earlier file chunks may be visible after later failure.
 
-## Phase 1 — verify maintenance security (verified locally; PR access blocked)
+## Phase 1 — verify maintenance security (verified locally; PR #1 open)
 
 Files: AGENTS.md, tests/cli/check_output_security.py, tests/fuzz_fixture_test.cpp, CMakeLists.txt,
 docs/REVIVAL_PLAN.md, docs/REVIVAL_PHASE1_RESULTS.md.
@@ -46,7 +46,9 @@ scrypt cost, leaving an explicit Phase 3 coverage gap.
 - [x] Run regressions against unchanged production code; fix only reproduced defects.
 - [x] Run CMake suite, formatting, packages, provider parity and policy checks;
       document actual results and unavailable platforms/tools.
-- [ ] Commit and open focused PR when GitHub access permits.
+- [x] Commit and push focused Phase 1 branch.
+- [x] Open focused PR: https://github.com/anothel/AnoSecureKit-Community/pull/1
+      (connected GitHub tool succeeded after CLI API access was forbidden).
 
 Acceptance: matrix plus existing suite pass, no API/format drift, reproducible
 results with explicit limitations. Tests verifying existing fixes may pass first.

@@ -97,8 +97,12 @@ untouched files); 22.1.5 passes the whole tree without formatting churn.
   Post-commit directory-sync failure may report failure with output already present.
 - Final external security review, support/release decisions and parked v0.5.0
   API/ABI integration remain follow-up phases; no merge or publication is authorized.
-- GitHub CLI reports an invalid GH_TOKEN even with network access enabled. PR
-  creation is blocked pending usable repository credentials; no PR URL is claimed.
+- Branch push succeeded with network access enabled. GitHub CLI auth diagnostics
+  report an invalid GH_TOKEN; the actual `gh pr create` request failed with
+  `Post "https://api.github.com/graphql": Forbidden`. PR creation is blocked by
+  CLI API access; the connected GitHub tool subsequently succeeded and opened
+  https://github.com/anothel/AnoSecureKit-Community/pull/1. The pushed branch is at
+  https://github.com/anothel/AnoSecureKit-Community/tree/codex/revival-20261115.
 
 ## Review disposition
 
