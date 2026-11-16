@@ -226,6 +226,20 @@ if(ANOSECUREKIT_BUILD_CLI)
     src/cli/main.cpp)
 
   set_target_properties(anosecurekit_cli PROPERTIES OUTPUT_NAME anosecurekit)
+  if(BUILD_SHARED_LIBS AND UNIX)
+    # Keep extracted/install-prefix-moved CLI packages self-contained with
+    # respect to our own library. OpenSSL remains a platform dependency.
+    file(RELATIVE_PATH _anosecurekit_cli_to_lib
+      "${CMAKE_INSTALL_FULL_BINDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    if(APPLE)
+      set(_anosecurekit_loader_origin "@loader_path")
+    else()
+      set(_anosecurekit_loader_origin "$ORIGIN")
+    endif()
+    set_property(TARGET anosecurekit_cli APPEND PROPERTY INSTALL_RPATH
+      "${_anosecurekit_loader_origin}/${_anosecurekit_cli_to_lib}")
+  endif()
+
 
   target_link_libraries(anosecurekit_cli PRIVATE anosecurekit::anosecurekit)
   target_compile_features(anosecurekit_cli PRIVATE cxx_std_20)

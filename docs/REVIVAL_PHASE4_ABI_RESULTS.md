@@ -20,8 +20,11 @@ Improve the candidate gates: validate every MSVC decorated export family and
 exact public-function counts instead of checking only five substring tokens;
 reject unknown exports. Pass the MSVC linker directory for dumpbin discovery.
 Forward toolchain, vcpkg triplet and OpenSSL root into nested package consumers.
-Add negative validator tests and a frozen old-source consumer. Keep unrelated
-candidate string rewrites and historical status/release assertions out.
+Add negative validator tests and a frozen old-source consumer. Historical
+status/release assertions stay out. Native Clang CI subsequently demonstrated
+that the candidate message-construction rewrites are needed: equivalent append
+operations avoid exporting a default-visible libstdc++ operator+ instantiation.
+Both exact messages and error categories are retained.
 
 `shared-symbol-check` runs source annotation checks and real ELF/Mach-O/MSVC
 export inspection. The reviewed allowlists inventory names/overload counts;
@@ -116,3 +119,25 @@ not a general ABI guarantee or a release authorization. No fuzz campaign or
 coverage claim is added: Phase 3 remains deferred. Provider parity uses the
 Community OpenSSL forwarding test implementation, not another production
 provider. No secure erasure, certification or external audit is claimed.
+
+## First native CI pass and follow-up
+
+API PR #3 at `b76330f`: Linux GCC Release/Debug/static/install-only, Clang Release,
+ASan/UBSan, macOS and Windows static/shared tests and packages all passed;
+[run 43867072525](https://github.com/anothel/AnoSecureKit-Community/actions/runs/43867072525)
+completed successfully. No release job ran.
+
+ABI PR #4 at `6909916`, run 43868810732: native Windows shared tests, packages,
+complete decorated export gate and both installed consumers passed. Windows
+static, macOS, Linux static/Debug/install-only and sanitizers also passed.
+The new GCC shared job passed 133 tests and its symbol inventory, then reproduced
+an installed CLI loader failure. The Clang shared job rejected an unexpected
+libstdc++ `operator+` symbol. Neither failure was waived.
+
+Follow-up regression: copy the installed shared package to a new prefix, clear
+loader-path environment variables and invoke its CLI. It failed before the fix
+(`/tmp/phase4-relocated-cli-red.log`). Set the shared UNIX CLI install rpath
+relative to its own executable (`$ORIGIN` on ELF, `@loader_path` on macOS), using
+the configured bin-to-library relative path. Retain system OpenSSL dependencies.
+Apply the two candidate append-based message constructions to remove the Clang
+STL export without widening the allowlist. Final reruns are recorded separately.

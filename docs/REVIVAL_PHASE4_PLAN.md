@@ -56,7 +56,9 @@ consumers must work. Symbol gates must reject unrelated or extra exports.
 
 Reuse stream `open_file` to avoid a second parser; retain Phase 2 I/O changes.
 Retain current CLI verification routing and diagnostics (the candidate changed
-missing-input diagnostics); the public API is additive. Skip unrelated candidate
-string-construction rewrites and historical release/status edits. No version bump.
+missing-input diagnostics); the public API is additive. Initially exclude candidate string-construction rewrites; Clang CI later proved
+they are needed to prevent a default-visible STL instantiation, so include only
+those two equivalent message constructions. Skip historical release/status edits.
+No version bump.
 The export allowlist is a surface inventory, not a universal binary compatibility
 promise: old binaries are tested only on the same local compiler/runtime.

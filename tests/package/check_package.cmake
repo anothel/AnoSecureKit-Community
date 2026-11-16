@@ -167,6 +167,29 @@ if(WIN32)
   set(_anosecurekit_path "${_anosecurekit_runtime_path}${_anosecurekit_path_separator}$ENV{PATH}")
 endif()
 
+# An extracted shared CLI package must locate its sibling library without the
+# build tree, an absolute install path, or a caller-provided loader path.
+if(UNIX)
+  file(GLOB shared_libraries
+    "${_anosecurekit_install_prefix}/lib/libanosecurekit.so*"
+    "${_anosecurekit_install_prefix}/lib/libanosecurekit*.dylib")
+  if(shared_libraries)
+    set(relocated_prefix "${ANOSECUREKIT_PACKAGE_CHECK_ROOT}/relocated-install")
+    file(REMOVE_RECURSE "${relocated_prefix}")
+    file(MAKE_DIRECTORY "${relocated_prefix}")
+    file(COPY "${_anosecurekit_install_prefix}/" DESTINATION "${relocated_prefix}")
+    execute_process(COMMAND "${CMAKE_COMMAND}" -E env
+      --unset=LD_LIBRARY_PATH --unset=DYLD_LIBRARY_PATH
+      "${relocated_prefix}/bin/anosecurekit" --version
+      RESULT_VARIABLE relocation_result OUTPUT_VARIABLE relocation_output
+      ERROR_VARIABLE relocation_error)
+    if(NOT relocation_result EQUAL 0 OR
+        NOT relocation_output STREQUAL "anosecurekit ${ANOSECUREKIT_PROJECT_VERSION}\n")
+      message(FATAL_ERROR "Relocated shared CLI failed: ${relocation_error}")
+    endif()
+  endif()
+endif()
+
 execute_process(
   COMMAND "${CMAKE_COMMAND}" -E env "PATH=${_anosecurekit_path}"
     "${CMAKE_COMMAND}"
