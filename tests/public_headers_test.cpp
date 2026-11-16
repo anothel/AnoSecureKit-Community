@@ -95,17 +95,25 @@ TEST(PublicHeaders, FileApiIsAvailable)
 {
 	using PathKeyFileApi = void (*)(const std::filesystem::path &, const std::filesystem::path &, const anosecurekit::key256 &, std::span<const std::byte>);
 	using StreamKeyFileApi = void (*)(std::istream &, std::ostream &, const anosecurekit::key256 &, std::span<const std::byte>);
+	using PathKeyVerifyApi = void (*)(const std::filesystem::path &, const anosecurekit::key256 &, std::span<const std::byte>);
+	using StreamKeyVerifyApi = void (*)(std::istream &, const anosecurekit::key256 &, std::span<const std::byte>);
 	using PathPasswordFileApi = void (*)(const std::filesystem::path &, const std::filesystem::path &, std::span<const std::byte>, std::span<const std::byte>);
 	using StreamPasswordFileApi = void (*)(std::istream &, std::ostream &, std::span<const std::byte>, std::span<const std::byte>);
+	using PathPasswordVerifyApi = void (*)(const std::filesystem::path &, std::span<const std::byte>, std::span<const std::byte>);
+	using StreamPasswordVerifyApi = void (*)(std::istream &, std::span<const std::byte>, std::span<const std::byte>);
 
 	static_assert(std::is_same_v<decltype(static_cast<PathKeyFileApi>(&anosecurekit::seal_file)), PathKeyFileApi>);
 	static_assert(std::is_same_v<decltype(static_cast<PathKeyFileApi>(&anosecurekit::open_file)), PathKeyFileApi>);
 	static_assert(std::is_same_v<decltype(static_cast<StreamKeyFileApi>(&anosecurekit::seal_file)), StreamKeyFileApi>);
 	static_assert(std::is_same_v<decltype(static_cast<StreamKeyFileApi>(&anosecurekit::open_file)), StreamKeyFileApi>);
+	static_assert(std::is_same_v<decltype(static_cast<PathKeyVerifyApi>(&anosecurekit::verify_file)), PathKeyVerifyApi>);
+	static_assert(std::is_same_v<decltype(static_cast<StreamKeyVerifyApi>(&anosecurekit::verify_file)), StreamKeyVerifyApi>);
 	static_assert(std::is_same_v<decltype(static_cast<PathPasswordFileApi>(&anosecurekit::seal_file_with_password)), PathPasswordFileApi>);
 	static_assert(std::is_same_v<decltype(static_cast<PathPasswordFileApi>(&anosecurekit::open_file_with_password)), PathPasswordFileApi>);
 	static_assert(std::is_same_v<decltype(static_cast<StreamPasswordFileApi>(&anosecurekit::seal_file_with_password)), StreamPasswordFileApi>);
 	static_assert(std::is_same_v<decltype(static_cast<StreamPasswordFileApi>(&anosecurekit::open_file_with_password)), StreamPasswordFileApi>);
+	static_assert(std::is_same_v<decltype(static_cast<PathPasswordVerifyApi>(&anosecurekit::verify_file_with_password)), PathPasswordVerifyApi>);
+	static_assert(std::is_same_v<decltype(static_cast<StreamPasswordVerifyApi>(&anosecurekit::verify_file_with_password)), StreamPasswordVerifyApi>);
 }
 
 TEST(PublicHeaders, KeyWrapApiIsAvailable)

@@ -122,15 +122,19 @@ int main()
 
 	write_file(plain_path, plaintext);
 	anosecurekit::seal_file(plain_path, sealed_path, key, aad);
+	anosecurekit::verify_file(sealed_path, key, aad);
 	anosecurekit::open_file(sealed_path, opened_path, key, aad);
 	const auto opened = read_file(opened_path);
 	anosecurekit::seal_file_with_password(plain_path, password_sealed_path, password, aad);
+	anosecurekit::verify_file_with_password(password_sealed_path, password, aad);
 	anosecurekit::open_file_with_password(password_sealed_path, password_opened_path, password, aad);
 	const auto password_opened = read_file(password_opened_path);
 
 	std::istringstream stream_plaintext(string_from_bytes(plaintext), std::ios::in | std::ios::binary);
 	std::ostringstream stream_sealed(std::ios::out | std::ios::binary);
 	anosecurekit::seal_file(stream_plaintext, stream_sealed, key, aad);
+	std::istringstream stream_verify_ciphertext(stream_sealed.str(), std::ios::in | std::ios::binary);
+	anosecurekit::verify_file(stream_verify_ciphertext, key, aad);
 	std::istringstream stream_ciphertext(stream_sealed.str(), std::ios::in | std::ios::binary);
 	std::ostringstream stream_opened_output(std::ios::out | std::ios::binary);
 	anosecurekit::open_file(stream_ciphertext, stream_opened_output, key, aad);
@@ -139,6 +143,8 @@ int main()
 	std::istringstream password_stream_plaintext(string_from_bytes(plaintext), std::ios::in | std::ios::binary);
 	std::ostringstream password_stream_sealed(std::ios::out | std::ios::binary);
 	anosecurekit::seal_file_with_password(password_stream_plaintext, password_stream_sealed, password, aad);
+	std::istringstream password_stream_verify_ciphertext(password_stream_sealed.str(), std::ios::in | std::ios::binary);
+	anosecurekit::verify_file_with_password(password_stream_verify_ciphertext, password, aad);
 	std::istringstream password_stream_ciphertext(password_stream_sealed.str(), std::ios::in | std::ios::binary);
 	std::ostringstream password_stream_opened_output(std::ios::out | std::ios::binary);
 	anosecurekit::open_file_with_password(password_stream_ciphertext, password_stream_opened_output, password, aad);

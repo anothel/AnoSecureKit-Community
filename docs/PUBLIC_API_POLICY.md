@@ -8,7 +8,8 @@ This document records the v1 public API shape decision.
 
 AnoSecureKit keeps the current exception boundary for v1. Public failures are
 reported with `anosecurekit::error` and `anosecurekit::error_code`.
-No public API change and no format change are made by this policy.
+This exception policy does not change existing APIs or formats. Phase 4 adds
+output-free verification functions; see [PUBLIC_FILE_VERIFICATION_API.md](PUBLIC_FILE_VERIFICATION_API.md).
 
 The affected APIs are the public functions and classes listed in README.md:
 
@@ -16,7 +17,7 @@ The affected APIs are the public functions and classes listed in README.md:
 - hash, HMAC, HKDF, compare, random, and token helpers
 - `encrypt`, `decrypt`, `wrap_key`, and `unwrap_key`
 - `seal_file`, `open_file`, `seal_file_with_password`, and
-  `open_file_with_password`
+  `open_file_with_password`, `verify_file`, and `verify_file_with_password`
 - `packet_encryptor` and `packet_decryptor`
 - version helpers
 

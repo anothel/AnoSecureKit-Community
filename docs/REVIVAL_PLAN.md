@@ -68,7 +68,7 @@ Acceptance: deterministic failure matrix for CLI and path APIs; no timing-only t
 Risk: fdopen/allocation failures and cleanup failure need explicit ownership checks;
       CLI and library durability guarantees differ.
 
-## Phase 3 — targeted fuzzing and coverage (separate PR)
+## Phase 3 — targeted fuzzing and coverage (deferred; separate PR)
 
 Files: tests/fuzz/file_fuzz.cpp, fuzz_utils.hpp, CMakeLists.txt, .github/workflows/fuzz.yml.
 - [ ] Instrument library and harnesses with ASan/UBSan and coverage, use copied corpora.
@@ -82,8 +82,8 @@ Acceptance: all five harnesses smoke-pass, bounded campaigns and measured covera
 
 Candidate: develop/v0.5.0 at 9fe79dc1e0f8b9951e86c2707c70469611ab43e4.
 Files: include/anosecurekit/file.hpp, implementation/tests, shared-library export rules.
-- [ ] Obtain exact branch and compare with reviewed Phase 1 baseline; do not merge blindly.
-- [ ] Review verification APIs, error behavior and discarded plaintext ownership.
+- [x] Obtain exact branch and compare with latest main (including Phases 1–2); do not merge blindly.
+- [x] Review verification APIs, error behavior and discarded plaintext ownership.
 - [ ] Test old consumers, header compatibility, shared exports and ABI allowlist on
       Linux/Windows; rerun format fixtures, installed packages and ordered parity.
 Acceptance: additive APIs only, explicit ABI decision and no lost maintenance fixes.
@@ -111,7 +111,8 @@ Publication/merge/tagging require separate authority; no external audit has occu
 Phase 1 results and limitations: [REVIVAL_PHASE1_RESULTS.md](REVIVAL_PHASE1_RESULTS.md).
 The tracked plan lives here because docs/superpowers/ is intentionally gitignored.
 Phase 2 execution and limitations: [REVIVAL_PHASE2_RESULTS.md](REVIVAL_PHASE2_RESULTS.md).
-Phases 3–6 remain follow-up work.
+Phase 3 remains explicitly deferred. Phase 4 execution is recorded in
+[REVIVAL_PHASE4_PLAN.md](REVIVAL_PHASE4_PLAN.md); Phases 5–6 remain follow-up work.
 
 ## Phase 2 execution design — 2026-11-16
 
