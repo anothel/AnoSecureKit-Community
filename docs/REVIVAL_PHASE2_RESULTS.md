@@ -73,7 +73,7 @@ builds the new driver/DSO before running the identical inventory.
 
 ## Reproduction and actual results
 
-Environment: Linux x86_64, GCC 14.2.0, OpenSSL 3.5.7, CMake 4.4.5,
+Environment: Linux x86_64, GCC 14.2.0, OpenSSL 3.5.7, CMake 3.31.6,
 Python 3.12.14, GoogleTest v1.14.0, clang-format 22.1.5 installed under `/tmp`.
 The preinstalled formatter was 19.1.7; use 22.1.5 for repository checks.
 With CMake and Ninja on PATH:
@@ -137,3 +137,5 @@ A read-only independent review found harness routing/allowlist and nested parity
 build issues; these were corrected. Library error categories now have separate
 driver statuses. Minor deferred review note: macOS configuration precedes the
 GoogleTest cache restore, which reduces caching effectiveness but not coverage.
+
+Phase 2 PR: https://github.com/anothel/AnoSecureKit-Community/pull/2.

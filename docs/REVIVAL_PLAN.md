@@ -128,7 +128,8 @@ there remains a documented limitation.
 - [x] Fix only reproduced cleanup/reporting defects; re-run fault matrix.
 - [x] Run full tests, provider inventory parity, policy/format/package and supported
       sanitizers; add macOS CI coverage and record actual remote checks.
-- [ ] Review delta, document confirmed defects and untested risks, open focused PR.
+- [x] Review delta, document confirmed defects and untested risks, open focused PR:
+      https://github.com/anothel/AnoSecureKit-Community/pull/2.
 
 Review focus: fdopen ownership, post-commit unlink/sync errors, destination races,
 short-write/EINTR handling, cleanup failure leaving sensitive temporary files.
