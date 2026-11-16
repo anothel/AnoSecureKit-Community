@@ -132,6 +132,10 @@ the requested path only after the command succeeds. On POSIX systems, CLI output
 files are created with mode `0600`. Existing destinations are never overwritten.
 These protections do not apply to `--out -`, because stdout is owned by the
 caller.
+If removing the temporary hard link fails after commit, the command reports an
+error even though the final file already exists. Persistent cleanup failure may
+also leave the private temporary file. Check output state before retrying; CLI
+output helpers sync the file but do not sync the parent directory.
 
 `encrypt` accepts either `--text` or `--in` plus exactly one key source. Without
 `--out`, it writes the resulting `SKT1` packet as lowercase hex. With `--out`,

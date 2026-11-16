@@ -87,7 +87,12 @@ and use platform commit syncing where practical. This improves crash resilience,
 but AnoSecureKit does not guarantee survival across power loss, filesystem bugs, or
 storage-device failure. If a post-commit directory sync fails on a platform that
 supports it, AnoSecureKit reports `backend_failure` and the output path may already
-exist.
+exist. A failure removing the temporary hard link after commit also reports an
+error, in both library path APIs and CLI output helpers. The final file is kept:
+an error does not imply that no output exists. Cleanup is best effort; persistent
+filesystem refusal can leave a private temporary file as well. Check both the
+operation result and filesystem state before retrying. CLI output helpers sync
+the file but do not sync its parent directory.
 
 Stream-based open APIs write to caller-provided streams. They cannot delete,
 truncate, or roll back bytes already accepted by that stream. Callers using

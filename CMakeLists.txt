@@ -526,6 +526,25 @@ if(ANOSECUREKIT_BUILD_TESTS)
     endif()
   endif()
 
+  # Interposition is confined to a Linux test DSO loaded by isolated children.
+  # Product libraries/CLI and installed packages never link these hooks.
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND TARGET anosecurekit_cli)
+    add_library(anosecurekit_io_faults SHARED tests/io/faults.cpp)
+    target_link_libraries(anosecurekit_io_faults PRIVATE ${CMAKE_DL_LIBS})
+    target_compile_features(anosecurekit_io_faults PRIVATE cxx_std_20)
+    add_executable(anosecurekit_io_driver tests/io/driver.cpp src/cli/commands.cpp)
+    target_link_libraries(anosecurekit_io_driver PRIVATE anosecurekit::anosecurekit)
+    target_compile_features(anosecurekit_io_driver PRIVATE cxx_std_20)
+    target_compile_options(anosecurekit_io_driver PRIVATE ${_anosecurekit_compile_options})
+    add_test(NAME FileIo.FaultInjection COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tests/io/check_faults.py
+      $<TARGET_FILE:anosecurekit_io_driver> $<TARGET_FILE:anosecurekit_io_faults>)
+    set_tests_properties(FileIo.FaultInjection PROPERTIES TIMEOUT 180)
+    list(APPEND _anosecurekit_check_dependencies anosecurekit_io_driver anosecurekit_io_faults)
+  endif()
+
+  add_custom_target(anosecurekit_test_binaries DEPENDS ${_anosecurekit_check_dependencies})
+
   add_custom_target(check
     COMMAND ${CMAKE_CTEST_COMMAND}
       --test-dir ${CMAKE_CURRENT_BINARY_DIR}

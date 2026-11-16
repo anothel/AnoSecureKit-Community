@@ -35,11 +35,13 @@
 namespace anosecurekit::detail
 {
 
-OutputFile::OutputFile(std::filesystem::path path, std::FILE *file) : path_(std::move(path)), file_(file)
+OutputFile::OutputFile(std::filesystem::path path, std::FILE *file)
+    : path_(std::move(path)), file_(file)
 {
 }
 
-OutputFile::OutputFile(OutputFile &&other) noexcept : path_(std::move(other.path_)), file_(std::exchange(other.file_, nullptr))
+OutputFile::OutputFile(OutputFile &&other) noexcept
+    : path_(std::move(other.path_)), file_(std::exchange(other.file_, nullptr))
 {
 }
 
@@ -209,6 +211,7 @@ ExclusiveOpenResult try_open_output_exclusive(const std::filesystem::path &path,
 	if (file == nullptr)
 	{
 		_close(fd);
+		remove_quietly(path);
 		return ExclusiveOpenResult::failed;
 	}
 	output = OutputFile(path, file);
@@ -228,6 +231,7 @@ ExclusiveOpenResult try_open_output_exclusive(const std::filesystem::path &path,
 	if (file == nullptr)
 	{
 		(void)::close(fd);
+		remove_quietly(path);
 		return ExclusiveOpenResult::failed;
 	}
 	output = OutputFile(path, file);
@@ -336,7 +340,12 @@ void commit_temp_file(const std::filesystem::path &temp_path, const std::filesys
 #elif defined(__unix__) || defined(__APPLE__)
 	if (::link(temp_path.c_str(), output.c_str()) == 0)
 	{
-		remove_quietly(temp_path);
+		std::error_code ec;
+		(void)std::filesystem::remove(temp_path, ec);
+		if (ec)
+		{
+			throw_backend_failure("Temporary file removal failed");
+		}
 		flush_parent_directory(output);
 		return;
 	}

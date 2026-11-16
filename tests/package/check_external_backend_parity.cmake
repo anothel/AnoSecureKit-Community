@@ -158,7 +158,7 @@ execute_process(
   COMMAND "${CMAKE_COMMAND}" --build "${_anosecurekit_parity_build}"
     --config "${ANOSECUREKIT_BUILD_CONFIG}"
     --parallel "${ANOSECUREKIT_TEST_PARALLEL_LEVEL}"
-    --target anosecurekit_tests anosecurekit_cli
+    --target anosecurekit_test_binaries
   RESULT_VARIABLE _anosecurekit_test_build_result)
 if(NOT _anosecurekit_test_build_result EQUAL 0)
   message(FATAL_ERROR "External backend test and CLI build failed")

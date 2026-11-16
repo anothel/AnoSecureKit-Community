@@ -27,7 +27,7 @@ Community/Enterprise separation. No merge, publication, tag edits or alert dismi
 - Late authentication failure: no committed file or owned temporary leftovers.
 - stdout: authenticated earlier file chunks may be visible after later failure.
 
-## Phase 1 — verify maintenance security (verified locally; PR #1 open)
+## Phase 1 — verify maintenance security (verified locally; PR #1 merged)
 
 Files: AGENTS.md, tests/cli/check_output_security.py, tests/fuzz_fixture_test.cpp, CMakeLists.txt,
 docs/REVIVAL_PLAN.md, docs/REVIVAL_PHASE1_RESULTS.md.
@@ -59,11 +59,11 @@ Risks: filesystem assumptions, Windows untested locally, fault paths not injecte
 Files: src/file_io.cpp, src/cli/commands.cpp, tests/file_test.cpp and new test-only
 fault harness under tests/. Preserve public interfaces; use test link wrappers or
 an internal seam, never public production switches.
-- [ ] Write failing cases for open/fdopen, read, short write/EINTR, flush/fsync,
+- [x] Write failing cases for open/fdopen, read, short write/EINTR, flush/fsync,
       close, link/rename, temp unlink and parent directory sync failures.
-- [ ] Assert generic error categories, descriptor closure, owned-temp cleanup and
+- [x] Assert generic error categories, descriptor closure, owned-temp cleanup and
       preservation of pre-existing files; post-commit sync failure may leave output.
-- [ ] Reproduce any defect, minimally fix it, run suite/parity and commit.
+- [x] Reproduce any defect, minimally fix it, run suite/parity and commit.
 Acceptance: deterministic failure matrix for CLI and path APIs; no timing-only tests.
 Risk: fdopen/allocation failures and cleanup failure need explicit ownership checks;
       CLI and library durability guarantees differ.
@@ -110,4 +110,26 @@ Publication/merge/tagging require separate authority; no external audit has occu
 
 Phase 1 results and limitations: [REVIVAL_PHASE1_RESULTS.md](REVIVAL_PHASE1_RESULTS.md).
 The tracked plan lives here because docs/superpowers/ is intentionally gitignored.
-Phases 2–6 are prepared follow-up work, not executed in this Phase 1 change.
+Phase 2 execution and limitations: [REVIVAL_PHASE2_RESULTS.md](REVIVAL_PHASE2_RESULTS.md).
+Phases 3–6 remain follow-up work.
+
+## Phase 2 execution design — 2026-11-16
+
+Baseline: updated origin/main, 21340d31273442cf58d689aed7f5e36bf2b436f2
+(PR #1 merged). Branch: codex/revival-phase2-io; target main.
+Execute inline. Use a Linux-only LD_PRELOAD test DSO and a driver invoking actual
+path APIs and CLI dispatch. No product target links hooks; no installed switches.
+This avoids adding test conditionals to production I/O and intercepts libstdc++
+file operations too. Windows/macOS retain portable tests; native fault injection
+there remains a documented limitation.
+
+- [x] Add deterministic one-shot hooks, assert each hook reached, run regressions
+      against unchanged production code and record failures.
+- [x] Fix only reproduced cleanup/reporting defects; re-run fault matrix.
+- [x] Run full tests, provider inventory parity, policy/format/package and supported
+      sanitizers; inspect existing platform CI coverage and record actual remote checks.
+- [x] Review delta, document confirmed defects and untested risks, open focused PR:
+      https://github.com/anothel/AnoSecureKit-Community/pull/2.
+
+Review focus: fdopen ownership, post-commit unlink/sync errors, destination races,
+short-write/EINTR handling, cleanup failure leaving sensitive temporary files.

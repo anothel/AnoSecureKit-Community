@@ -390,7 +390,15 @@ anosecurekit::bytes read_file(const std::filesystem::path &path)
 		throw std::runtime_error("failed to open input file");
 	}
 
-	const std::string data{std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>()};
+	std::string data;
+	try
+	{
+		data.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+	}
+	catch (const std::ios_base::failure &)
+	{
+		throw std::runtime_error("failed to read input file");
+	}
 	if (!in.good() && !in.eof())
 	{
 		throw std::runtime_error("failed to read input file");
@@ -976,7 +984,11 @@ void commit_output_file(const std::filesystem::path &temp_path, const std::files
 	std::filesystem::create_hard_link(temp_path, output, ec);
 	if (!ec)
 	{
-		remove_file_quietly(temp_path);
+		(void)std::filesystem::remove(temp_path, ec);
+		if (ec)
+		{
+			throw std::runtime_error("failed to write output file");
+		}
 		return;
 	}
 	std::error_code exists_ec;
