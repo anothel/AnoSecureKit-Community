@@ -125,8 +125,8 @@ Native Windows/macOS fault hooks, Windows descriptor failure semantics, allocati
 failure, real power loss, network filesystems, and adversarial parent-directory
 replacement are untested. Linux preload coverage assumes dynamically linked
 libc/libstdc++ calls; the explicit reached-hook assertions fail if interception
-stops working. Read-EINTR retry evidence is for this runtime. ASan/TSan and fuzz
-campaigns were not run in this phase; UBSan is recorded separately.
+stops working. Read-EINTR retry evidence is for this runtime. ASan/TSan were not run locally; remote Clang ASan/UBSan results are recorded
+below. Fuzz campaigns remain Phase 3 work.
 
 The existing Linux GCC/Clang, Windows, macOS AppleClang/OpenSSL 3 and Clang
 ASan/UBSan CI jobs are retained. Native fault injection remains
@@ -139,3 +139,15 @@ driver statuses. The initially duplicated macOS matrix entry was removed after c
 the existing dedicated macOS job already covers tests and packages.
 
 Phase 2 PR: https://github.com/anothel/AnoSecureKit-Community/pull/2.
+
+## Remote CI snapshot
+
+Implementation commit `b00578f6de49e6408fffe6d4ffedb9826dea41ae`,
+[run 43788440231](https://github.com/anothel/AnoSecureKit-Community/actions/runs/43788440231):
+Linux GCC Debug tests/packages, GCC Release static tests/packages, install-only
+packages, Clang ASan/UBSan tests and macOS AppleClang tests/packages passed.
+Windows MSVC static/shared jobs were still installing dependencies when inspected;
+Linux Release jobs were still running. Subsequent commits change documentation
+and remove the duplicated macOS workflow entry; C++ implementation and tests are
+unchanged. Latest-head CI remains queued/running; no Windows pass is claimed.
+The PR checks are the source for results after this snapshot.
