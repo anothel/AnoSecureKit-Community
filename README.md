@@ -930,3 +930,9 @@ queue. [`docs/ROADMAP.md`](docs/ROADMAP.md) is retained only as a compatibility
 entry point. There is no active roadmap or release action. Completed work remains
 in Git history or release notes; unselected future ideas remain deferred in
 [docs/WEB_ROADMAP.md](docs/WEB_ROADMAP.md).
+
+### Unreleased file verification API
+
+`verify_file` and `verify_file_with_password` accept a path or input stream and
+authenticate a complete SKF1/SKP1 input without plaintext output. See
+[the API contract](docs/PUBLIC_FILE_VERIFICATION_API.md) for errors and limits.

@@ -11,6 +11,7 @@
 #include <limits>
 #include <ostream>
 #include <span>
+#include <streambuf>
 
 #include "anosecurekit/error.hpp"
 
@@ -20,6 +21,19 @@ namespace
 {
 
 using namespace anosecurekit::detail;
+
+class discard_stream_buffer final : public std::streambuf
+{
+protected:
+	std::streamsize xsputn(const char *, std::streamsize count) override
+	{
+		return count;
+	}
+	int_type overflow(int_type ch) override
+	{
+		return traits_type::not_eof(ch);
+	}
+};
 
 template <typename Output>
 void seal_stream_payload(
@@ -314,6 +328,33 @@ void open_file_with_password(
 	const internal::wipe_on_exit wipe_file_key{std::span<std::byte>(file_key)};
 
 	open_file_payload(input, output, header.serialized, header.nonce_prefix, file_key, aad);
+}
+
+void verify_file(const std::filesystem::path &input, const key256 &key, std::span<const std::byte> aad)
+{
+	std::ifstream in = open_input(input);
+	verify_file(in, key, aad);
+}
+
+void verify_file(std::istream &input, const key256 &key, std::span<const std::byte> aad)
+{
+	discard_stream_buffer buffer;
+	std::ostream output(&buffer);
+	open_file(input, output, key, aad);
+}
+
+void verify_file_with_password(const std::filesystem::path &input, std::span<const std::byte> password, std::span<const std::byte> aad)
+{
+	require_non_empty_password(password);
+	std::ifstream in = open_input(input);
+	verify_file_with_password(in, password, aad);
+}
+
+void verify_file_with_password(std::istream &input, std::span<const std::byte> password, std::span<const std::byte> aad)
+{
+	discard_stream_buffer buffer;
+	std::ostream output(&buffer);
+	open_file_with_password(input, output, password, aad);
 }
 
 } // namespace anosecurekit

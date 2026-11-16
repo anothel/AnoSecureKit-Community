@@ -464,6 +464,7 @@ if(ANOSECUREKIT_BUILD_TESTS)
     tests/base64_test.cpp
     tests/compare_test.cpp
     tests/file_test.cpp
+    tests/file_verification_test.cpp
     tests/fixture_inventory_test.cpp
     tests/fuzz_fixture_test.cpp
     tests/hash_test.cpp

@@ -92,3 +92,6 @@ actual code/tag/release evidence
 
 New source-controlled documentation must include
 `SPDX-License-Identifier: MPL-2.0`.
+
+Phase 4: [public verification API](PUBLIC_FILE_VERIFICATION_API.md),
+[integration plan](REVIVAL_PHASE4_PLAN.md).
