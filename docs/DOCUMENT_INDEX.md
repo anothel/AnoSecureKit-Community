@@ -95,3 +95,6 @@ New source-controlled documentation must include
 
 Phase 4: [public verification API](PUBLIC_FILE_VERIFICATION_API.md),
 [integration plan](REVIVAL_PHASE4_PLAN.md).
+
+Phase 4 shared integration: [ABI policy](SHARED_LIBRARY_ABI.md) and
+[results](REVIVAL_PHASE4_ABI_RESULTS.md).

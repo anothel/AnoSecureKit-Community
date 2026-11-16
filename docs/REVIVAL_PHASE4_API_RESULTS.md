@@ -64,8 +64,11 @@ cmake --build build --target backend-boundary-check document-alignment-check \
 
 ## Remaining evidence and risks
 
-Remote Linux/MSVC/macOS checks are observed after opening the PR; results will
-be recorded separately. Windows/macOS cannot be executed locally. Shared ABI
+Native CI at API commit `b76330faa4e0febf079d5f7d96156c36e0514e5d`,
+[run 43867072525](https://github.com/anothel/AnoSecureKit-Community/actions/runs/43867072525),
+completed successfully: GCC Release/Debug/static/install-only, Clang Release,
+ASan/UBSan, macOS package and Windows static/shared tests and packages. The
+tag-only release job was skipped. Windows/macOS cannot be executed locally. Shared ABI
 exports and old binaries are the separate dependent Phase 4 ABI PR, not proved
 by static API tests. Stream exceptions follow existing open behavior. No secure
 erasure, audit, certification or release-readiness claim is made. Phase 3 fuzz

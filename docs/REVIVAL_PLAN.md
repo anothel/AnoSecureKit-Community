@@ -84,10 +84,15 @@ Candidate: develop/v0.5.0 at 9fe79dc1e0f8b9951e86c2707c70469611ab43e4.
 Files: include/anosecurekit/file.hpp, implementation/tests, shared-library export rules.
 - [x] Obtain exact branch and compare with latest main (including Phases 1–2); do not merge blindly.
 - [x] Review verification APIs, error behavior and discarded plaintext ownership.
-- [ ] Test old consumers, header compatibility, shared exports and ABI allowlist on
+- [x] Test old consumers, header compatibility, shared exports and ABI allowlist on
       Linux/Windows; rerun format fixtures, installed packages and ordered parity.
 Acceptance: additive APIs only, explicit ABI decision and no lost maintenance fixes.
-Risk: candidate not present in initial checkout; ABI/platform behavior needs CI.
+Candidate retrieved and reviewed; API PR #3 was merged outside this task.
+ABI PR: https://github.com/anothel/AnoSecureKit-Community/pull/4 (targets main).
+Implementation e5e3d39 passed all 11 native CI validation jobs; no release ran.
+Results: [REVIVAL_PHASE4_API_RESULTS.md](REVIVAL_PHASE4_API_RESULTS.md) and
+[REVIVAL_PHASE4_ABI_RESULTS.md](REVIVAL_PHASE4_ABI_RESULTS.md).
+Risk: compiler/runtime-specific ABI evidence; Windows old-binary replacement remains untested.
 
 ## Phase 5 — CLI secret handling (separate PR)
 

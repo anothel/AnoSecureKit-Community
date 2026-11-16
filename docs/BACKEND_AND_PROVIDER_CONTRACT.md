@@ -47,9 +47,9 @@ Common packet, file, key-management, and cleanup paths call the internal secure
 wipe helper without directly including OpenSSL headers. Provider-specific
 OpenSSL cleanup stays inside the OpenSSL implementation boundary.
 
-`secure_wipe` is an internal implementation symbol even where shared-library
-visibility mechanics require it to be exported. It is not an installed public
-header or supported public API.
+`secure_wipe` is an internal implementation symbol hidden from the shared-library
+ABI. It is not an installed public header or supported public API. Shared test
+executables compile their own wipe implementation to test it without exporting it.
 
 ## External Provider Seam
 

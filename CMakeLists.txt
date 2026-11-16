@@ -166,6 +166,12 @@ add_library(anosecurekit
 
 add_library(anosecurekit::anosecurekit ALIAS anosecurekit)
 
+if(BUILD_SHARED_LIBS)
+  set_target_properties(anosecurekit PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN YES)
+endif()
+
 target_compile_features(anosecurekit PUBLIC cxx_std_20)
 
 target_include_directories(anosecurekit
@@ -188,8 +194,10 @@ else()
     ANOSECUREKIT_BUILDING_LIBRARY
     ANOSECUREKIT_EXTERNAL_BACKEND_PROVIDER=1)
   if(BUILD_SHARED_LIBS)
-    set_property(TARGET "${ANOSECUREKIT_EXTERNAL_BACKEND_TARGET}"
-      PROPERTY POSITION_INDEPENDENT_CODE ON)
+    set_target_properties("${ANOSECUREKIT_EXTERNAL_BACKEND_TARGET}" PROPERTIES
+      POSITION_INDEPENDENT_CODE ON
+      CXX_VISIBILITY_PRESET hidden
+      VISIBILITY_INLINES_HIDDEN YES)
     target_compile_definitions("${ANOSECUREKIT_EXTERNAL_BACKEND_TARGET}" PRIVATE
       ANOSECUREKIT_SHARED)
   endif()
@@ -218,11 +226,86 @@ if(ANOSECUREKIT_BUILD_CLI)
     src/cli/main.cpp)
 
   set_target_properties(anosecurekit_cli PROPERTIES OUTPUT_NAME anosecurekit)
+  if(BUILD_SHARED_LIBS AND UNIX)
+    # Keep extracted/install-prefix-moved CLI packages self-contained with
+    # respect to our own library. OpenSSL remains a platform dependency.
+    file(RELATIVE_PATH _anosecurekit_cli_to_lib
+      "${CMAKE_INSTALL_FULL_BINDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    if(APPLE)
+      set(_anosecurekit_loader_origin "@loader_path")
+    else()
+      set(_anosecurekit_loader_origin "$ORIGIN")
+    endif()
+    set_property(TARGET anosecurekit_cli APPEND PROPERTY INSTALL_RPATH
+      "${_anosecurekit_loader_origin}/${_anosecurekit_cli_to_lib}")
+  endif()
+
 
   target_link_libraries(anosecurekit_cli PRIVATE anosecurekit::anosecurekit)
   target_compile_features(anosecurekit_cli PRIVATE cxx_std_20)
 
   target_compile_options(anosecurekit_cli PRIVATE ${_anosecurekit_compile_options} ${_anosecurekit_coverage_options})
+endif()
+
+add_custom_target(shared-symbol-gate-test
+  COMMAND ${CMAKE_COMMAND}
+    -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    -DTEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/symbol-gate-selftest
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/package/check_symbol_gate.cmake
+  USES_TERMINAL)
+
+add_custom_target(shared-symbol-annotation-check
+  COMMAND ${CMAKE_COMMAND}
+    -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_shared_symbol_annotations.cmake
+  USES_TERMINAL)
+
+if(BUILD_SHARED_LIBS)
+  add_custom_target(shared-symbol-check
+    COMMAND ${CMAKE_COMMAND}
+      -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -DANOSECUREKIT_LIBRARY=$<TARGET_FILE:anosecurekit>
+      -DANOSECUREKIT_NM=${CMAKE_NM}
+      -DANOSECUREKIT_LINKER=${CMAKE_LINKER}
+      -DANOSECUREKIT_PLATFORM=${CMAKE_SYSTEM_NAME}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/check_shared_symbols.cmake
+    DEPENDS anosecurekit shared-symbol-annotation-check shared-symbol-gate-test
+    USES_TERMINAL)
+else()
+  add_custom_target(shared-symbol-check
+    COMMAND ${CMAKE_COMMAND} -E echo "shared-symbol-check requires BUILD_SHARED_LIBS=ON"
+    COMMAND ${CMAKE_COMMAND} -E false
+    USES_TERMINAL)
+endif()
+
+if(NOT _anosecurekit_external_backend)
+  add_custom_target(shared-package-check
+    COMMAND ${CMAKE_COMMAND}
+      -DANOSECUREKIT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -DANOSECUREKIT_CHECK_ROOT=${CMAKE_CURRENT_BINARY_DIR}/shared-package-check
+      -DANOSECUREKIT_PROJECT_VERSION:STRING=${PROJECT_VERSION}
+      -DANOSECUREKIT_PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+      -DANOSECUREKIT_PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+      -DANOSECUREKIT_PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+      -DANOSECUREKIT_BUILD_CONFIG=$<CONFIG>
+      -DANOSECUREKIT_DEFAULT_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DANOSECUREKIT_CMAKE_GENERATOR=${CMAKE_GENERATOR}
+      -DANOSECUREKIT_CMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
+      -DANOSECUREKIT_CMAKE_GENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
+      -DANOSECUREKIT_CMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+      -DANOSECUREKIT_CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+      -DVCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}
+      -DOPENSSL_ROOT_DIR=${OPENSSL_ROOT_DIR}
+      -DANOSECUREKIT_OPENSSL_RUNTIME_DIR=${ANOSECUREKIT_OPENSSL_RUNTIME_DIR}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/package/check_shared_package.cmake
+    DEPENDS shared-symbol-annotation-check
+    USES_TERMINAL)
+else()
+  add_custom_target(shared-package-check
+    COMMAND ${CMAKE_COMMAND} -E echo "shared-package-check is available only for the shipped Community OpenSSL profile"
+    COMMAND ${CMAKE_COMMAND} -E false
+    USES_TERMINAL)
 endif()
 
 add_custom_target(spdx-check
@@ -475,6 +558,13 @@ if(ANOSECUREKIT_BUILD_TESTS)
     tests/public_headers_test.cpp
     tests/random_test.cpp)
 
+  if(BUILD_SHARED_LIBS)
+    # Internal symbols remain hidden from the shared ABI. Compile the wipe
+    # implementation into the repository-only test executable instead of
+    # exporting it solely for tests.
+    target_sources(anosecurekit_tests PRIVATE src/internal/secure_wipe.cpp)
+  endif()
+
   target_link_libraries(anosecurekit_tests PRIVATE anosecurekit::anosecurekit GTest::gtest_main)
   target_compile_features(anosecurekit_tests PRIVATE cxx_std_20)
   target_compile_options(anosecurekit_tests PRIVATE ${_anosecurekit_compile_options} ${_anosecurekit_coverage_options})
@@ -645,6 +735,8 @@ elseif(TARGET check AND ANOSECUREKIT_BUILD_CLI AND ANOSECUREKIT_INSTALL_CLI)
       dogfood-check
       release-workflow-check
       release-notes-check
+      shared-symbol-annotation-check
+      shared-package-check
       spdx-check
       legacy-name-check
       document-alignment-check

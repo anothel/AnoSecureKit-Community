@@ -7,7 +7,7 @@ on:
     tags:
       - 'v*'
   pull_request:
-    branches: [main]
+    branches: [main, codex/revival-phase4-file-verification]
 
 permissions:
   contents: read
@@ -225,6 +225,9 @@ jobs:
       - name: Package check
         run: cmake --build build --config Release --target package-check
 
+      - name: Shared ABI and installed consumer gates
+        run: cmake --build build --config Release --target shared-symbol-check shared-package-check
+
       - name: Upload package artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -250,6 +253,35 @@ jobs:
               throw "Missing $file"
             }
           }
+
+  linux-shared-abi:
+    name: ubuntu-latest ${{ matrix.compiler }} Release shared ABI
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install Linux dependencies
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev ninja-build
+      - name: Configure shared library
+        env:
+          CC: ${{ matrix.compiler == 'gcc' && 'gcc' || 'clang' }}
+          CXX: ${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+        run: >
+          cmake -S . -B build
+          -G "${{ matrix.compiler == 'gcc' && 'Ninja Multi-Config' || 'Ninja' }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DBUILD_SHARED_LIBS=ON -DANOSECUREKIT_BUILD_TESTS=ON
+          -DANOSECUREKIT_WARNINGS_AS_ERRORS=ON
+      - name: Shared tests and symbol inventory
+        run: cmake --build build --config Release --target check shared-symbol-check
+      - name: Shared installed consumers and packages
+        run: cmake --build build --config Release --target shared-package-check package-check
+      - name: Provider parity
+        run: cmake --build build --config Release --target external-backend-parity-check
 
   linux-sanitizers:
     name: ubuntu-latest clang Debug sanitizers
@@ -334,7 +366,7 @@ jobs:
   release:
     name: GitHub Release
     runs-on: ubuntu-latest
-    needs: [build, install-only, linux-static, windows-shared, linux-sanitizers, macos-package]
+    needs: [build, install-only, linux-static, windows-shared, linux-shared-abi, linux-sanitizers, macos-package]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
