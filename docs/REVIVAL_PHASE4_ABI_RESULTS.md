@@ -4,8 +4,11 @@
 Baseline: main `0cb8bda7b6d96a11bd83228321707f83d62daa4c`.
 API prerequisite: `b76330faa4e0febf079d5f7d96156c36e0514e5d`, PR #3.
 Candidate: `develop/v0.5.0` at `9fe79dc1e0f8b9951e86c2707c70469611ab43e4`.
-Branch: `codex/revival-phase4-shared-abi`, stacked on the API PR. Both descend
-from latest main; this PR's review delta contains the ABI integration only.
+Branch: `codex/revival-phase4-shared-abi`, initially stacked on the API PR.
+PR #3 was merged outside this task at `dd3829fff67973b499c2daf0d6e815dfb6c3dd14`
+while the cloud environment was disconnected. PR #4 was then retargeted to main;
+the comparison still contains only the ABI integration. Both branches started
+from the latest main available at task start. No merge was performed by this task.
 Phase 3 remains deferred. No merge, release, version bump or tag change.
 
 ## Scope and candidate review
@@ -109,12 +112,13 @@ not a locally executed MSVC failure; native CI validates the scoped suppression.
 No public class layout changed and warnings remain enabled elsewhere. CI now includes GCC/Clang Linux shared jobs and the
 existing Windows shared job runs export and installed-consumer gates. CI accepts
 the stacked API branch as a base so this dependent PR runs before either merge.
-Remote platform outcomes will be recorded after opening this PR.
+Remote platform outcomes are recorded below, tied to immutable revisions.
 
 ## Remaining risks
 
 No Windows/macOS execution is available locally. Windows export spelling and
-cross-DSO exception semantics require native CI. Local old-binary evidence is
+cross-DSO exception semantics are checked in native CI (131 tests and 55 unique
+DLL exports passed at `6909916`, including both installed consumers). Local old-binary evidence is
 not a general ABI guarantee or a release authorization. No fuzz campaign or
 coverage claim is added: Phase 3 remains deferred. Provider parity uses the
 Community OpenSSL forwarding test implementation, not another production
@@ -141,3 +145,31 @@ relative to its own executable (`$ORIGIN` on ELF, `@loader_path` on macOS), usin
 the configured bin-to-library relative path. Retain system OpenSSL dependencies.
 Apply the two candidate append-based message constructions to remove the Clang
 STL export without widening the allowlist. Final reruns are recorded separately.
+
+## Final implementation verification
+
+Implementation commit: `e5e3d3911aa143db98c2c7e1ee2fdc30654ace02`.
+[Native CI run 43973468472](https://github.com/anothel/AnoSecureKit-Community/actions/runs/43973468472).
+The connected GitHub service published exactly the locally verified tree
+`b943dc833f476f9a4e0127d83d6d78dd112b2f2b` after terminal Git credentials
+became unavailable; local and remote commit/tree identities were reconciled.
+
+- GCC Multi-Config shared ABI, installed packages/relocation, consumers and
+  provider parity: PASS.
+- Clang shared ABI, installed packages/relocation, consumers and parity: PASS;
+  the original unexpected STL export is gone without an allowlist change.
+- Linux GCC Release/Debug/static/install-only and Clang Release: PASS.
+- ASan/UBSan full suite and macOS package job: PASS.
+- Native Windows static/shared rerun: PASS, including 131 shared CTests,
+  55 unique DLL exports, and current/frozen installed consumers.
+- All 11 validation jobs passed; the tag-only release job was skipped.
+
+After the follow-up, local shared `check` passed 133/133 and full shared
+`package-check` passed, including copied-prefix invocation with both loader-path
+environment variables cleared. The installed ELF CLI has `$ORIGIN/../lib` as
+its default RUNPATH. Existing user-supplied install rpaths are retained.
+
+The final documentation commit records this immutable implementation revision;
+it does not change runtime code. The baseline release-preflight documentation
+blocker, Windows old-binary replacement gap, compiler/runtime ABI limits and
+Phase 3 fuzz/coverage deferral remain as stated above.

@@ -8,6 +8,8 @@ Baseline: main `0cb8bda7b6d96a11bd83228321707f83d62daa4c` (Phase 2 merged).
 Candidate reviewed: `9fe79dc1e0f8b9951e86c2707c70469611ab43e4`.
 Spec: AGENTS.md, REVIVAL_PLAN.md Phase 4, FORMAT.md, SECURITY_MODEL.md.
 Goal: additive file verification and explicit shared-library export gates.
+Status: API #3 merged externally; ABI #4 targets main with implementation CI
+passing at e5e3d39. No merge or release was performed by this task.
 Preserve all existing APIs, package names, v1 bytes, KDF settings and providers.
 Phase 3 is deferred; no merge, release, tag change or alert dismissal.
 
@@ -28,8 +30,9 @@ Phase 3 is deferred; no merge, release, tag change or alert dismissal.
 
 ## Task 2 — shared ABI PR
 
-Consumes the Task 1 API. Stack this focused PR on Task 1; both descend from
-latest main. This keeps APIs and visibility policy independently reviewable.
+Consumes the Task 1 API. Initially stack this focused PR on Task 1; both descend
+from latest main at task start. After the external merge of #3, retarget #4 to
+main; its review delta remains the ABI integration only.
 
 - [x] Run the candidate symbol gate against a current shared build and observe
   rejection of internal exports before applying visibility changes.
@@ -40,9 +43,8 @@ latest main. This keeps APIs and visibility policy independently reviewable.
 - [x] Compile a consumer with baseline headers/library, run its unchanged binary
   against the new DSO, and recompile old source against installed new headers.
 - [x] Wire Linux/Windows shared checks to CI, rerun suites/package/parity and
-  document ABI policy and compiler limits; remote CI outcomes pending.
-- [x] Review complete delta; commit/push and dependent PR follow local verification.
-  Native CI remains a final gate; never merge.
+  document ABI policy and compiler limits; record remote results against tested commits.
+- [x] Review complete delta, publish the focused PR and verify native CI; never merge.
 
 ## Review focus
 
@@ -56,7 +58,8 @@ consumers must work. Symbol gates must reject unrelated or extra exports.
 
 Reuse stream `open_file` to avoid a second parser; retain Phase 2 I/O changes.
 Retain current CLI verification routing and diagnostics (the candidate changed
-missing-input diagnostics); the public API is additive. Initially exclude candidate string-construction rewrites; Clang CI later proved
+missing-input diagnostics); the public API is additive. Initially exclude
+candidate string-construction rewrites; Clang CI later proved
 they are needed to prevent a default-visible STL instantiation, so include only
 those two equivalent message constructions. Skip historical release/status edits.
 No version bump.
