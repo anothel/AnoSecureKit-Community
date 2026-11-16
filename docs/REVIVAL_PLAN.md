@@ -87,7 +87,10 @@ Files: include/anosecurekit/file.hpp, implementation/tests, shared-library expor
 - [ ] Test old consumers, header compatibility, shared exports and ABI allowlist on
       Linux/Windows; rerun format fixtures, installed packages and ordered parity.
 Acceptance: additive APIs only, explicit ABI decision and no lost maintenance fixes.
-Risk: candidate not present in initial checkout; ABI/platform behavior needs CI.
+Candidate now retrieved and reviewed; API PR: https://github.com/anothel/AnoSecureKit-Community/pull/3.
+Results: [REVIVAL_PHASE4_API_RESULTS.md](REVIVAL_PHASE4_API_RESULTS.md) and
+[REVIVAL_PHASE4_ABI_RESULTS.md](REVIVAL_PHASE4_ABI_RESULTS.md).
+Risk: compiler/runtime-specific ABI evidence; Windows old-binary replacement remains untested.
 
 ## Phase 5 — CLI secret handling (separate PR)
 

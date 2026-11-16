@@ -31,17 +31,18 @@ Phase 3 is deferred; no merge, release, tag change or alert dismissal.
 Consumes the Task 1 API. Stack this focused PR on Task 1; both descend from
 latest main. This keeps APIs and visibility policy independently reviewable.
 
-- [ ] Run the candidate symbol gate against a current shared build and observe
+- [x] Run the candidate symbol gate against a current shared build and observe
   rejection of internal exports before applying visibility changes.
-- [ ] Adapt candidate export annotations, hidden visibility, allowlist and clean
+- [x] Adapt candidate export annotations, hidden visibility, allowlist and clean
   installed shared consumer gate. Preserve all public signatures/class layouts.
-- [ ] Test allowlist rejection of missing and unexpected exports, and Windows
+- [x] Test allowlist rejection of missing and unexpected exports, and Windows
   export inventory rather than relying only on token substring presence.
-- [ ] Compile a consumer with baseline headers/library, run its unchanged binary
+- [x] Compile a consumer with baseline headers/library, run its unchanged binary
   against the new DSO, and recompile old source against installed new headers.
-- [ ] Wire Linux/Windows shared checks to CI, rerun suites/package/parity and
-  document ABI policy, compiler limits and actual remote CI outcomes.
-- [ ] Review complete delta, commit, push and open dependent PR; never merge.
+- [x] Wire Linux/Windows shared checks to CI, rerun suites/package/parity and
+  document ABI policy and compiler limits; remote CI outcomes pending.
+- [x] Review complete delta; commit/push and dependent PR follow local verification.
+  Native CI remains a final gate; never merge.
 
 ## Review focus
 

@@ -76,6 +76,15 @@ set(_anosecurekit_legacy_check "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_legacy_id
 set(_anosecurekit_cli_docs_check "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_cli_docs.cmake")
 
 foreach(_anosecurekit_required_file IN ITEMS
+    "${ANOSECUREKIT_SOURCE_DIR}/docs/PUBLIC_FILE_VERIFICATION_API.md"
+    "${ANOSECUREKIT_SOURCE_DIR}/docs/SHARED_LIBRARY_ABI.md"
+    "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_shared_symbols.cmake"
+    "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_shared_symbol_annotations.cmake"
+    "${ANOSECUREKIT_SOURCE_DIR}/cmake/check_export_inventory.cmake"
+    "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist.txt"
+    "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist_msvc.txt"
+    "${ANOSECUREKIT_SOURCE_DIR}/tests/package/check_shared_package.cmake"
+    "${ANOSECUREKIT_SOURCE_DIR}/tests/abi/v041_consumer.cpp"
     "${_anosecurekit_cmakelists}"
     "${_anosecurekit_readme}"
     "${_anosecurekit_security}"
@@ -550,8 +559,8 @@ _anosecurekit_require_terms(
   "current exception boundary"
   "`anosecurekit::error`"
   "`anosecurekit::error_code`"
-  "No public API change"
-  "no format change"
+  "does not change existing APIs or formats"
+  "PUBLIC_FILE_VERIFICATION_API.md"
   "affected APIs"
   "result-style API"
   "migration cost"

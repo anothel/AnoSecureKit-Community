@@ -19,16 +19,26 @@ enum class error_code
 	backend_failure,
 };
 
-class error : public std::runtime_error
+// MSVC's std::runtime_error has no DLL class annotation. Keep our exception
+// RTTI exported; users must share the supported compiler/CRT ABI.
+#if defined(_MSC_VER) && defined(ANOSECUREKIT_SHARED)
+#pragma warning(push)
+#pragma warning(disable : 4275)
+#endif
+class ANOSECUREKIT_API error : public std::runtime_error
 {
 public:
-	ANOSECUREKIT_API error(error_code code, std::string message);
+	error(error_code code, std::string message);
 
-	[[nodiscard]] ANOSECUREKIT_API error_code code() const noexcept;
+	[[nodiscard]] error_code code() const noexcept;
 
 private:
 	error_code code_;
 };
+
+#if defined(_MSC_VER) && defined(ANOSECUREKIT_SHARED)
+#pragma warning(pop)
+#endif
 
 } // namespace anosecurekit
 
