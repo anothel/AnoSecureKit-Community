@@ -128,14 +128,14 @@ libc/libstdc++ calls; the explicit reached-hook assertions fail if interception
 stops working. Read-EINTR retry evidence is for this runtime. ASan/TSan and fuzz
 campaigns were not run in this phase; UBSan is recorded separately.
 
-The existing Linux GCC/Clang and Windows CI matrix is retained; a macOS
-AppleClang/OpenSSL 3 check/package job is added. Native fault injection remains
+The existing Linux GCC/Clang, Windows, macOS AppleClang/OpenSSL 3 and Clang
+ASan/UBSan CI jobs are retained. Native fault injection remains
 Linux-only even when portable tests run on other platforms. Remote CI status is
 recorded in the PR; configuring jobs is not evidence that they passed.
 
 A read-only independent review found harness routing/allowlist and nested parity
 build issues; these were corrected. Library error categories now have separate
-driver statuses. Minor deferred review note: macOS configuration precedes the
-GoogleTest cache restore, which reduces caching effectiveness but not coverage.
+driver statuses. The initially duplicated macOS matrix entry was removed after confirming that
+the existing dedicated macOS job already covers tests and packages.
 
 Phase 2 PR: https://github.com/anothel/AnoSecureKit-Community/pull/2.

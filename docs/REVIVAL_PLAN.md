@@ -127,7 +127,7 @@ there remains a documented limitation.
       against unchanged production code and record failures.
 - [x] Fix only reproduced cleanup/reporting defects; re-run fault matrix.
 - [x] Run full tests, provider inventory parity, policy/format/package and supported
-      sanitizers; add macOS CI coverage and record actual remote checks.
+      sanitizers; inspect existing platform CI coverage and record actual remote checks.
 - [x] Review delta, document confirmed defects and untested risks, open focused PR:
       https://github.com/anothel/AnoSecureKit-Community/pull/2.
 
