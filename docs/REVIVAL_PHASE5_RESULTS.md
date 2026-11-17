@@ -66,7 +66,7 @@ cmake --build build --target external-backend-parity-check
 
 Initial complete CTest run exposed stale expected diagnostics; installed package
 checks exposed stale help expectations. These test expectations were updated.
-Final verification and native PR CI results will be recorded below before closeout.
+Final verification and native PR CI results are recorded below.
 
 ## Remaining limits
 
@@ -84,10 +84,17 @@ release-readiness or certification claims; Phase 3 remains deferred.
 
 - Full `check`: **134/134 passed** after the review fix (including security and
   I/O fault matrices); `format-check` with 22.1.5 passed in the same invocation.
-- Package/installed CLI and consumer: passed before the review fix; final rerun
-  in progress to bind evidence to the final implementation.
-- External provider parity: 134/134 passed with identical inventory before the
-  review fix; final rerun in progress.
-- Checked CLI help, document alignment, backend boundary, external hook, SPDX and
-  legacy-name gates passed; final documentation rerun in progress.
-- Native CI: pending PR publication; no native Windows console success claimed.
+- Final package/installed CLI and CMake consumer rerun: **PASS**; ZIP/TGZ source
+  and binary packages generated successfully.
+- Final external provider parity: **134/134 passed**, identical ordered test
+  inventory, including the reviewed secret-input regressions.
+- Final checked CLI help, document alignment, backend boundary, external hook,
+  SPDX and legacy-name gates: **PASS**.
+- Implementation commit: `c5219fe029c72ac0bb33bbcd9ce50cad8f87c74c`.
+- PR: https://github.com/anothel/AnoSecureKit-Community/pull/5. Native CI run
+  https://github.com/anothel/AnoSecureKit-Community/actions/runs/44019329664
+  passed all nine Linux/macOS validation jobs. Both Windows builds compiled and
+  passed 131 other tests, but the new explicit descriptor-rejection assertion
+  compared native CRLF diagnostics with LF. Updated only that diagnostic
+  expectation to use `os.linesep`; raw password bytes are untouched. Native
+  rerun pending; no native Windows console success claimed.

@@ -162,7 +162,7 @@ other source, with parsing completed before secret acquisition.
       observe descriptor acceptance fail against the unchanged CLI.
 - [x] Implement source selection, native no-echo entry and descriptor reading;
       run focused regressions and the full CTest suite.
-- [ ] Update checked help, CLI/security docs and regression expectations; run
+- [x] Update checked help, CLI/security docs and regression expectations; run
       formatting, provider parity, package/consumer and policy checks.
 - [ ] Obtain fresh review, run native CI through focused PR and record actual
       outcomes/limitations in REVIVAL_PHASE5_RESULTS.md. No automatic merge.

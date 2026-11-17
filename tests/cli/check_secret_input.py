@@ -41,7 +41,7 @@ with tempfile.TemporaryDirectory() as tmp:
     run(verify + ['--password-file', str(empty)])
     if os.name == 'nt':
         p = run(verify + ['--password-fd', '0'], input=b'')
-        assert p.stderr == b'password descriptors are unsupported on this platform\n'
+        assert p.stderr == b'password descriptors are unsupported on this platform' + os.linesep.encode(), p.stderr
     if os.name == 'posix':
         run(verify + ['--password-fd', '0'], input=password.read_bytes(), ok=True)
         run(verify + ['--password-fd', '0'], input=b'')
