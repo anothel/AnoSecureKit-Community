@@ -106,7 +106,7 @@ anosecurekit verify-file --in plain.bin.skf --key-file key.hex</code></pre>
       <ul>
         <li>Output paths are never overwritten.</li>
         <li>Wrong keys, wrong passwords, changed AAD, and modified data fail generically.</li>
-        <li>Password files are raw bytes: no trimming, normalization, prompt, or environment lookup.</li>
+        <li>Password files preserve raw bytes without trimming or normalization. Password commands also accept explicit no-echo <code>--password-prompt</code> terminal input or POSIX <code>--password-fd</code> input; sources conflict and empty input fails. See <a href="CLI.md#password-input-sources">password input sources</a> for cancellation, platform and memory limits.</li>
         <li>`verify-file` and `verify-file-password` authenticate without writing plaintext.</li>
         <li>Detailed command shapes live in the <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/CLI.md">full CLI reference</a>.</li>
       </ul>

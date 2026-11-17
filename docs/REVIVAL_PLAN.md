@@ -88,7 +88,7 @@ Files: include/anosecurekit/file.hpp, implementation/tests, shared-library expor
       Linux/Windows; rerun format fixtures, installed packages and ordered parity.
 Acceptance: additive APIs only, explicit ABI decision and no lost maintenance fixes.
 Candidate retrieved and reviewed; API PR #3 was merged outside this task.
-ABI PR: https://github.com/anothel/AnoSecureKit-Community/pull/4 (targets main).
+ABI PR #4 merged as cad3969edaa8c3ced29852ec2af68f217849548a.
 Implementation e5e3d39 passed all 11 native CI validation jobs; no release ran.
 Results: [REVIVAL_PHASE4_API_RESULTS.md](REVIVAL_PHASE4_API_RESULTS.md) and
 [REVIVAL_PHASE4_ABI_RESULTS.md](REVIVAL_PHASE4_ABI_RESULTS.md).
@@ -97,9 +97,9 @@ Risk: compiler/runtime-specific ABI evidence; Windows old-binary replacement rem
 ## Phase 5 — CLI secret handling (separate PR)
 
 Files: src/cli/commands.cpp, docs/CLI.md, tests/cli/.
-- [ ] Specify optional file/descriptor/prompt input with precedence and stdin conflicts.
-- [ ] Test exact password bytes, empty inputs, no echo/log disclosure and error paths.
-- [ ] Preserve existing options; document argv/process-list exposure and memory limits.
+- [x] Specify optional file/descriptor/prompt input with precedence and stdin conflicts.
+- [x] Test exact password bytes, empty inputs, no echo/log disclosure and error paths.
+- [x] Preserve existing options; document argv/process-list exposure and memory limits.
 Acceptance: backward compatible inputs and documented ownership; no erasure promises.
 
 ## Phase 6 — final security and release readiness (separate review PR)
@@ -117,7 +117,7 @@ Phase 1 results and limitations: [REVIVAL_PHASE1_RESULTS.md](REVIVAL_PHASE1_RESU
 The tracked plan lives here because docs/superpowers/ is intentionally gitignored.
 Phase 2 execution and limitations: [REVIVAL_PHASE2_RESULTS.md](REVIVAL_PHASE2_RESULTS.md).
 Phase 3 remains explicitly deferred. Phase 4 execution is recorded in
-[REVIVAL_PHASE4_PLAN.md](REVIVAL_PHASE4_PLAN.md); Phases 5–6 remain follow-up work.
+[REVIVAL_PHASE4_PLAN.md](REVIVAL_PHASE4_PLAN.md); Phase 5 results: [REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 6 remains follow-up work.
 
 ## Phase 2 execution design — 2026-11-16
 
@@ -139,3 +139,41 @@ there remains a documented limitation.
 
 Review focus: fdopen ownership, post-commit unlink/sync errors, destination races,
 short-write/EINTR handling, cleanup failure leaving sensitive temporary files.
+
+## Phase 5 execution design — 2026-11-17
+
+Baseline: fetched origin/main `cad3969edaa8c3ced29852ec2af68f217849548a`
+(PR #4 merged). Branch: `codex/revival-phase5-cli`; execute inline as requested.
+Preserve public APIs, formats, crypto/provider policy and existing key/file inputs.
+
+Design decision: use explicit stdin-terminal `--password-prompt`, with no implicit
+fallback, rather than opening a controlling terminal independently of stdin.
+This makes pipe behavior deterministic on both POSIX and Windows. Prompt is a
+single byte-oriented entry, with a 4096-byte bound and mode restoration via RAII.
+Use native termios/Windows console modes. Typed cancellation is handled while
+signal/processed input is disabled; external termination remains a limitation.
+Add POSIX-only borrowed `--password-fd`, rejecting terminals and descriptor 0
+when file data also uses stdin. Windows retains portable password files; CRT
+inherited descriptors and key descriptors are deferred. Raw file/fd passwords
+retain exact bytes and reject empty input. Every source conflicts with every
+other source, with parsing completed before secret acquisition.
+
+- [x] Add bounded portable subprocess and POSIX pseudo-terminal regressions;
+      observe descriptor acceptance fail against the unchanged CLI.
+- [x] Implement source selection, native no-echo entry and descriptor reading;
+      run focused regressions and the full CTest suite.
+- [x] Update checked help, CLI/security docs and regression expectations; run
+      formatting, provider parity, package/consumer and policy checks.
+- [x] Obtain fresh review, run native CI through focused PR and record actual
+      outcomes/limitations in REVIVAL_PHASE5_RESULTS.md. No automatic merge.
+
+Review focus: parse-before-read conflicts, stdin aliasing, exact binary input,
+empty/EOF/cancel/overflow behavior, terminal restoration and diagnostic leakage.
+Phase 3 remains deferred; no fuzz coverage completion is claimed.
+
+Phase 5 PR: https://github.com/anothel/AnoSecureKit-Community/pull/5. Implementation
+`c5219fe` plus test-only Windows newline correction `dd4c9d8` passed all 11 native
+validation jobs in run 44020814789; release skipped. Local complete CTest 134/134,
+provider parity, format 22.1.5, packages/consumers and document/boundary checks pass.
+Remaining limits, including native Windows interactive-console coverage, are in
+[REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 3 remains deferred.

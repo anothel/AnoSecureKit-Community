@@ -35,9 +35,9 @@ Usage:
   anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit verify-file --in <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit verify-file --in <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit seal-file-password --in <path|-> --out <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file-password --in <path|-> --out <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit verify-file-password --in <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
   anosecurekit help [command]
 ```
 
@@ -100,7 +100,7 @@ anosecurekit open-file --in plain.bin.skf --out plain.bin --key-file key.hex
 anosecurekit seal-file --in plain.bin --out plain.bin.skf --key-file key.hex --aad-text record:v1
 anosecurekit open-file --in plain.bin.skf --out plain.bin --key-file key.hex --aad-text record:v1
 
-# Use raw password bytes from a file; no trimming, prompt, or env lookup occurs.
+# Use raw password bytes from a file; no trimming or env lookup occurs.
 anosecurekit seal-file-password --in plain.bin --out plain.bin.skp --password-file password.bin
 anosecurekit open-file-password --in plain.bin.skp --out plain.bin --password-file password.bin
 
@@ -119,7 +119,7 @@ The packet CLI commands use the `SKT1` packet format, and the file commands use
 the `SKF1` or `SKP1` file formats. `seal-file`, `open-file`, and `verify-file`
 use `SKF1` with a caller-provided 32-byte key. `seal-file-password`,
 `open-file-password`, and `verify-file-password` use `SKP1` with scrypt-derived
-keys from `--password-file`. `--key-hex` must be a strict 64-character hex
+keys from the selected password source. `--key-hex` must be a strict 64-character hex
 string for a 32-byte key. `keygen` writes a fresh key as 64 lowercase hex
 characters plus a trailing newline and refuses to overwrite an existing output
 file. `--key-file` reads the same text format, trimming leading and trailing
@@ -164,8 +164,8 @@ process exit code: 0 on success, 1 on failure. For `seal-file`, `open-file`,
 `seal-file-password`, and
 `open-file-password`, `--in -` reads from stdin and `--out -` writes raw binary
 output to stdout. For verification commands, `--in -` reads the sealed file from
-stdin. At most one AAD option may be provided. The CLI does not expose password
-prompts, password text arguments, or environment-variable key loading.
+stdin. At most one AAD option may be provided. The CLI supports explicit password prompts as described below; it does not expose
+password text arguments or environment-variable key loading.
 
 `hmac-sha256` accepts an arbitrary strict hex key and either text or file input.
 `hkdf-sha256` accepts strict hex key material and salt, accepts `info` as either
@@ -204,3 +204,51 @@ prints command-specific usage for the supported commands. Known commands with
 the wrong shape print that command's usage to stderr. Packet and file command
 conflicts report the specific duplicate, conflicting input or packet source,
 conflicting key source, conflicting AAD source, or unsupported option.
+
+## Password input sources
+
+For all three password commands, supply exactly one of `--password-file <path>`,
+`--password-fd <n>`, or `--password-prompt`. No source takes precedence: duplicates
+and combinations fail before reading any password. Missing sources fail without
+prompting. Options are validated before acquiring secrets. All empty inputs fail
+with exit code 1. Errors never print password contents; stdout remains reserved
+for command output.
+
+`--password-prompt` explicitly reads stdin only when it is a terminal (a Windows
+console on Windows), with echo disabled. It rejects redirected stdin and `--in -`;
+it never falls back to a file, pipe, environment variable or controlling terminal.
+The prompt is on stderr. Enter finishes the password without including CR/LF;
+backspace/delete removes the preceding byte. Ctrl-C, Ctrl-D and Ctrl-Z cancel
+with exit code 1 before creating output. The limit is 4096 bytes; overflow fails.
+Terminal modes are restored on completion, empty input, cancellation and caught
+errors. External signals/forced process termination or console loss may prevent
+restoration; terminal recovery is then the caller's responsibility. Input uses
+terminal bytes (the console input code page on Windows); it does not normalize
+Unicode. Use files/descriptors for exact binary passwords or non-ASCII portability.
+There is one entry, without confirmation, including for sealing.
+
+`--password-fd <n>` is POSIX-only; Windows rejects it explicitly because CRT
+file descriptor inheritance is not a portable automation interface there. Use
+`--password-file` on Windows. On POSIX the nonnegative decimal descriptor is
+borrowed, consumed from its current offset to EOF, never closed or reconfigured.
+Raw bytes, including NUL, CR/LF and spaces, are retained exactly, like a password
+file. Terminal descriptors are rejected to prevent accidental echo. Descriptor 0
+is supported unless `--in -` also needs stdin. The caller must not alias the same
+underlying stream through another descriptor and must close pipe writers to
+provide EOF; an open pipe may wait indefinitely. Nonblocking read errors fail.
+
+```sh
+# Explicit no-echo terminal input:
+anosecurekit seal-file-password --in plain.bin --out plain.skp --password-prompt
+# POSIX shell: only the descriptor number appears in argv:
+anosecurekit verify-file-password --in plain.skp --password-fd 3 3< password.bin
+```
+
+Existing `--password-file`, `--key-file`, and `--key-hex` semantics remain intact.
+A password file named `-` is still a literal path, not stdin. Prefer key files
+over `--key-hex` when process listings or shell history can expose arguments.
+No new secret-bearing argv or environment option is added. Descriptor input for
+keys is deferred: their existing validated text files remain portable. None of
+these interfaces provides secure storage or guaranteed erasure: process memory,
+allocator copies, dumps, swap, terminal logging and a compromised host remain
+outside these guarantees.

@@ -138,8 +138,11 @@ leave observable bytes after failure.
 ## Password-Based Encryption
 
 `SKP1` accepts password bytes exactly as supplied. AnoSecureKit does not normalize
-Unicode, trim whitespace, prompt interactively, read environment variables, or
-define password quality rules.
+Unicode, trim whitespace, read environment variables, or define password quality
+rules. The CLI additionally offers explicit no-echo terminal entry and POSIX
+descriptor input; see [CLI.md](CLI.md#password-input-sources) for source conflicts,
+cancellation, byte handling and terminal recovery limitations. The library itself
+does not prompt.
 
 Current `SKP1` uses fixed scrypt parameters:
 
