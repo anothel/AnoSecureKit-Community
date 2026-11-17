@@ -140,3 +140,19 @@ explicitly enables that supported mode for the LF case and checks its preservati
 and restoration; other cases explicitly use ordinary console input. This is a
 test-environment correction, not a production password-reader defect. No timeout
 or assertion is waived. Native rerun results follow separately.
+
+The native macOS 26 ARM64/AppleClang 21 export diagnostic in job
+[134120623541](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44106630951/job/134120623541)
+identified **49 unique public function names**, with all function counts intact;
+exception RTTI/name/vtable were absent from the exported inventory. The original
+ELF-oriented gate required those three exports and rejected the dylib. Apple ARM64
+uses nonunique compiler-emitted RTTI. The gate now selects an exact ARM64 Mach-O
+allowlist using `lipo -archs` on the actual library; ELF retains 52 exports and
+other architectures retain their existing policy. No arbitrary exports are allowed
+and no runtime class layout, signature or destructor is changed to satisfy a gate.
+A recorded real-output fixture reproduces the old rejection and passes the new
+49-symbol policy locally; this replay is **static/simulated validator evidence**,
+not native library execution. Native frozen-binary typed catches remain mandatory.
+The follow-up lane pins supported macOS 15; macOS-latest CTest/package coverage is
+retained in the existing workflow. Thin ARM64 evidence does not prove universal
+binaries or Intel C++ ABI compatibility.

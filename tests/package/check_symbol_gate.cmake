@@ -31,3 +31,10 @@ foreach(case IN ITEMS valid missing unexpected internal)
   endif()
 endforeach()
 message(STATUS "Shared export validator rejects missing, unexpected and internal exports")
+
+# Recorded real native output: guards the Apple arm64 ABI expectation separately
+# from native execution. It cannot stand in for a Mach-O/library/consumer run.
+file(STRINGS "${ANOSECUREKIT_SOURCE_DIR}/tests/abi/macos_arm64_exports.txt" apple_symbols)
+list(FILTER apple_symbols EXCLUDE REGEX "^#")
+anosecurekit_check_export_inventory("${apple_symbols}"
+  "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist_apple_arm64.txt")
