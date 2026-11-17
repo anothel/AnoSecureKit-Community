@@ -58,6 +58,8 @@ for label, tree in [('old', old), ('new', source)]:
          '-DANOSECUREKIT_BUILD_CLI=OFF', '-DANOSECUREKIT_INSTALL_CLI=OFF'] + extra)
     run(['cmake', '--build', build, '--config', 'Release'])
     if label == 'new':
+        if __import__('sys').platform == 'darwin':
+            run(['nm', '-gU', '-C', build / 'libanosecurekit.dylib'])
         run(['cmake', '--build', build, '--config', 'Release', '--target', 'shared-symbol-check', 'shared-package-check'])
     run(['cmake', '--install', build, '--config', 'Release', '--prefix', install])
 
