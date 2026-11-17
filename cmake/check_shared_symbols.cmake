@@ -82,8 +82,19 @@ list(REMOVE_DUPLICATES symbols)
 list(SORT symbols)
 
 include("${CMAKE_CURRENT_LIST_DIR}/check_export_inventory.cmake")
-anosecurekit_check_export_inventory("${symbols}"
-  "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist.txt")
+set(allowlist "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist.txt")
+if(APPLE)
+  find_program(ANOSECUREKIT_LIPO NAMES lipo REQUIRED)
+  execute_process(COMMAND "${ANOSECUREKIT_LIPO}" -archs "${ANOSECUREKIT_LIBRARY}"
+    RESULT_VARIABLE arch_result OUTPUT_VARIABLE library_arch OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT arch_result EQUAL 0)
+    message(FATAL_ERROR "cannot identify Mach-O architecture")
+  endif()
+  if(library_arch STREQUAL "arm64")
+    set(allowlist "${ANOSECUREKIT_SOURCE_DIR}/cmake/shared_symbol_allowlist_apple_arm64.txt")
+  endif()
+endif()
+anosecurekit_check_export_inventory("${symbols}" "${allowlist}")
 
 foreach(forbidden IN ITEMS
     "anosecurekit::detail::"

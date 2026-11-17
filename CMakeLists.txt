@@ -614,6 +614,14 @@ if(ANOSECUREKIT_BUILD_TESTS)
         $<TARGET_FILE:anosecurekit_cli>)
     set_tests_properties(Cli.SecretInput PROPERTIES TIMEOUT 180)
 
+    if(WIN32)
+      add_test(NAME Cli.WindowsConsole
+        COMMAND ${Python3_EXECUTABLE}
+          ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli/check_windows_console.py
+          $<TARGET_FILE:anosecurekit_cli>)
+      set_tests_properties(Cli.WindowsConsole PROPERTIES TIMEOUT 180)
+    endif()
+
     if(UNIX)
       find_package(Python3 3.7 REQUIRED COMPONENTS Interpreter)
       add_test(NAME Cli.OutputSecurity
