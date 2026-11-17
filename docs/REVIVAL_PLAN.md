@@ -164,9 +164,16 @@ other source, with parsing completed before secret acquisition.
       run focused regressions and the full CTest suite.
 - [x] Update checked help, CLI/security docs and regression expectations; run
       formatting, provider parity, package/consumer and policy checks.
-- [ ] Obtain fresh review, run native CI through focused PR and record actual
+- [x] Obtain fresh review, run native CI through focused PR and record actual
       outcomes/limitations in REVIVAL_PHASE5_RESULTS.md. No automatic merge.
 
 Review focus: parse-before-read conflicts, stdin aliasing, exact binary input,
 empty/EOF/cancel/overflow behavior, terminal restoration and diagnostic leakage.
 Phase 3 remains deferred; no fuzz coverage completion is claimed.
+
+Phase 5 PR: https://github.com/anothel/AnoSecureKit-Community/pull/5. Implementation
+`c5219fe` plus test-only Windows newline correction `dd4c9d8` passed all 11 native
+validation jobs in run 44020814789; release skipped. Local complete CTest 134/134,
+provider parity, format 22.1.5, packages/consumers and document/boundary checks pass.
+Remaining limits, including native Windows interactive-console coverage, are in
+[REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 3 remains deferred.

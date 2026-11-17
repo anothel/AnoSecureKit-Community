@@ -97,4 +97,30 @@ release-readiness or certification claims; Phase 3 remains deferred.
   passed 131 other tests, but the new explicit descriptor-rejection assertion
   compared native CRLF diagnostics with LF. Updated only that diagnostic
   expectation to use `os.linesep`; raw password bytes are untouched. Native
-  rerun pending; no native Windows console success claimed.
+  rerun results follow; no native Windows interactive-console success is claimed.
+
+### Native rerun
+
+Test-only follow-up: `dd4c9d80044bc18fc45700717ee280d073dd5726`.
+[Native run 44020814789](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44020814789)
+completed successfully: **all 11 validation jobs passed**. The tag-only release
+job was skipped. Verified matrix:
+
+- Linux GCC Release/Debug/static/install-only and Clang Release: PASS.
+- Linux GCC/Clang shared tests, ABI export gates, installed/frozen consumers,
+  relocated CLI packages and external-provider parity: PASS.
+- Linux ASan/UBSan complete suite: PASS.
+- macOS AppleClang tests and packages: PASS, including POSIX terminal regressions.
+- Native Windows MSVC static/shared: **132/132 CTests each**, package/consumer
+  checks, and shared ABI export/consumer gates: PASS. The new redirected-input
+  and explicit unsupported-descriptor checks pass with native CRLF diagnostics.
+
+This follow-up changes a diagnostic assertion, not the production implementation.
+The subsequent documentation-only commit records these immutable results; it does
+not change the runtime or tests validated by this run. Native Windows interactive
+console entry, echo/mode restoration and encoding remain unautomated; no such
+coverage is inferred from a green Windows build. Other review suggestions not
+added to the matrix include PTY conflict-mode snapshots and descriptor-terminal
+rejection tests; existing common conflict and no-echo tests plus source review
+cover these paths only partially. These are coverage limits, not verified claims.
+Phase 3 remains deferred; no merge, release or tag changes were performed.
