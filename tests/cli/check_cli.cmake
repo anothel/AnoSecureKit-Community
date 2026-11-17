@@ -229,9 +229,9 @@ set(expected_help [=[Usage:
   anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit verify-file --in <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit verify-file --in <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit seal-file-password --in <path|-> --out <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file-password --in <path|-> --out <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit verify-file-password --in <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
   anosecurekit help [command]
 ]=])
 
@@ -253,9 +253,9 @@ set(expected_decrypt_help "Usage:\n  anosecurekit decrypt (--packet-hex <hex>|--
 set(expected_seal_file_help "Usage:\n  anosecurekit seal-file --in <path|-> --out <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>]\n")
 set(expected_open_file_help "Usage:\n  anosecurekit open-file --in <path|-> --out <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>]\n")
 set(expected_verify_file_help "Usage:\n  anosecurekit verify-file --in <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>]\n")
-set(expected_seal_file_password_help "Usage:\n  anosecurekit seal-file-password --in <path|-> --out <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]\n")
-set(expected_open_file_password_help "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]\n")
-set(expected_verify_file_password_help "Usage:\n  anosecurekit verify-file-password --in <path|-> --password-file <path> [--aad-text <text>|--aad-hex <hex>]\n")
+set(expected_seal_file_password_help "Usage:\n  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]\n")
+set(expected_open_file_password_help "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]\n")
+set(expected_verify_file_password_help "Usage:\n  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]\n")
 
 run_cli(0 "${expected_help}")
 run_cli(0 "${expected_help}" help)
@@ -332,8 +332,8 @@ run_cli_failure("${expected_wrap_key_help}" wrap-key --bad-flag abc)
 run_cli_failure("${expected_unwrap_key_help}" unwrap-key --bad-flag abc)
 run_cli_failure("${expected_encrypt_help}" encrypt --bad-flag abc)
 run_cli_failure("${expected_decrypt_help}" decrypt --bad-flag abc)
-run_cli_failure("${expected_seal_file_password_help}" seal-file-password --bad-flag abc)
-run_cli_failure("${expected_open_file_password_help}" open-file-password --bad-flag abc)
+run_cli_failure("unsupported password file option\n" seal-file-password --bad-flag abc)
+run_cli_failure("unsupported password file option\n" open-file-password --bad-flag abc)
 run_cli_failure("failed to open input file\n" sha256 --file "${CMAKE_CURRENT_BINARY_DIR}/anosecurekit-cli-missing.txt")
 run_cli_failure("hex input must contain an even number of characters\n" hex-decode --text 6)
 run_cli_failure("base64url input has invalid length\n" base64url-decode --text "=")
@@ -749,7 +749,7 @@ run_cli_failure("File authentication failed\n" open-file-password --in "${passwo
 assert_file_absent("${password_wrong_opened}")
 run_cli_no_stdout(verify-file-password --in "${password_sealed}" --password-file "${password_file}")
 run_cli_failure("File authentication failed\n" verify-file-password --in "${password_sealed}" --password-file "${wrong_password_file}")
-run_cli_failure("unsupported password file option: --out\n" verify-file-password --in "${password_sealed}" --password-file "${password_file}" --out "${password_verify_output_probe}")
+run_cli_failure("unsupported password file option\n" verify-file-password --in "${password_sealed}" --password-file "${password_file}" --out "${password_verify_output_probe}")
 assert_file_absent("${password_verify_output_probe}")
 
 run_cli_no_stdout(seal-file-password --in "${plain_file}" --out "${password_aad_sealed}" --password-file "${password_file}" --aad-text record:v1)
@@ -818,16 +818,16 @@ run_cli_failure("hex input must contain an even number of characters\n" seal-fil
 run_cli_failure("duplicate option: --out\n" seal-file-password --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-output-a.skp" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-output-b.skp" --password-file "${password_file}")
 run_cli_failure("duplicate option: --in\n" open-file-password --in "${password_sealed}" --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-input.txt" --password-file "${password_file}")
 run_cli_failure("duplicate option: --out\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-opened-a.txt" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-opened-b.txt" --password-file "${password_file}")
-run_cli_failure("duplicate option: --password-file\n" seal-file-password --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-file.skp" --password-file "${password_file}" --password-file "${wrong_password_file}")
-run_cli_failure("duplicate option: --password-file\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-opened.txt" --password-file "${password_file}" --password-file "${wrong_password_file}")
+run_cli_failure("conflicting password sources\n" seal-file-password --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-file.skp" --password-file "${password_file}" --password-file "${wrong_password_file}")
+run_cli_failure("conflicting password sources\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-opened.txt" --password-file "${password_file}" --password-file "${wrong_password_file}")
 run_cli_failure("conflicting AAD options\n" seal-file-password --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-aad.skp" --password-file "${password_file}" --aad-text record:v1 --aad-hex 7265636f72643a7631)
 run_cli_failure("conflicting AAD options\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-password-opened-aad.txt" --password-file "${password_file}" --aad-text record:v1 --aad-hex 7265636f72643a7631)
 run_cli_failure("${expected_seal_file_password_help}" seal-file-password --in "${plain_file}" --password-file "${password_file}")
 run_cli_failure("${expected_open_file_password_help}" open-file-password --in "${password_sealed}" --password-file "${password_file}")
 run_cli_failure("password must not be empty\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/empty-password-opened.txt" --password-file "${empty_password_file}")
 run_cli_failure("Output file already exists\n" open-file-password --in "${password_sealed}" --out "${existing_output}" --password-file "${password_file}")
-run_cli_failure("unsupported password file option: --key-hex\n" seal-file-password --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/password-key-option.skp" --key-hex "${file_key}" --password-file "${password_file}")
-run_cli_failure("unsupported password file option: --unknown\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/password-unknown-opened.txt" --unknown value --password-file "${password_file}")
+run_cli_failure("unsupported password file option\n" seal-file-password --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/password-key-option.skp" --key-hex "${file_key}" --password-file "${password_file}")
+run_cli_failure("unsupported password file option\n" open-file-password --in "${password_sealed}" --out "${CMAKE_CURRENT_BINARY_DIR}/password-unknown-opened.txt" --unknown value --password-file "${password_file}")
 
 run_cli_failure("duplicate option: --out\n" seal-file --in "${plain_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-output-a.skf" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-output-b.skf" --key-hex "${file_key}")
 run_cli_failure("duplicate option: --in\n" open-file --in "${sealed_file}" --in "${sealed_file}" --out "${CMAKE_CURRENT_BINARY_DIR}/duplicate-input-opened.txt" --key-hex "${file_key}")

@@ -28,8 +28,13 @@
 #include <io.h>
 #include <share.h>
 #include <sys/stat.h>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
 #else
 #include <fcntl.h>
+#include <termios.h>
 #include <unistd.h>
 #endif
 
@@ -75,11 +80,11 @@ void print_help()
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit verify-file --in <path|-> --key-file <path> "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
-	          << "  anosecurekit seal-file-password --in <path|-> --out <path|-> --password-file <path> "
+	          << "  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
-	          << "  anosecurekit open-file-password --in <path|-> --out <path|-> --password-file <path> "
+	          << "  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
-	          << "  anosecurekit verify-file-password --in <path|-> --password-file <path> "
+	          << "  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit help [command]\n";
 }
@@ -185,15 +190,15 @@ std::string_view password_file_command_usage(std::string_view command)
 {
 	if (command == "seal-file-password")
 	{
-		return "Usage:\n  anosecurekit seal-file-password --in <path|-> --out <path|-> --password-file <path> "
+		return "Usage:\n  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 		       "[--aad-text <text>|--aad-hex <hex>]";
 	}
 	if (command == "open-file-password")
 	{
-		return "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> --password-file <path> "
+		return "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 		       "[--aad-text <text>|--aad-hex <hex>]";
 	}
-	return "Usage:\n  anosecurekit verify-file-password --in <path|-> --password-file <path> "
+	return "Usage:\n  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	       "[--aad-text <text>|--aad-hex <hex>]";
 }
 
@@ -491,6 +496,137 @@ struct file_command_options
 	bool output_is_stdout = false;
 };
 
+// Restore terminal modes on every normal return and exception, including cancellation.
+// External termination (SIGKILL, console closure) cannot be recovered here.
+class password_terminal
+{
+public:
+	password_terminal()
+	{
+#ifdef _WIN32
+		handle_ = GetStdHandle(STD_INPUT_HANDLE);
+		if (!GetConsoleMode(handle_, &saved_))
+			throw std::runtime_error("password prompt requires a terminal");
+		if (!SetConsoleMode(handle_, saved_ & ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT)))
+			throw std::runtime_error("password terminal setup failed");
+#else
+		if (!isatty(STDIN_FILENO) || tcgetattr(STDIN_FILENO, &saved_) != 0)
+			throw std::runtime_error("password prompt requires a terminal");
+		auto mode = saved_;
+		mode.c_lflag &= static_cast<tcflag_t>(~(ECHO | ECHONL | ICANON | ISIG));
+		mode.c_iflag &= static_cast<tcflag_t>(~(ICRNL | INLCR | IGNCR | ISTRIP | IXON | IXOFF | PARMRK));
+		mode.c_cc[VMIN] = 1;
+		mode.c_cc[VTIME] = 0;
+		if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &mode) != 0)
+			throw std::runtime_error("password terminal setup failed");
+#endif
+	}
+	password_terminal(const password_terminal &) = delete;
+	password_terminal &operator=(const password_terminal &) = delete;
+	~password_terminal()
+	{
+		restore();
+	}
+	bool restore()
+	{
+		if (restored_)
+			return true;
+#ifdef _WIN32
+		restored_ = SetConsoleMode(handle_, saved_) != 0;
+#else
+		restored_ = tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_) == 0;
+#endif
+		return restored_;
+	}
+	int read_byte()
+	{
+		unsigned char value = 0;
+#ifdef _WIN32
+		DWORD count = 0;
+		if (!ReadConsoleA(handle_, &value, 1, &count, nullptr) || count != 1)
+			throw std::runtime_error("password input failed");
+#else
+		if (::read(STDIN_FILENO, &value, 1) != 1)
+			throw std::runtime_error("password input failed");
+#endif
+		return value;
+	}
+
+private:
+	bool restored_ = false;
+#ifdef _WIN32
+	HANDLE handle_;
+	DWORD saved_ = 0;
+#else
+	termios saved_{};
+#endif
+};
+
+anosecurekit::bytes password_from_prompt()
+{
+	password_terminal terminal;
+	std::cerr << "Password: " << std::flush;
+	anosecurekit::bytes password;
+	for (;;)
+	{
+		const int value = terminal.read_byte();
+		if (value == 3 || value == 4 || value == 26)
+			throw std::runtime_error("password input cancelled");
+		if (value == '\r' || value == '\n')
+			break;
+		if (value == 8 || value == 127)
+		{
+			if (!password.empty())
+				password.pop_back();
+			continue;
+		}
+		if (password.size() == 4096)
+			throw std::runtime_error("password input too long");
+		password.push_back(static_cast<std::byte>(value));
+	}
+	if (!terminal.restore())
+		throw std::runtime_error("password terminal restore failed");
+	std::cerr << '\n';
+	if (password.empty())
+		throw std::runtime_error("password must not be empty");
+	return password;
+}
+
+anosecurekit::bytes password_from_descriptor(std::string_view value, bool input_is_stdin)
+{
+	int descriptor = -1;
+	const auto result = std::from_chars(value.data(), value.data() + value.size(), descriptor);
+	if (result.ec != std::errc{} || result.ptr != value.data() + value.size() || descriptor < 0)
+		throw std::runtime_error("invalid password descriptor");
+	if (descriptor == 0 && input_is_stdin)
+		throw std::runtime_error("conflicting stdin sources");
+#ifdef _WIN32
+	throw std::runtime_error("password descriptors are unsupported on this platform");
+#else
+	if (isatty(descriptor))
+		throw std::runtime_error("password descriptor must not be a terminal");
+	// Borrowed descriptor: consume to EOF, never close or change flags.
+	anosecurekit::bytes password;
+	std::array<std::byte, 4096> buffer{};
+	for (;;)
+	{
+		const auto count = ::read(descriptor, buffer.data(), buffer.size());
+		if (count < 0)
+		{
+			if (errno == EINTR)
+				continue;
+			throw std::runtime_error("password input failed");
+		}
+		if (count == 0)
+			break;
+		password.insert(password.end(), buffer.begin(), buffer.begin() + count);
+	}
+	if (password.empty())
+		throw std::runtime_error("password must not be empty");
+	return password;
+#endif
+}
+
 struct password_file_command_options
 {
 	std::filesystem::path input;
@@ -631,16 +767,28 @@ password_file_command_options parse_password_file_command_options(int argc, char
 {
 	const std::string_view command = argv[1];
 	const bool requires_output = command != "verify-file-password";
-	if (argc < (requires_output ? 8 : 6) || ((argc - 2) % 2) != 0)
+	if (argc < 2)
 	{
 		throw std::runtime_error(std::string(password_file_command_usage(argv[1])));
 	}
 
 	password_file_command_options options;
-	for (int index = 2; index < argc; index += 2)
+	std::string_view source;
+	std::string_view source_value;
+	for (int index = 2; index < argc; ++index)
 	{
 		const std::string_view option = argv[index];
-		const std::string_view value = argv[index + 1];
+		if (option == "--password-prompt")
+		{
+			if (options.has_password)
+				throw std::runtime_error("conflicting password sources");
+			source = option;
+			options.has_password = true;
+			continue;
+		}
+		if (++index == argc)
+			throw std::runtime_error("missing option value");
+		const std::string_view value = argv[index];
 
 		if (option == "--in")
 		{
@@ -653,17 +801,19 @@ password_file_command_options parse_password_file_command_options(int argc, char
 		{
 			if (!requires_output)
 			{
-				throw std::runtime_error(std::string("unsupported password file option: ") + std::string(option));
+				throw std::runtime_error("unsupported password file option");
 			}
 			reject_duplicate(options.has_output, option);
 			options.output = std::filesystem::path(value);
 			options.output_is_stdout = is_standard_stream_marker(value);
 			options.has_output = true;
 		}
-		else if (option == "--password-file")
+		else if (option == "--password-file" || option == "--password-fd")
 		{
-			reject_duplicate(options.has_password, option);
-			options.password = password_from_file(std::filesystem::path(value));
+			if (options.has_password)
+				throw std::runtime_error("conflicting password sources");
+			source = option;
+			source_value = value;
 			options.has_password = true;
 		}
 		else if (option == "--aad-text" || option == "--aad-hex")
@@ -677,7 +827,7 @@ password_file_command_options parse_password_file_command_options(int argc, char
 		}
 		else
 		{
-			throw std::runtime_error(std::string("unsupported password file option: ") + std::string(option));
+			throw std::runtime_error("unsupported password file option");
 		}
 	}
 
@@ -686,6 +836,16 @@ password_file_command_options parse_password_file_command_options(int argc, char
 		throw std::runtime_error(std::string(password_file_command_usage(argv[1])));
 	}
 
+	if (source == "--password-prompt")
+	{
+		if (options.input_is_stdin)
+			throw std::runtime_error("conflicting stdin sources");
+		options.password = password_from_prompt();
+	}
+	else if (source == "--password-fd")
+		options.password = password_from_descriptor(source_value, options.input_is_stdin);
+	else
+		options.password = password_from_file(std::filesystem::path(source_value));
 	return options;
 }
 

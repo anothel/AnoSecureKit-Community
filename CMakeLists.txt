@@ -607,6 +607,13 @@ if(ANOSECUREKIT_BUILD_TESTS)
       set_tests_properties(Cli.UtilityCommands PROPERTIES ${_anosecurekit_test_properties})
     endif()
     list(APPEND _anosecurekit_check_dependencies anosecurekit_cli)
+    find_package(Python3 3.7 REQUIRED COMPONENTS Interpreter)
+    add_test(NAME Cli.SecretInput
+      COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli/check_secret_input.py
+        $<TARGET_FILE:anosecurekit_cli>)
+    set_tests_properties(Cli.SecretInput PROPERTIES TIMEOUT 180)
+
     if(UNIX)
       find_package(Python3 3.7 REQUIRED COMPONENTS Interpreter)
       add_test(NAME Cli.OutputSecurity
