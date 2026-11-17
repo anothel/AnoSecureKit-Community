@@ -2,7 +2,13 @@
 
 # AnoSecureKit Provider Parity Status
 
-Status: CURRENT
+Status: HISTORICAL JULY EVIDENCE
+
+Current maintenance evidence is in [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
+Phase 6 locally runs 134 tests per assembly; Phase 4/5 results record native CI
+including shared provider parity. The older counts and hosted limitations below
+apply only to their named revisions. The external test adapter forwards to
+OpenSSL; it does not establish parity with Enterprise or another crypto module.
 Task: `COMM-VER-02`
 Repository reference: `1d933eb0cace1fe899e9432f314bff9026f5f69c`
 Closeout maintenance baseline: `df1936777843415022a97f775c6e61eea6d99cb0`

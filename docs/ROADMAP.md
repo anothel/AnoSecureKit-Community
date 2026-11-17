@@ -1,34 +1,29 @@
 <!-- SPDX-License-Identifier: MPL-2.0 -->
-
 # AnoSecureKit Community Roadmap
 
 Status: COMPATIBILITY ENTRY POINT
 
-The canonical queue is [`docs/NEXT_WORK_QUEUE.md`](NEXT_WORK_QUEUE.md), and it is
-closed. This file remains for stable links and release checks; it is not an
-independent task list.
+The canonical queue is [docs/NEXT_WORK_QUEUE.md](NEXT_WORK_QUEUE.md). This page
+must not carry a second task list. The active execution record is
+[REVIVAL_PLAN.md](REVIVAL_PLAN.md).
 
-## Closeout Direction
+## Current Direction
 
-```text
-ENGINEERING_STATUS=CLOSED_AND_FROZEN
-ACTIVE_NEXT_WORK=NONE
-ACTIVE_RELEASE_ACTION=NONE
-FUTURE_WORK=DEFERRED_NOT_SELECTED
+PRs #1–#5 are merged. Phase 6 records release engineering and remaining risks.
+Phase 3 fuzzing and coverage remain DEFERRED. The next release version requires
+an explicit maintainer decision; current source 0.4.1 is unpublished.
+Keep OpenSSL 3.x as the only shipped Community production provider, the external
+seam build-tree-only without fallback, and preserve public identities and v1 formats.
+
+## Release Verification Entry Point
+
+```sh
+cmake --build build --config Release --target release-preflight
 ```
 
-- Keep `v0.4.0` as the published release baseline.
-- Keep source version `0.4.1` unpublished and parked.
-- Keep `develop/v0.5.0` parked and unmerged.
-- Keep OpenSSL 3.x as the only shipped Community production provider.
-- Keep the external provider seam build-tree-only with no silent fallback.
-- Preserve the public API, CLI, CMake identity, fixtures, and
-  `SKT1`/`SKF1`/`SKP1` v1 meanings.
-- Keep Enterprise proprietary code and the AnoCrypto-C adapter outside
-  Community.
+See [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md) for evidence and gaps.
 
-There is no active roadmap. Deferred product, security, distribution, and web
-ideas are not selected work. Reopening requires a new explicit product decision;
-completed work remains in release notes, focused status documents, or Git
-history. Website notes in [`docs/WEB_ROADMAP.md`](WEB_ROADMAP.md) are also
-closed and deferred.
+## Intake Rules
+
+New work needs a scope, a runnable check, and a rollback path. Maintenance does
+not authorize publication, tag changes, alert dismissal, or a support SLA.

@@ -2,7 +2,15 @@
 
 # AnoSecureKit Community CodeQL Triage Status
 
-Status: CURRENT
+Status: HISTORICAL STATIC TRIAGE
+
+Phase 6 (2026-11-17): records reviewed; current code-scanning API returned
+`Forbidden`. No retry through alternate identities or alert-state mutation was
+attempted. The 19-alert verdict below applies to its July analysis target,
+not merged maintenance main. Current alert inventory, changed data flows and
+new analyses require authorized follow-up. Local-operator assumptions must be
+revisited for service/privileged embedding; quality issues #1/#18/#19 remain
+backlog risks. No external audit or current zero-vulnerability claim is made.
 Triage date: 2026-07-17 (Asia/Seoul)
 Repository baseline: `a72aa8e96de6e9e312f13aabbb8baa1a17c36a4b`
 Analysis target: `694459ebe497d15ba75ef76a52fa7c36ddd7bcce`

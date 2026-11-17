@@ -4,11 +4,29 @@
 
 ## v0.4.1
 
-AnoSecureKit Community v0.4.1 is an unpublished and parked maintenance snapshot
-at `df1936777843415022a97f775c6e61eea6d99cb0`. It has no tag, GitHub Release,
-release assets, release SBOM, or v0.4.1 attestations. Publication is not approved
-or scheduled. This section records prepared source changes; it is not a published
-release claim or publication authorization.
+This section tracks unpublished source version 0.4.1. It does not select the
+next release version or authorize publication. PRs #1–#5 are merged on main;
+there is no new release evidence or provenance implied by local package staging.
+A maintainer must choose the version and review the matching section before tagging.
+
+### Resumed maintenance (2026-11)
+
+- Fix owned-temp cleanup after fdopen failure, report temporary unlink failures,
+  and keep credential read diagnostics generic. Output can remain after post-commit
+  errors; persistent filesystem failures may leave private temporary files.
+- Add deterministic Linux I/O fault and POSIX output-permission/race regressions.
+- Add path/stream file verification overloads without a plaintext destination.
+- Restrict shared exports; validate current/frozen consumers and relocated CLI
+  packages. Compatibility evidence is toolchain-specific.
+- Add POSIX borrowed descriptors and no-echo prompts alongside existing password files;
+  argv passwords still expose secrets in process listings. Native Windows
+  interactive-console and old-binary replacement remain untested.
+- Reconcile release engineering gates and status; see REVIVAL_PHASE6_RESULTS.md.
+- Phase 3 fuzz campaigns and measured coverage remain **DEFERRED**. No external
+  security audit or release-readiness guarantee is claimed.
+
+The following preparation/verification entries are historical July evidence;
+current results are recorded separately in the Phase results documents.
 
 ### Fixed
 
@@ -57,7 +75,7 @@ release claim or publication authorization.
 ### Compatibility and Claims Boundary
 
 - No breaking public C++ API change.
-- No CLI, include-root, namespace, package, or CMake target change. The CLI
+- No include-root, namespace, package, or CMake target rename. The July CLI
   hardening changes only private output-file creation mechanics; command names,
   options, output formats, and exit behavior remain compatible.
 - OpenSSL 3.x remains the only shipped Community production provider.

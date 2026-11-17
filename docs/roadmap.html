@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AnoSecureKit Roadmap</title>
-  <meta name="description" content="AnoSecureKit Community closeout state, frozen baselines, and closed work-queue links.">
+  <meta name="description" content="AnoSecureKit Community maintenance readiness and current work-queue links.">
   <meta name="color-scheme" content="dark light">
   <link rel="stylesheet" href="./assets/site.css">
 </head>
@@ -18,20 +18,20 @@
         <a href="./cli.html">CLI</a>
         <a href="./security.html">Security</a>
         <a href="./release-verification.html">Verify releases</a>
-        <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Closeout queue</a>
+        <a href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Maintenance queue</a>
       </div>
     </nav>
 
     <section class="hero-body">
-      <p class="eyebrow">Project closeout</p>
-      <h1>Published v0.4.0. Public development closed.</h1>
+      <p class="eyebrow">Maintenance readiness</p>
+      <h1>Published v0.4.0. Maintenance resumed.</h1>
       <p class="lead">
-        The canonical queue in <code>docs/NEXT_WORK_QUEUE.md</code> is closed.
-        Source version v0.4.1 and the v0.5.0 feature candidate are unpublished
-        and parked.
+        The canonical queue in <code>docs/NEXT_WORK_QUEUE.md</code> points to
+        the resumed maintenance plan. Source version v0.4.1 is unpublished;
+        the next release version requires a maintainer decision.
       </p>
       <div class="actions">
-        <a class="button primary" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Read closeout queue</a>
+        <a class="button primary" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/NEXT_WORK_QUEUE.md">Read maintenance queue</a>
         <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/CURRENT_STATUS.md">Read current status</a>
         <a class="button" href="https://github.com/anothel/AnoSecureKit-Community/blob/main/docs/WEB_ROADMAP.md">Web roadmap</a>
       </div>
@@ -41,10 +41,10 @@
   <main>
     <section class="cards" aria-label="Roadmap status">
       <article class="card warning">
-        <h2>Closed</h2>
+        <h2>Resumed maintenance</h2>
         <p>
-          Active next work, roadmap, and release actions are none. Reopening
-          requires a new explicit product decision.
+          PRs #1–#5 are merged. Phase 6 assesses readiness; Phase 3 fuzzing and
+          coverage remain DEFERRED. Publication requires a maintainer decision.
         </p>
       </article>
 
@@ -53,7 +53,7 @@
         <p>
           v0.4.0 publication evidence is self-contained. Exact OpenSSL/external
           provider parity passed 124/124 through both assemblies with the same
-          inventory. Main hosted CI, CodeQL, and scheduled Fuzz passed.
+          inventory. Those July results are historical; see current Phase 6 evidence.
         </p>
       </article>
 
@@ -61,7 +61,8 @@
         <h2>Parked snapshots</h2>
         <p>
           v0.4.1 has no tag, Release, assets, SBOM, or v0.4.1 attestations.
-          <code>develop/v0.5.0</code> is unmerged and is not a public surface.
+          Selected file verification APIs and shared ABI gates are merged on main,
+          but are absent from published v0.4.0.
         </p>
       </article>
     </section>
@@ -69,7 +70,7 @@
     <section class="section">
       <h2>Roadmap rules</h2>
       <ul>
-        <li><code>docs/NEXT_WORK_QUEUE.md</code> is the canonical closed queue.</li>
+        <li><code>docs/NEXT_WORK_QUEUE.md</code> is the canonical maintenance queue.</li>
         <li>Keep OpenSSL 3.x as the only shipped Community production provider.</li>
         <li>Keep the external provider seam build-tree-only with no silent fallback.</li>
         <li>Do not copy Enterprise proprietary source or an AnoCrypto-C adapter into Community.</li>

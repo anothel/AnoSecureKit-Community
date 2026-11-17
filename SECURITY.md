@@ -27,21 +27,16 @@ Include enough information to reproduce and classify the issue:
 
 ## Supported Versions
 
-No AnoSecureKit Community version is under active maintenance. The project is
-EOL with archival response only:
-
-- no supported version or response SLA
-- no active security-fix or release plan
-- future fixes, releases, or security response require a new explicit product
-  decision
-- the repository and published v0.4.0 materials remain available as historical
-  references
+Community maintenance resumed on 2026-11-15 under docs/REVIVAL_PLAN.md;
+PRs #1–#5 are merged. This does not establish a supported-version policy or
+response SLA. Release publication, future scope and risk acceptance still require
+an explicit maintainer decision. See docs/REVIVAL_PHASE6_RESULTS.md for remaining
+evidence gaps; no external security audit has occurred.
 
 Published v0.4.0 generic CLI output can create key or plaintext files with mode
-`0644` under a POSIX `umask 022`. The unpublished maintenance snapshot at
-`df1936777843415022a97f775c6e61eea6d99cb0` uses exclusive temporary-file
+`0644` under a POSIX `umask 022`. Unpublished main retains the maintenance fix using exclusive temporary-file
 creation and mode `0600`. That fix is not in the published v0.4.0 Release;
-v0.4.1 is unpublished, parked, and not scheduled.
+source 0.4.1 is unpublished; the next release version is not selected.
 
 ## Disclosure
 

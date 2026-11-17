@@ -102,14 +102,25 @@ Files: src/cli/commands.cpp, docs/CLI.md, tests/cli/.
 - [x] Preserve existing options; document argv/process-list exposure and memory limits.
 Acceptance: backward compatible inputs and documented ownership; no erasure promises.
 
-## Phase 6 — final security and release readiness (separate review PR)
+## Phase 6 — release engineering and final readiness (focused PR)
 
-- [ ] Review full delta against threat model, triage open alerts without dismissing them.
-- [ ] Run supported compiler/platform/provider matrix, package consumers, ABI checks,
-      fuzz/coverage and release-preflight; reconcile current status/queue documents.
-- [ ] Prepare version-specific notes, checksums/SBOM/provenance plan and rollback steps.
-Acceptance: evidence tied to immutable commits, remaining risks accepted by maintainer.
-Publication/merge/tagging require separate authority; no external audit has occurred.
+Baseline: fetched origin/main `98ddadd6f73659583e55314f7d91acb6ac9371b8`,
+PRs #1–#5 merged. Branch: `codex/revival-phase6-readiness`. Execute inline.
+
+- [x] Read completed phase records, release workflows, policies and status docs.
+- [x] Reproduce stale README preflight assertion; align documentation and obsolete
+      queue/release-note assertions without removing version/artifact/security gates.
+- [ ] Run full release-preflight, CTest, parity, formatting, packages/consumers,
+      shared ABI gates and existing native PR CI; record actual results.
+- [x] Reconcile status, roadmap and prepared release notes with merged work.
+- [x] Review retained security triage; current API access returned Forbidden.
+      Stop blocked validation; no alternate identity/access workaround or dismissal.
+- [ ] Record evidence matrix and GO / NO-GO recommendation in
+      [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
+
+Phase 3 fuzzing and coverage remain **DEFERRED**, excluded from Phase 6 execution.
+Release version, support policy and risk acceptance require explicit maintainer
+choices. Publication/merge/tagging are not authorized; no external audit occurred.
 
 ## Execution record
 
@@ -117,7 +128,7 @@ Phase 1 results and limitations: [REVIVAL_PHASE1_RESULTS.md](REVIVAL_PHASE1_RESU
 The tracked plan lives here because docs/superpowers/ is intentionally gitignored.
 Phase 2 execution and limitations: [REVIVAL_PHASE2_RESULTS.md](REVIVAL_PHASE2_RESULTS.md).
 Phase 3 remains explicitly deferred. Phase 4 execution is recorded in
-[REVIVAL_PHASE4_PLAN.md](REVIVAL_PHASE4_PLAN.md); Phase 5 results: [REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 6 remains follow-up work.
+[REVIVAL_PHASE4_PLAN.md](REVIVAL_PHASE4_PLAN.md); Phase 5 results: [REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 6 evidence is in [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
 
 ## Phase 2 execution design — 2026-11-16
 
