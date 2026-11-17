@@ -19,7 +19,7 @@ if '--worker' not in sys.argv:
                               creationflags=subprocess.DETACHED_PROCESS,
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
-        worker.communicate(timeout=150)
+        _, diagnostics = worker.communicate(timeout=150)
     except subprocess.TimeoutExpired:
         # Kill the CLI descendants while the worker PID still identifies the tree.
         subprocess.run(['taskkill', '/PID', str(worker.pid), '/T', '/F'],
@@ -29,7 +29,11 @@ if '--worker' not in sys.argv:
         raise SystemExit('isolated Windows console regression timed out')
     # Do not forward unexpected child diagnostics that might contain test input.
     if worker.returncode:
-        raise SystemExit('isolated Windows console regression failed')
+        # Worker emits only numeric progress markers; discard traceback contents.
+        import re
+        markers = re.findall(rb'console-stage [0-9]+ [a-z]+', diagnostics)
+        detail = markers[-1].decode() if markers else 'worker setup'
+        raise SystemExit('isolated Windows console regression failed: ' + detail)
     print('PASS: native isolated Win32 console input')
     raise SystemExit(0)
 
@@ -116,7 +120,16 @@ with tempfile.TemporaryDirectory() as tmp:
     plain.write_bytes(b'console regression payload')
     sentinel = 'console-secret-sentinel'
 
+    case_number = 0
+
     def case(text, expected, success=True, error=b'', cp=1252):
+        global case_number
+        case_number += 1
+
+        def stage(name):
+            print('console-stage', case_number, name, file=sys.stderr, flush=True)
+
+        stage('setup')
         require(k.SetConsoleCP(cp))
         require(k.FlushConsoleInputBuffer(h))
         # Deliberately enable every mode the CLI must temporarily disable.
@@ -139,13 +152,18 @@ with tempfile.TemporaryDirectory() as tmp:
             require(child.poll() is None and mode() == (saved & ~7))
             # Read the prompt as a handshake; modes alone precede prompt output.
             require(child.stderr.read(10) == b'Password: ')
+            stage('inject')
             inject(text)
+            stage('wait')
             stdout, stderr = child.communicate(timeout=20)
+            stage('result')
             require(child.returncode == (0 if success else 1))
             require(not stdout and error in stderr)
             require(sentinel.encode() not in stderr)
             require(mode() == saved)
+            stage('screen')
             no_screen_secret(sentinel)
+            stage('done')
         finally:
             if child.poll() is None:
                 child.kill()
