@@ -31,23 +31,17 @@ treat the project as a substitute for a full security review in high-risk system
 
 ## Project Status
 
-AnoSecureKit Community engineering is closed and frozen. Public development,
-active release work, and the active roadmap are closed.
+Community maintenance resumed on 2026-11-15 under
+[docs/REVIVAL_PLAN.md](docs/REVIVAL_PLAN.md). PRs #1–#5 are merged: output
+security regressions, deterministic I/O fault handling, additive file verification
+APIs, shared-library export gates, and CLI password sources. Phase 6 assesses
+release readiness; Phase 3 fuzzing and coverage remain **DEFERRED**.
 
-```text
-published release: v0.4.0
-release commit: 694459ebe497d15ba75ef76a52fa7c36ddd7bcce
-unpublished maintenance snapshot: df1936777843415022a97f775c6e61eea6d99cb0
-maintenance source version: 0.4.1
-maintenance state: unpublished and parked
-parked feature candidate: develop/v0.5.0@9fe79dc1e0f8b9951e86c2707c70469611ab43e4
-active next work: none
-active release action: none
-security support: EOL, archival response only
-```
-
-No version has an active maintenance commitment or response SLA. Future fixes,
-releases, or security response require a new explicit product decision.
+Published baseline remains `v0.4.0`. Current source uses
+`project(... VERSION 0.4.1)`; this is an unpublished source version, not a
+maintainer decision about the next release. No release or tag is authorized.
+No support SLA or external audit is established by resumed maintenance.
+See [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md) for current evidence.
 
 ### Published v0.4.0 Output-File Limitation
 
@@ -147,7 +141,7 @@ artifacts, release assets, and provenance files before release.
 External audits and roadmap notes are handled through this contract. Items that
 do not map to the C++ API, CLI, `SKT1`/`SKF1`/`SKP1`, CMake package, release
 asset, or security-reporting surface are triage input, not implementation scope.
-`docs/NEXT_WORK_QUEUE.md` records the canonical closed queue;
+`docs/NEXT_WORK_QUEUE.md` records the canonical active work queue;
 `docs/ROADMAP.md` is a compatibility entry point.
 
 For the canonical documentation map, see
@@ -324,7 +318,7 @@ before claiming that release assets, checksums, SBOM, attestations, or hosted
 runs exist for a specific revision.
 
 The tag version must match the CMake project version. The current `main` source
-version is `0.4.1`, but it is an unpublished and parked maintenance snapshot
+version is `0.4.1`, but it is unpublished maintenance source
 with no tag or Release.
 
 Local release preflight:
@@ -925,9 +919,9 @@ executables with the OpenSSL DLL directory on `PATH`.
 
 ## Roadmap
 
-See [docs/NEXT_WORK_QUEUE.md](docs/NEXT_WORK_QUEUE.md) for the closed canonical
+See [docs/NEXT_WORK_QUEUE.md](docs/NEXT_WORK_QUEUE.md) for the canonical maintenance
 queue. [`docs/ROADMAP.md`](docs/ROADMAP.md) is retained only as a compatibility
-entry point. There is no active roadmap or release action. Completed work remains
+entry point. The resumed maintenance roadmap is in REVIVAL_PLAN.md; publication requires a maintainer decision. Completed work remains
 in Git history or release notes; unselected future ideas remain deferred in
 [docs/WEB_ROADMAP.md](docs/WEB_ROADMAP.md).
 

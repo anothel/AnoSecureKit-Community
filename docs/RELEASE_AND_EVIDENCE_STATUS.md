@@ -2,9 +2,33 @@
 
 # AnoSecureKit Release and Evidence Status
 
-Status date: 2026-07-25 (Asia/Seoul)
-Engineering status: `CLOSED_AND_FROZEN`
-Current release code/tag baseline: `v0.4.0`
+Status date: 2026-11-17. Maintenance resumed; PRs #1–#5 merged.
+Published release baseline remains `v0.4.0`. Current source is unpublished 0.4.1;
+next release version and publication require an explicit maintainer decision.
+
+## Current maintenance evidence
+
+See [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md) for Phase 6 results on
+baseline `98ddadd6f73659583e55314f7d91acb6ac9371b8` plus the focused readiness
+changes. Selected file verification APIs and shared ABI work are merged on main;
+they remain absent from published v0.4.0. CLI password inputs and I/O fixes are
+also merged. Phase 3 fuzzing and coverage are **DEFERRED**.
+
+Local staging creates rehearsal archives, checksums and an asset-inventory SPDX
+SBOM; it does not create published assets or hosted provenance. Current alert
+access returned Forbidden. Historical triage is not a fresh assessment of main.
+No release, tags, alert disposition or external audit is authorized or claimed.
+
+Native Phase 6 validation at `a10689af7937576d95170a56eda71c2fe3b76f88`:
+[run 44050791647](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44050791647),
+all 11 validation jobs PASS, Release skipped. The later evidence-record commit
+changes documentation only. Publication recommendation remains NO-GO.
+
+## Historical July closeout and publication record
+
+Everything below is retained historical evidence for the named revisions, not
+current-main verification. Frozen/parked status statements below describe July
+and are superseded by CURRENT_STATUS.md and REVIVAL_PLAN.md for maintenance.
 
 ## Evidence Labels
 
@@ -322,11 +346,11 @@ No public API, CLI syntax, CMake identity, production provider, or v1 format
 meaning changed. The correction is not included in published v0.4.0; that Release
 retains the generic CLI-output `0644` limitation.
 
-## Current Evidence Matrix
+## Historical July Evidence Matrix
 
 | Evidence | Status | Current statement |
 | --- | --- | --- |
-| Tag/version alignment | PASS | `v0.4.0` resolves to `694459ebe...`; CMake version is `0.4.0` |
+| Tag/version alignment | PASS | `v0.4.0` resolves to `694459ebe...`; CMake version at that tag is `0.4.0` |
 | GitHub Release object | PASS | Public, non-draft, non-prerelease Release recovered |
 | Release title and published time | PASS | Exact title and 2026-07-13 19:26:47 KST confirmed |
 | Release body exact comparison | NOT_EQUAL | Two normalized wording differences; raw bytes and unified diff retained |

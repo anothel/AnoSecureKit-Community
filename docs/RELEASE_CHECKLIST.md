@@ -2,6 +2,10 @@
 
 # AnoSecureKit Release Checklist
 
+Current source is unpublished 0.4.1. Examples below do not select a release
+version; a maintainer decision is required. Phase 6 evidence and unresolved gaps
+are in [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
+
 Use this checklist before pushing a version tag. Release automation only runs
 for tags matching `v*`.
 
