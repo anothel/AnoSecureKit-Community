@@ -40,7 +40,7 @@ selection rather than inferring it from a successful launch alone.
 
 ## Verification status
 
-Local Linux checks and native CI outcomes will be recorded with immutable commits
+Local Linux checks and native CI outcomes are recorded with immutable commits
 below. Merely configuring Windows/macOS jobs does not count as native execution.
 No production defect is asserted from static inspection or test scaffolding.
 
@@ -156,3 +156,67 @@ not native library execution. Native frozen-binary typed catches remain mandator
 The follow-up lane pins supported macOS 15; macOS-latest CTest/package coverage is
 retained in the existing workflow. Thin ARM64 evidence does not prove universal
 binaries or Intel C++ ABI compatibility.
+
+Native macOS 15.8.2 ARM64/AppleClang 17.0.0.17000013/OpenSSL 3.5.9
+**PASS** in job
+[134130316225](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44109330056/job/134130316225),
+head `f5e68f6e5c105414600aa02a3f10fcf7a9161487`, tested PR merge
+`f73828f28a196a261ec05cf07bb2d5e2656c5a9a`. The unchanged old binary passed
+before and after replacement, and the missing-library control failed. **49**
+actual Mach-O exports and both current shared installed consumers passed.
+Unrestricted `nm -m` confirms `__ZTIN12anosecurekit5errorE`,
+`__ZTSN12anosecurekit5errorE` and `__ZTVN12anosecurekit5errorE` exist as
+non-external (formerly private external) metadata. The typed catch succeeds
+without exporting those descriptors or changing the public class.
+Frozen consumer SHA-256:
+`7d2c00743a09c81c8eb724877d39b6f4fe1872ee76ce6e22ff1608028947eaf0`.
+Baseline dylib:
+`d9ed3ea32b06cbf451088952cc078194254fb1fd6ec3ce7a15f68f239ecd126d`;
+replacement dylib:
+`a54003ee9e24eec33f0625397743d9405abfc42447fe206ae1818110f9b0af29`.
+[Artifact 14340560757](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44109330056/artifacts/14340560757)
+retains the frozen executable and JSON; archive digest
+`da28d879c4babe8ec66bdef81ffbe50b5ddf956260c4a0a55138dd09738f7135`.
+
+Final local rerun after the Apple gate correction: full static/shared CTest each
+**134/134 PASS**, ELF **52** exports PASS, recorded Apple **49**-symbol replay PASS,
+current shared consumers/package, full ordered external-provider parity **134/134**,
+format 22.1.5, binary/source packages, installed CLI and policy/document gates PASS.
+Final independent review found no important issue in the platform gate correction.
+These remain internal maintenance checks, not an external audit or release authority.
+
+Native Windows isolated console coverage **PASS** in both static and shared
+jobs at head `289158aa9e49b2a8b3f5359de3b76587ef26b5f5`, PR merge `b029973`
+(complete SHA in job checkout log). [Run 44107964573](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44107964573)
+passed all **11 validation jobs**; Release skipped. Windows shared job
+[134125416775](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44107964573/job/134125416775)
+passed **133/133 CTests**, including `Cli.WindowsConsole` in 3.23 seconds;
+static job [134125416936](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44107964573/job/134125416936)
+passed **133/133**, console regression in 4.19 seconds. This is actual Win32
+console allocation and CLI execution, not redirected-input or mocked Win32 calls.
+All eleven console cases completed, including both encoding cases and the VT LF
+case. Windows shared exports and current installed shared consumers also passed.
+Linux GCC/Clang Release/Debug/static/shared, ordered parity, sanitizers and
+macOS-latest CTest/packages passed in the same run.
+
+Final platform workflow at `f5e68f6e5c105414600aa02a3f10fcf7a9161487`:
+[44109330056](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44109330056)
+completed with **all three native Linux, Windows and macOS-15 replacement jobs
+PASS**. This includes current shared exports/packages and unchanged historical
+binaries, with no recompilation after freezing. The later full main CI rerun is
+[44109331342](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44109331342);
+its final status is recorded below. Earlier failed diagnostic runs remain evidence
+of corrected test/gate portability defects, not failures silently waived.
+
+At evidence closeout, final main CI run 44109331342 has **10/11 validation jobs
+PASS** (including both Windows static/shared and all Linux jobs); its redundant
+macOS-latest package job is still **QUEUED, not PASS**. The complete prior matrix
+at 289158a passed, and the final revision's native macOS-15 shared replacement,
+exception and installed-package lane passed independently. A queued job is not
+claimed as execution. The final documentation-only commit records these immutable
+outcomes and does not change the implementation tested at f5e68f6. Maintainers
+must inspect the PR's current checks before any separately authorized merge.
+
+Publication remains **NO-GO**. Phase 3 remains **DEFERRED**. Current alerts remain
+unavailable rather than cleared; no security restrictions were bypassed. No merge,
+release, tag, alert dismissal or publication was performed.
