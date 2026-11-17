@@ -208,14 +208,15 @@ binaries, with no recompilation after freezing. The later full main CI rerun is
 its final status is recorded below. Earlier failed diagnostic runs remain evidence
 of corrected test/gate portability defects, not failures silently waived.
 
-At evidence closeout, final main CI run 44109331342 has **10/11 validation jobs
-PASS** (including both Windows static/shared and all Linux jobs); its redundant
-macOS-latest package job is still **QUEUED, not PASS**. The complete prior matrix
-at 289158a passed, and the final revision's native macOS-15 shared replacement,
-exception and installed-package lane passed independently. A queued job is not
-claimed as execution. The final documentation-only commit records these immutable
-outcomes and does not change the implementation tested at f5e68f6. Maintainers
-must inspect the PR's current checks before any separately authorized merge.
+Final main CI run [44109331342](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44109331342)
+completed **successfully: all 11 validation jobs PASS** at implementation head
+`f5e68f6e5c105414600aa02a3f10fcf7a9161487` (PR merge `f73828f`).
+The macOS-latest package job initially remained queued after the other ten passed;
+it subsequently ran and passed. Release was skipped. Thus the final implementation
+has both the complete 11-job compiler/platform/package/sanitizer matrix and all
+three dedicated native frozen-binary lanes green. The final documentation-only
+commit records those immutable results without changing runtime or test code.
+Maintainers must still inspect current PR checks before a separately authorized merge.
 
 Publication remains **NO-GO**. Phase 3 remains **DEFERRED**. Current alerts remain
 unavailable rather than cleared; no security restrictions were bypassed. No merge,
