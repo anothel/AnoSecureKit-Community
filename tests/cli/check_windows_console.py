@@ -122,7 +122,7 @@ with tempfile.TemporaryDirectory() as tmp:
 
     case_number = 0
 
-    def case(text, expected, success=True, error=b'', cp=1252):
+    def case(text, expected, success=True, error=b'', cp=1252, vt=False):
         global case_number
         case_number += 1
 
@@ -133,7 +133,7 @@ with tempfile.TemporaryDirectory() as tmp:
         require(k.SetConsoleCP(cp))
         require(k.FlushConsoleInputBuffer(h))
         # Deliberately enable every mode the CLI must temporarily disable.
-        require(k.SetConsoleMode(h, mode() | 7))
+        require(k.SetConsoleMode(h, ((mode() | 7) & ~0x200) | (0x200 if vt else 0)))
         saved = mode()
         password.write_bytes(expected)
         if packet.exists():
@@ -172,7 +172,8 @@ with tempfile.TemporaryDirectory() as tmp:
 
     case(sentinel + '\r', sentinel.encode())
     case(sentinel + 'x\b\r', sentinel.encode())
-    case(sentinel + '\n', sentinel.encode())
+    # Native conhost discards an injected LF unless VT input mode is enabled.
+    case(sentinel + '\n', sentinel.encode(), vt=True)
     for cancel in ['\x03', '\x04', '\x1a']:
         case(sentinel + cancel, sentinel.encode(), False, b'password input cancelled')
     case('\r', b'nonempty', False, b'password must not be empty')

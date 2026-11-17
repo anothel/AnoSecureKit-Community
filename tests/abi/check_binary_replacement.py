@@ -60,6 +60,7 @@ for label, tree in [('old', old), ('new', source)]:
     if label == 'new':
         if __import__('sys').platform == 'darwin':
             run(['nm', '-gU', '-C', build / 'libanosecurekit.dylib'])
+            run(['nm', '-m', '-C', build / 'libanosecurekit.dylib'])
         run(['cmake', '--build', build, '--config', 'Release', '--target', 'shared-symbol-check', 'shared-package-check'])
     run(['cmake', '--install', build, '--config', 'Release', '--prefix', install])
 

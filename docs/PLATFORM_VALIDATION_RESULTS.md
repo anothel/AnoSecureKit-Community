@@ -107,3 +107,36 @@ frozen executable ownership. It identified boundary cases lacking a disclosure
 sentinel and missing candidate shared package metadata coverage on macOS. Both
 were strengthened before the implementation above was published. No confirmed
 production compatibility defect has been found; no production behavior changed.
+
+## Native execution evidence
+
+PR: https://github.com/anothel/AnoSecureKit-Community/pull/7.
+
+Windows frozen-binary replacement **PASS** in native job
+[134112497468](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44104338872/job/134112497468),
+head `70e5aa3fe4c2fa3c33e7e3a506eafbd9603d09ec`, tested PR merge
+`51e8d0f6286c83dc02ba28d0881dec39f116a671`. Windows Server 2025,
+MSVC 19.51.36260.0, vcpkg OpenSSL 3.6.5. Baseline and replacement runs passed;
+missing DLL control failed as required. All **55** actual DLL exports and both
+current shared installed consumers passed. Frozen executable SHA-256:
+`b073b61b8787457f57e8655d08e2015a3d85e9cbb8048ed9fd47f98d1538ded8`.
+Baseline DLL:
+`58f9916f70e8a2ca255f8e057fc86fcf8b5a523dbb5b02741f1380178b91cb01`;
+replacement DLL:
+`d353d8709e19c4a8459245f39416848c1c7e041df7ef2684b6050aebc7c88265`.
+[Artifact 14338657953](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44104338872/artifacts/14338657953)
+retains the executable and JSON; archive digest
+`7d98c24acb0231caab54b6e77e7a0b637cd75c5487e8a811c45920a00c098056`.
+
+This Windows pass proves neither console behavior nor arbitrary CRT/compiler ABI
+compatibility. Separate console and macOS shared-gate failures are investigated
+below; a passing static macOS package job cannot clear a shared ABI failure.
+
+Windows console regression first failed at `console-stage 3 wait` in native job
+[134118869989](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44106133041/job/134118869989).
+The first two cases (CR and backspace) completed. Windows conhost discards an
+injected LF key unless virtual-terminal input mode is enabled. The harness now
+explicitly enables that supported mode for the LF case and checks its preservation
+and restoration; other cases explicitly use ordinary console input. This is a
+test-environment correction, not a production password-reader defect. No timeout
+or assertion is waived. Native rerun results follow separately.
