@@ -195,3 +195,26 @@ jobs in run 44050791647; release skipped. Local preflight, static/shared CTest
 134/134, ordered parity, formatting, packages/consumers and ELF exports pass.
 Recommendation: NO-GO for publication; no version selected, current alert access
 blocked, platform gaps remain, Phase 3 fuzzing/coverage explicitly DEFERRED.
+
+## Platform validation execution design — 2026-11-17
+
+Baseline: origin/main `8a94c591f4d290107c698e6ab7e5598f53fd2b61` (PR #6).
+Branch: `codex/revival-platform-validation`. Execute inline immediately per user.
+
+- [ ] Add a real Windows console harness in a detached, bounded child process;
+      assert disabled echo/line/processed input, exact restoration, typed cancellation,
+      empty/4096/4097-byte behavior, editing and explicit console code-page bytes.
+      Check diagnostics and console screen for disclosure; never print passwords.
+- [ ] Add native Windows/macOS CI building an installed consumer once against
+      pinned pre-Phase-4 revision `0cb8bda7b6d96a11bd83228321707f83d62daa4c`;
+      run old library, freeze executable hash, remove runtime as negative control,
+      replace only runtime, run unchanged executable and verify hash. Retain JSON.
+- [ ] Run full CTest, parity, package/consumer, symbols, formatting and policy gates;
+      record native outcomes separately from Linux/static inspection.
+- [ ] Review final diff, document remaining limits, open focused PR; never merge.
+
+Tests validate existing behavior first; fix only reproduced defects with a failing
+regression. Same-toolchain evidence is not a cross-compiler/STL/CRT ABI promise.
+Phase 3 fuzzing/coverage remains DEFERRED. Alert access restrictions remain binding;
+unavailable data is not cleared. Publication remains NO-GO pending separately
+resolved blockers and explicit maintainer authority to reconsider.
