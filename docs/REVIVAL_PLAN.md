@@ -110,12 +110,12 @@ PRs #1–#5 merged. Branch: `codex/revival-phase6-readiness`. Execute inline.
 - [x] Read completed phase records, release workflows, policies and status docs.
 - [x] Reproduce stale README preflight assertion; align documentation and obsolete
       queue/release-note assertions without removing version/artifact/security gates.
-- [ ] Run full release-preflight, CTest, parity, formatting, packages/consumers,
+- [x] Run full release-preflight, CTest, parity, formatting, packages/consumers,
       shared ABI gates and existing native PR CI; record actual results.
 - [x] Reconcile status, roadmap and prepared release notes with merged work.
 - [x] Review retained security triage; current API access returned Forbidden.
       Stop blocked validation; no alternate identity/access workaround or dismissal.
-- [ ] Record evidence matrix and GO / NO-GO recommendation in
+- [x] Record evidence matrix and GO / NO-GO recommendation in
       [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
 
 Phase 3 fuzzing and coverage remain **DEFERRED**, excluded from Phase 6 execution.
@@ -188,3 +188,10 @@ validation jobs in run 44020814789; release skipped. Local complete CTest 134/13
 provider parity, format 22.1.5, packages/consumers and document/boundary checks pass.
 Remaining limits, including native Windows interactive-console coverage, are in
 [REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 3 remains deferred.
+
+Phase 6 PR: https://github.com/anothel/AnoSecureKit-Community/pull/6.
+Validation commit a10689af7937576d95170a56eda71c2fe3b76f88 passed all 11 native
+jobs in run 44050791647; release skipped. Local preflight, static/shared CTest
+134/134, ordered parity, formatting, packages/consumers and ELF exports pass.
+Recommendation: NO-GO for publication; no version selected, current alert access
+blocked, platform gaps remain, Phase 3 fuzzing/coverage explicitly DEFERRED.

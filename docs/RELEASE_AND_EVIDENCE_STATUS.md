@@ -19,6 +19,11 @@ SBOM; it does not create published assets or hosted provenance. Current alert
 access returned Forbidden. Historical triage is not a fresh assessment of main.
 No release, tags, alert disposition or external audit is authorized or claimed.
 
+Native Phase 6 validation at `a10689af7937576d95170a56eda71c2fe3b76f88`:
+[run 44050791647](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44050791647),
+all 11 validation jobs PASS, Release skipped. The later evidence-record commit
+changes documentation only. Publication recommendation remains NO-GO.
+
 ## Historical July closeout and publication record
 
 Everything below is retained historical evidence for the named revisions, not

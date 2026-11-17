@@ -54,7 +54,7 @@ explicitly named. NOT TESTED includes unavailable/blocked work; it never means P
 | Rehearsal SPDX SBOM | PASS | Asset inventory and SHA-256s; not a transitive dependency vulnerability scan |
 | Provenance configuration | PASS | Tag-only release needs all native jobs; contents/id-token/attestations write scoped to release; dist/* attested |
 | Wrong README version / mismatching tag rejection | PASS | Temporary-source mutation and v9.9.9 tag rejected; valid control passes |
-| Existing native CI on this PR | NOT TESTED | Pending PR run; prior Phase 5 run is historical, not a current-head pass |
+| Existing native CI | PASS | All 11 validation jobs at a10689a, run 44050791647; tag-only Release skipped |
 | New release assets / hosted attestation verification | NOT TESTED | No release/tag authorized; local staging is not publication evidence |
 | Current security-alert inventory / revalidation | NOT TESTED (BLOCKED) | GitHub code-scanning API returned Forbidden; stopped |
 | External security audit | NOT TESTED | None claimed |
@@ -128,3 +128,22 @@ fails, preserve existing tags, retain evidence, fix on main and choose a new
 version; never silently replace consumed artifacts or move a published tag.
 The release workflow supports same-tag upload reruns with --clobber; any such
 recovery needs explicit maintainer authority and renewed integrity/provenance checks.
+
+## Native CI and final review
+
+PR: https://github.com/anothel/AnoSecureKit-Community/pull/6.
+Validation commit: `a10689af7937576d95170a56eda71c2fe3b76f88`.
+[Run 44050791647](https://github.com/anothel/AnoSecureKit-Community/actions/runs/44050791647)
+completed successfully: all 11 validation jobs passed; GitHub Release was skipped.
+Linux GCC Release/Debug/static/install-only, Clang Release, GCC/Clang shared ABI,
+ASan/UBSan, macOS AppleClang packages, and Windows MSVC static/shared passed.
+The shared lanes include real exports, installed consumers and package checks;
+Linux shared lanes also run provider parity. This does not prove native Windows
+interactive-console behavior or old-binary replacement.
+
+A separate read-only reviewer checked the final diff and local logs. Stale
+SECURITY.md maintenance wording and historical provider-status labels were
+corrected; the follow-up review found no material issues. This is internal review,
+not external audit. This subsequent documentation-only record does not change
+the production code or tests validated at a10689a. Its own hosted status must not
+be conflated with that immutable run. NO-GO for publication remains unchanged.
