@@ -15,11 +15,20 @@ if os.name != 'nt':
     raise SystemExit('requires native Windows')
 cli = str(pathlib.Path(sys.argv[1]).resolve())
 if '--worker' not in sys.argv:
-    p = subprocess.run([sys.executable, __file__, cli, '--worker'],
-                       creationflags=subprocess.DETACHED_PROCESS,
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=150)
+    worker = subprocess.Popen([sys.executable, __file__, cli, '--worker'],
+                              creationflags=subprocess.DETACHED_PROCESS,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        worker.communicate(timeout=150)
+    except subprocess.TimeoutExpired:
+        # Kill the CLI descendants while the worker PID still identifies the tree.
+        subprocess.run(['taskkill', '/PID', str(worker.pid), '/T', '/F'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+        worker.kill()
+        worker.wait(timeout=5)
+        raise SystemExit('isolated Windows console regression timed out')
     # Do not forward unexpected child diagnostics that might contain test input.
-    if p.returncode:
+    if worker.returncode:
         raise SystemExit('isolated Windows console regression failed')
     print('PASS: native isolated Win32 console input')
     raise SystemExit(0)

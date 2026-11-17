@@ -63,3 +63,13 @@ or cross-compiler C++ ABI promise is made. The allowlists inventory symbol famil
 not every parameter encoding, object layout, calling convention or STL ABI.
 Existing consumers that intentionally used internal symbols must be rebuilt using
 installed public headers; those internal exports were never a supported contract.
+
+## Platform validation follow-up
+
+The focused native frozen-binary workflow and exact pre-Phase-4 baseline are
+recorded in [PLATFORM_VALIDATION_RESULTS.md](PLATFORM_VALIDATION_RESULTS.md).
+It builds against the earlier installed package once, checks baseline execution
+and a missing-runtime negative control, replaces only the runtime, and verifies
+the executable hash after execution. Native results are recorded there separately
+from Linux evidence and frozen-source rebuilds. This adds no cross-toolchain ABI
+promise and does not change the NO-GO publication recommendation.

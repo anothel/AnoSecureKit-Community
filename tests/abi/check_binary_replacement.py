@@ -20,6 +20,10 @@ p.add_argument('source', type=pathlib.Path)
 p.add_argument('work', type=pathlib.Path)
 p.add_argument('cmake_args', nargs=argparse.REMAINDER)
 a = p.parse_args()
+# Loader failure must not open a modal Windows error dialog in the negative control.
+if os.name == 'nt':
+    import ctypes
+    ctypes.windll.kernel32.SetErrorMode(0x8003)
 source = a.source.resolve()
 work = a.work.resolve()
 work.mkdir(parents=True, exist_ok=False)

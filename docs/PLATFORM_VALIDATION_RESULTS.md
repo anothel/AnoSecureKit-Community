@@ -56,3 +56,54 @@ erasure is claimed. The harness does not prove recovery from external terminatio
 Existing filesystem fault-injection and stdout rollback limits still apply.
 Platform evidence alone cannot authorize publication: all release blockers must
 be separately resolved and a maintainer must authorize reconsidering NO-GO.
+
+## Local execution evidence
+
+Linux x86_64, GCC 14.2.0/libstdc++, OpenSSL 3.5.7, Python 3.12.14,
+CMake 3.31.6, Ninja; clang-format 22.1.5. Implementation tree at
+`70e5aa3fe4c2fa3c33e7e3a506eafbd9603d09ec`:
+
+- Full static CTest: **134/134 PASS**.
+- Full shared CTest: **134/134 PASS**; actual ELF export allowlist: **52 PASS**.
+- External-provider parity: **134/134 PASS**, identical ordered inventory.
+- Package/installed CLI/current and frozen-source consumers, current shared package:
+  **PASS**. These rebuilt consumers are separate from the frozen-binary test.
+- CLI documentation, document alignment, backend boundary, external hook, SPDX,
+  legacy-name and formatting gates: **PASS**.
+- Linux frozen binary replacement: **PASS**, including required missing-library
+  failure. Consumer SHA-256 before/after:
+  `c3a84f961ffcf6de1ed5ab919e737ce1b2258aa04214e80a109d4dd51f4a17ea`.
+  Baseline DSO SHA-256:
+  `ff9bb0e4e6e96ec5d97a8f08b17d5384e2cd81f745d3645f497f9dacab471694`;
+  replacement DSO:
+  `b89fa69917d31ef2493898623bd045982c8c27c59dfbe938e0ae169b4e99c8e9`.
+
+Commands (repository root, repository tool directory added to PATH):
+
+```sh
+cmake -S . -B build -DANOSECUREKIT_WARNINGS_AS_ERRORS=ON \
+  -DCLANG_FORMAT_EXE=/tmp/platform-format/clang_format/data/bin/clang-format
+cmake --build build --target check format-check package-check \
+  external-backend-parity-check shared-package-check cli-docs-check \
+  document-alignment-check backend-boundary-check external-backend-hook-check \
+  spdx-check legacy-name-check -j4
+cmake -S . -B build-shared -G Ninja -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_SHARED_LIBS=ON -DANOSECUREKIT_BUILD_TESTS=ON \
+  -DANOSECUREKIT_WARNINGS_AS_ERRORS=ON \
+  -DFETCHCONTENT_SOURCE_DIR_GOOGLETEST="$PWD/build/_deps/googletest-src"
+cmake --build build-shared --target check shared-symbol-check -j4
+python3 tests/abi/check_binary_replacement.py . /tmp/platform-binary-final
+```
+
+Initial tool/setup failures: missing CMake on PATH; clang-format 19 disagreed with
+the previously verified 22.1.5 style. Selecting the repository CMake and installing
+22.1.5 resolved these without production edits. The binary test's temporary output
+directory must be new on each run. Logs under `/tmp/platform-*` are local only.
+Terminal git push had no credentials; the connected GitHub service published the
+identical local tree `e148a898cc7b24e4b25f2166d1ea68480e70883d` as `70e5aa3`.
+
+Independent read-only review checked console ctypes layout, loader selection and
+frozen executable ownership. It identified boundary cases lacking a disclosure
+sentinel and missing candidate shared package metadata coverage on macOS. Both
+were strengthened before the implementation above was published. No confirmed
+production compatibility defect has been found; no production behavior changed.
