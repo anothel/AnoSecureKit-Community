@@ -20,7 +20,9 @@ A maintainer must choose the version and review the matching section before tagg
   packages. Compatibility evidence is toolchain-specific.
 - Add POSIX borrowed descriptors and no-echo prompts alongside existing password files;
   argv passwords still expose secrets in process listings. Native Windows
-  interactive-console and old-binary replacement remain untested.
+  interactive-console regression passed in hosted CI (run 44107964573);
+  three-OS frozen-binary replacement passed separately (run 44181886485).
+  Neither result authorizes a v0.4.1 release.
 - Reconcile release engineering gates and status; see REVIVAL_PHASE6_RESULTS.md.
 - Phase 3 fuzz campaigns and measured coverage remain **DEFERRED**. No external
   security audit or release-readiness guarantee is claimed.
