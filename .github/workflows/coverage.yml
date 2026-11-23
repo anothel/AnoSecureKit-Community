@@ -1,0 +1,60 @@
+# SPDX-License-Identifier: MPL-2.0
+name: Community coverage (non-release)
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measured-coverage:
+    name: Linux GCC full-suite measured coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Linux build dependencies
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev ninja-build
+
+      - name: Cache GoogleTest v1.14.0 source
+        uses: actions/cache@v6
+        with:
+          path: build-coverage/_deps/googletest-src
+          key: ${{ runner.os }}-gcc-Debug-coverage-googletest-v1.14.0-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gcc-Debug-coverage-googletest-v1.14.0-
+            ${{ runner.os }}-gcc-Debug-googletest-v1.14.0-
+
+      - name: Install gcovr in a local virtual environment
+        shell: bash
+        run: |
+          python3 -m venv .coverage-venv
+          . .coverage-venv/bin/activate
+          python -m pip install --disable-pip-version-check gcovr==7.2
+          echo "$PWD/.coverage-venv/bin" >> "$GITHUB_PATH"
+
+      - name: Configure full-suite GCC coverage
+        run: >
+          cmake -S . -B build-coverage -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DANOSECUREKIT_BUILD_TESTS=ON
+          -DANOSECUREKIT_ENABLE_COVERAGE=ON
+          -DANOSECUREKIT_WARNINGS_AS_ERRORS=ON
+
+      - name: Test and generate coverage
+        run: cmake --build build-coverage --target coverage-report -j2
+
+      - name: Upload observational coverage artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: anosecurekit-coverage-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build-coverage/coverage/anosecurekit.html
+            build-coverage/coverage/coverage.xml
+          if-no-files-found: error
+          retention-days: 7
