@@ -29,6 +29,36 @@ build-fuzz/anosecurekit_fuzz_skt1 tests/fixtures tests/fuzz/corpus
 build-fuzz/anosecurekit_fuzz_file tests/fixtures tests/fuzz/corpus
 ```
 
+## Opt-in SKP1 valid-scrypt corpus
+
+The regular `anosecurekit_fuzz_file` intentionally skips complete `SKP1`
+headers to keep its high-throughput parser campaign bounded. For actual SKP1
+KDF and authenticated-record paths, build a **separate, opt-in** fuzz target:
+
+```sh
+cmake -S . -B build-fuzz-skp1 -G Ninja \
+  -DANOSECUREKIT_BUILD_FUZZ=ON \
+  -DANOSECUREKIT_FUZZ_VALID_SKP1=ON \
+  -DANOSECUREKIT_BUILD_TESTS=OFF \
+  -DCMAKE_CXX_COMPILER=clang++
+cmake --build build-fuzz-skp1 --target fuzz-skp1-valid-smoke
+
+mkdir -p build-fuzz-skp1/skp1-corpus
+cp tests/fixtures/skp1-known-password-file.hex build-fuzz-skp1/skp1-corpus/
+build-fuzz-skp1/anosecurekit_fuzz_skp1_valid \
+  -runs=1000 -max_len=4096 -timeout=5 -rss_limit_mb=1024 \
+  build-fuzz-skp1/skp1-corpus
+```
+
+This lane uses the **synthetic** committed SKP1 compatibility fixture and
+its documented password/AAD to reach real scrypt and authentication, via the
+verify-only API (no plaintext output). Its bounded input size and explicit
+runtime budget are necessary because even valid-looking SKP1 records can
+trigger the fixed-cost scrypt KDF. The target is not included in the default
+`fuzz-smoke` or weekly workflow; enabling it does not grant a release or
+security-clearance claim. Save crashes/sanitizer output and exact SHA/flags,
+not random generated corpora, passwords or decrypted payloads.
+
 ## GitHub Scheduled Fuzzing
 
 `.github/workflows/fuzz.yml` runs weekly and on manual dispatch. The scheduled

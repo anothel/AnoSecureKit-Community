@@ -79,6 +79,7 @@ option(ANOSECUREKIT_WARNINGS_AS_ERRORS "Treat AnoSecureKit build warnings as err
 option(ANOSECUREKIT_BUILD_CLI "Build AnoSecureKit CLI" ON)
 option(ANOSECUREKIT_INSTALL_CLI "Install AnoSecureKit CLI" ON)
 option(ANOSECUREKIT_BUILD_FUZZ "Build AnoSecureKit libFuzzer targets" OFF)
+option(ANOSECUREKIT_FUZZ_VALID_SKP1 "Build the opt-in bounded SKP1 KDF fuzz lane" OFF)
 option(ANOSECUREKIT_ENABLE_COVERAGE "Build with GCC/Clang coverage instrumentation" OFF)
 
 if(NOT _anosecurekit_external_backend
@@ -405,6 +406,14 @@ if(ANOSECUREKIT_BUILD_FUZZ)
   anosecurekit_add_fuzz(anosecurekit_fuzz_base64url tests/fuzz/base64url_fuzz.cpp)
   anosecurekit_add_fuzz(anosecurekit_fuzz_skt1 tests/fuzz/skt1_fuzz.cpp)
   anosecurekit_add_fuzz(anosecurekit_fuzz_file tests/fuzz/file_fuzz.cpp)
+  if(ANOSECUREKIT_FUZZ_VALID_SKP1)
+    anosecurekit_add_fuzz(anosecurekit_fuzz_skp1_valid tests/fuzz/skp1_valid_fuzz.cpp)
+    add_custom_target(fuzz-skp1-valid-smoke
+      COMMAND $<TARGET_FILE:anosecurekit_fuzz_skp1_valid> -runs=1
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/skp1-known-password-file.hex
+      DEPENDS anosecurekit_fuzz_skp1_valid
+      USES_TERMINAL)
+  endif()
 
   set(_anosecurekit_fuzz_corpus
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures
