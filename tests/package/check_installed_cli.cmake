@@ -63,19 +63,53 @@ function(run_cli_no_stdout)
   endif()
 endfunction()
 
-function(run_cli_pipe input_file output_file)
+function(run_cli_pipe input_file output_file command expected_exit expected_stderr expected_discarded_sha256)
+  # Capture binary stdout in this test's work directory until the CLI exits.
+  string(RANDOM LENGTH 16 ALPHABET 0123456789abcdef quarantine_suffix)
+  set(quarantine_dir "${ANOSECUREKIT_CLI_WORK_DIR}/pipe-quarantine-${quarantine_suffix}")
+  if(EXISTS "${quarantine_dir}" OR IS_SYMLINK "${quarantine_dir}")
+    message(FATAL_ERROR "Piped ${command} quarantine already exists")
+  endif()
+  file(MAKE_DIRECTORY "${quarantine_dir}")
+  file(CHMOD "${quarantine_dir}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+  set(pending "${quarantine_dir}/stdout.bin")
+  file(WRITE "${pending}" "")
+  file(CHMOD "${pending}" PERMISSIONS OWNER_READ OWNER_WRITE)
   execute_process(
-    COMMAND "${ANOSECUREKIT_CLI}" ${ARGN}
+    COMMAND "${ANOSECUREKIT_CLI}" "${command}" ${ARGN}
     INPUT_FILE "${input_file}"
-    OUTPUT_FILE "${output_file}"
+    OUTPUT_FILE "${pending}"
     RESULT_VARIABLE result
     ERROR_VARIABLE stderr)
 
-  if(NOT result EQUAL 0)
-    message(FATAL_ERROR "Expected piped command to pass, got ${result}. stderr=${stderr}")
+  set(publish_result "0")
+  set(discarded_sha256 "")
+  if(result STREQUAL "0" AND stderr STREQUAL "")
+    if(EXISTS "${output_file}" OR IS_SYMLINK "${output_file}")
+      set(publish_result "destination already exists")
+    else()
+      execute_process(COMMAND "${CMAKE_COMMAND}" -E rename "${pending}" "${output_file}"
+        RESULT_VARIABLE publish_result)
+    endif()
+  else()
+    file(SHA256 "${pending}" discarded_sha256)
   endif()
-  if(NOT stderr STREQUAL "")
-    message(FATAL_ERROR "Piped command should not write stderr. stderr=[${stderr}]")
+  file(REMOVE_RECURSE "${quarantine_dir}")
+  if(EXISTS "${quarantine_dir}")
+    message(FATAL_ERROR "Could not remove piped ${command} quarantine")
+  endif()
+
+  if(NOT result STREQUAL "${expected_exit}")
+    message(FATAL_ERROR "Expected piped ${command} exit ${expected_exit}, got ${result}. stderr=${stderr}")
+  endif()
+  if(NOT stderr STREQUAL expected_stderr)
+    message(FATAL_ERROR "Unexpected piped ${command} stderr. Expected [${expected_stderr}], got [${stderr}]")
+  endif()
+  if(NOT publish_result STREQUAL "0")
+    message(FATAL_ERROR "Could not publish piped ${command} output: ${publish_result}")
+  endif()
+  if(NOT discarded_sha256 STREQUAL expected_discarded_sha256)
+    message(FATAL_ERROR "Piped ${command} discarded unexpected bytes")
   endif()
 endfunction()
 
@@ -119,6 +153,35 @@ endfunction()
 function(assert_file_absent path)
   if(EXISTS "${path}")
     message(FATAL_ERROR "Expected file to be absent: ${path}")
+  endif()
+endfunction()
+
+function(check_cli_pipe_open input_file output_file command credential_option credential wrong_credential)
+  run_cli_pipe("${input_file}" "${output_file}" "${command}" 0 "" ""
+    --in - --out - "${credential_option}" "${credential}" --aad-text record:v1)
+  file(SHA256 "${output_file}" published_sha256)
+  if(NOT published_sha256 STREQUAL pipe_plain_sha256)
+    message(FATAL_ERROR "Piped ${command} did not publish the complete plaintext")
+  endif()
+
+  # A late structural failure leaves the first record in quarantine.
+  set(trailing_file "${input_file}.trailing")
+  set(rejected_output "${output_file}.rejected")
+  configure_file("${input_file}" "${trailing_file}" COPYONLY)
+  file(APPEND "${trailing_file}" "x")
+  file(REMOVE "${rejected_output}")
+  run_cli_pipe("${trailing_file}" "${rejected_output}" "${command}" 1 "Invalid file sealing packet\n" "${pipe_prefix_sha256}"
+    --in - --out - "${credential_option}" "${credential}" --aad-text record:v1)
+  assert_file_absent("${rejected_output}")
+  file(REMOVE "${trailing_file}")
+
+  # A wrong credential fails before any record and preserves prior publication.
+  string(SHA256 empty_sha256 "")
+  run_cli_pipe("${input_file}" "${output_file}" "${command}" 1 "File authentication failed\n" "${empty_sha256}"
+    --in - --out - "${credential_option}" "${wrong_credential}" --aad-text record:v1)
+  file(SHA256 "${output_file}" after_failure_sha256)
+  if(NOT after_failure_sha256 STREQUAL published_sha256)
+    message(FATAL_ERROR "Failed piped ${command} changed previously published output")
   endif()
 endfunction()
 
@@ -221,6 +284,8 @@ set(password_sealed_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cl
 set(password_opened_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-password-opened.txt")
 set(password_wrong_opened_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-password-wrong-opened.txt")
 set(password_verify_output_probe "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-password-verify-output-probe.txt")
+set(pipe_plain_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-pipe-plain.bin")
+set(wrong_pipe_key_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-pipe-wrong-key.hex")
 set(pipe_sealed_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-pipe.skf")
 set(pipe_opened_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-pipe-opened.txt")
 set(password_pipe_sealed_file "${ANOSECUREKIT_CLI_WORK_DIR}/anosecurekit-installed-cli-password-pipe.skp")
@@ -322,13 +387,16 @@ if(NOT temp_collision_text STREQUAL "existing temp")
 endif()
 file(REMOVE "${temp_collision_opened_temp_file}")
 
-run_cli_pipe("${plain_file}" "${pipe_sealed_file}" seal-file --in - --out - --key-file "${key_file}" --aad-text record:v1)
-run_cli_pipe("${pipe_sealed_file}" "${pipe_opened_file}" open-file --in - --out - --key-file "${key_file}" --aad-text record:v1)
-file(READ "${pipe_opened_file}" pipe_opened_text)
-if(NOT pipe_opened_text STREQUAL "installed CLI plaintext\n")
-  message(FATAL_ERROR "installed CLI piped open did not recover plaintext. got=[${pipe_opened_text}]")
-endif()
-run_cli_stdin_no_stdout("${pipe_sealed_file}" verify-file --in - --key-file "${key_file}" --aad-text record:v1)
+string(REPEAT "x" 1048576 pipe_prefix)
+string(SHA256 pipe_prefix_sha256 "${pipe_prefix}")
+file(WRITE "${pipe_plain_file}" "${pipe_prefix}final record")
+file(SHA256 "${pipe_plain_file}" pipe_plain_sha256)
+run_cli_pipe("${pipe_plain_file}" "${pipe_sealed_file}" seal-file 0 "" ""
+  --in - --out - --key-file "${key_to_wrap_file}" --aad-text record:v1)
+file(WRITE "${wrong_pipe_key_file}" "${packet_zero_key}\n")
+check_cli_pipe_open("${pipe_sealed_file}" "${pipe_opened_file}" open-file --key-file
+  "${key_to_wrap_file}" "${wrong_pipe_key_file}")
+run_cli_stdin_no_stdout("${pipe_sealed_file}" verify-file --in - --key-file "${key_to_wrap_file}" --aad-text record:v1)
 
 run_cli_no_stdout(seal-file-password --out "${password_sealed_file}" --password-file "${password_file}" --aad-text record:v1 --in "${plain_file}")
 file(READ "${password_sealed_file}" password_sealed_hex HEX)
@@ -347,12 +415,10 @@ run_cli_failure("File authentication failed\n" verify-file-password --in "${pass
 run_cli_failure("unsupported password file option\n" verify-file-password --in "${password_sealed_file}" --password-file "${password_file}" --aad-text record:v1 --out "${password_verify_output_probe}")
 assert_file_absent("${password_verify_output_probe}")
 
-run_cli_pipe("${plain_file}" "${password_pipe_sealed_file}" seal-file-password --in - --out - --password-file "${password_file}" --aad-text record:v1)
-run_cli_pipe("${password_pipe_sealed_file}" "${password_pipe_opened_file}" open-file-password --in - --out - --password-file "${password_file}" --aad-text record:v1)
-file(READ "${password_pipe_opened_file}" password_pipe_opened_text)
-if(NOT password_pipe_opened_text STREQUAL "installed CLI plaintext\n")
-  message(FATAL_ERROR "installed CLI piped password open did not recover plaintext. got=[${password_pipe_opened_text}]")
-endif()
+run_cli_pipe("${pipe_plain_file}" "${password_pipe_sealed_file}" seal-file-password 0 "" ""
+  --in - --out - --password-file "${password_file}" --aad-text record:v1)
+check_cli_pipe_open("${password_pipe_sealed_file}" "${password_pipe_opened_file}" open-file-password --password-file
+  "${password_file}" "${wrong_password_file}")
 run_cli_stdin_no_stdout("${password_pipe_sealed_file}" verify-file-password --in - --password-file "${password_file}" --aad-text record:v1)
 
 run_cli_no_stdout(encrypt --in "${plain_file}" --out "${packet_file}" --key-file "${key_file}" --aad-text record:v1)

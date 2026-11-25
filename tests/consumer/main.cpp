@@ -3,9 +3,13 @@
 #include <filesystem>
 #include <fstream>
 #include <iterator>
+#include <optional>
+#include <span>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include "anosecurekit/anosecurekit.hpp"
 
@@ -14,6 +18,7 @@ namespace
 
 constexpr std::size_t kPacketPrefixSize = 17;
 constexpr std::size_t kPacketTagSize = 16;
+constexpr std::size_t kFileRecordSize = 1024 * 1024;
 
 anosecurekit::bytes ascii_bytes(std::string_view text)
 {
@@ -54,6 +59,79 @@ std::string string_from_bytes(const anosecurekit::bytes &bytes)
 		result.push_back(static_cast<char>(std::to_integer<unsigned char>(byte)));
 	}
 	return result;
+}
+
+void require(bool condition, std::string_view scenario, std::string_view expectation)
+{
+	if (!condition)
+	{
+		throw std::runtime_error(std::string(scenario) + ": " + std::string(expectation));
+	}
+}
+
+void check_packet_consumer(
+    std::string_view scenario, std::span<const std::byte> packet, const anosecurekit::bytes &plaintext,
+    const anosecurekit::key256 &key, const anosecurekit::bytes &aad, std::optional<anosecurekit::error_code> expected_error)
+{
+	anosecurekit::bytes published;
+	std::optional<anosecurekit::error_code> failure;
+	try
+	{
+		anosecurekit::packet_decryptor decryptor(key, aad);
+		decryptor.begin(packet.first(kPacketPrefixSize));
+		auto pending = decryptor.update(packet.subspan(kPacketPrefixSize, plaintext.size()));
+		require(pending.size() == plaintext.size() && published.empty(), scenario, "update must only stage plaintext");
+		const auto tail = decryptor.finalize(packet.last(kPacketTagSize));
+		pending.insert(pending.end(), tail.begin(), tail.end());
+		published = std::move(pending);
+	}
+	catch (const anosecurekit::error &ex)
+	{
+		failure = ex.code();
+	}
+	require(failure == expected_error, scenario, "unexpected finalization result");
+	require(failure ? published.empty() : published == plaintext, scenario, "unexpected published packet output");
+}
+
+template <typename Open, typename Credential>
+void check_file_stream_consumer(
+    std::string_view format, const std::string &sealed, std::string_view plaintext,
+    Open open, const Credential &credential, const Credential &wrong_credential)
+{
+	using anosecurekit::error_code;
+	const auto check_open = [&](std::string_view name, const std::string &input, const Credential &secret,
+	                            std::optional<error_code> expected_error, std::string_view expected_bytes) {
+		const auto scenario = std::string(format) + " " + std::string(name);
+		const std::string previous_output = "previous consumer output";
+		std::string published = previous_output;
+		std::optional<error_code> failure;
+		{
+			std::istringstream ciphertext(input, std::ios::in | std::ios::binary);
+			std::ostringstream pending(std::ios::out | std::ios::binary);
+			try
+			{
+				open(ciphertext, pending, secret);
+				published = std::move(pending).str();
+			}
+			catch (const anosecurekit::error &ex)
+			{
+				failure = ex.code();
+				require(pending.view() == expected_bytes, scenario, "unexpected quarantined bytes before discard");
+			}
+		}
+		require(failure == expected_error, scenario, "unexpected stream open result");
+		require(published == (failure ? std::string_view(previous_output) : expected_bytes),
+		    scenario, "unexpected published stream output");
+	};
+
+	const auto prefix = plaintext.substr(0, kFileRecordSize);
+	auto bad_tag = sealed;
+	bad_tag.back() = static_cast<char>(static_cast<unsigned char>(bad_tag.back()) ^ 1u);
+	check_open("valid", sealed, credential, std::nullopt, plaintext);
+	check_open("final tag", bad_tag, credential, error_code::authentication_failed, prefix);
+	check_open("truncated", sealed.substr(0, sealed.size() - 1), credential, error_code::invalid_packet, prefix);
+	check_open("wrong credential", sealed, wrong_credential, error_code::authentication_failed, {});
+	check_open("trailing input", sealed + "x", credential, error_code::invalid_packet, prefix);
 }
 
 } // namespace
@@ -98,11 +176,11 @@ int main()
 	streaming_packet.insert(streaming_packet.end(), stream_tag.begin(), stream_tag.end());
 	const auto streaming_roundtrip = anosecurekit::decrypt(streaming_packet, key, aad);
 
-	anosecurekit::packet_decryptor packet_decryptor(key, aad);
-	const std::span<const std::byte> packet_span(packet);
-	packet_decryptor.begin(packet_span.first(kPacketPrefixSize));
-	const auto streaming_plaintext = packet_decryptor.update(packet_span.subspan(kPacketPrefixSize, plaintext.size()));
-	const auto streaming_tail = packet_decryptor.finalize(packet_span.last(kPacketTagSize));
+	check_packet_consumer("SKT1 valid", packet, plaintext, key, aad, std::nullopt);
+	auto bad_packet = packet;
+	bad_packet.back() ^= std::byte{1};
+	check_packet_consumer("SKT1 final tag", bad_packet, plaintext, key, aad,
+	    anosecurekit::error_code::authentication_failed);
 
 	const auto wrapped_key = anosecurekit::wrap_key(key, key, aad);
 	const auto unwrapped_key = anosecurekit::unwrap_key(wrapped_key, key, aad);
@@ -130,25 +208,29 @@ int main()
 	anosecurekit::open_file_with_password(password_sealed_path, password_opened_path, password, aad);
 	const auto password_opened = read_file(password_opened_path);
 
-	std::istringstream stream_plaintext(string_from_bytes(plaintext), std::ios::in | std::ios::binary);
+	const auto file_plaintext = std::string(kFileRecordSize, 'x') + string_from_bytes(plaintext);
+	std::istringstream stream_plaintext(file_plaintext, std::ios::in | std::ios::binary);
 	std::ostringstream stream_sealed(std::ios::out | std::ios::binary);
 	anosecurekit::seal_file(stream_plaintext, stream_sealed, key, aad);
 	std::istringstream stream_verify_ciphertext(stream_sealed.str(), std::ios::in | std::ios::binary);
 	anosecurekit::verify_file(stream_verify_ciphertext, key, aad);
-	std::istringstream stream_ciphertext(stream_sealed.str(), std::ios::in | std::ios::binary);
-	std::ostringstream stream_opened_output(std::ios::out | std::ios::binary);
-	anosecurekit::open_file(stream_ciphertext, stream_opened_output, key, aad);
-	const auto stream_opened = ascii_bytes(stream_opened_output.str());
+	auto wrong_key = key;
+	wrong_key.front() ^= std::byte{1};
+	const auto open_with_key = [&](std::istream &input, std::ostream &pending, const anosecurekit::key256 &open_key) {
+		anosecurekit::open_file(input, pending, open_key, aad);
+	};
+	check_file_stream_consumer("SKF1", stream_sealed.str(), file_plaintext, open_with_key, key, wrong_key);
 
-	std::istringstream password_stream_plaintext(string_from_bytes(plaintext), std::ios::in | std::ios::binary);
+	std::istringstream password_stream_plaintext(file_plaintext, std::ios::in | std::ios::binary);
 	std::ostringstream password_stream_sealed(std::ios::out | std::ios::binary);
 	anosecurekit::seal_file_with_password(password_stream_plaintext, password_stream_sealed, password, aad);
 	std::istringstream password_stream_verify_ciphertext(password_stream_sealed.str(), std::ios::in | std::ios::binary);
 	anosecurekit::verify_file_with_password(password_stream_verify_ciphertext, password, aad);
-	std::istringstream password_stream_ciphertext(password_stream_sealed.str(), std::ios::in | std::ios::binary);
-	std::ostringstream password_stream_opened_output(std::ios::out | std::ios::binary);
-	anosecurekit::open_file_with_password(password_stream_ciphertext, password_stream_opened_output, password, aad);
-	const auto password_stream_opened = ascii_bytes(password_stream_opened_output.str());
+	const auto open_with_password = [&](std::istream &input, std::ostream &pending, const anosecurekit::bytes &open_password) {
+		anosecurekit::open_file_with_password(input, pending, open_password, aad);
+	};
+	check_file_stream_consumer("SKP1", password_stream_sealed.str(), file_plaintext, open_with_password,
+	    password, ascii_bytes("wrong consumer password"));
 
 	std::filesystem::remove(plain_path);
 	std::filesystem::remove(sealed_path);
@@ -165,9 +247,7 @@ int main()
 	                            anosecurekit::constant_time_equal(digest, digest);
 
 	return version_api_ok && utility_api_ok && roundtrip == plaintext && streaming_roundtrip == plaintext &&
-	               streaming_plaintext == plaintext && streaming_tail.empty() && unwrapped_key == key &&
-	               opened == plaintext && password_opened == plaintext && stream_opened == plaintext &&
-	               password_stream_opened == plaintext && !token.empty()
+	               unwrapped_key == key && opened == plaintext && password_opened == plaintext && !token.empty()
 	           ? 0
 	           : 1;
 }
