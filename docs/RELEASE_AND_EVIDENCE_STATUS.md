@@ -12,7 +12,9 @@ See [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md) for Phase 6 results o
 baseline `98ddadd6f73659583e55314f7d91acb6ac9371b8` plus the focused readiness
 changes. Selected file verification APIs and shared ABI work are merged on main;
 they remain absent from published v0.4.0. CLI password inputs and I/O fixes are
-also merged. Phase 3 fuzzing and coverage are **DEFERRED**.
+also merged. Phase 3 fuzzing and coverage were **DEFERRED** at that assessment.
+See the [later bounded verification](COVERAGE.md#phase-3-bounded-verification)
+and [current maintenance status](CURRENT_STATUS.md).
 
 Local staging creates rehearsal archives, checksums and an asset-inventory SPDX
 SBOM; it does not create published assets or hosted provenance. Current alert

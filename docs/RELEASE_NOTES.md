@@ -24,8 +24,9 @@ A maintainer must choose the version and review the matching section before tagg
   three-OS frozen-binary replacement passed separately (run 44181886485).
   Neither result authorizes a v0.4.1 release.
 - Reconcile release engineering gates and status; see REVIVAL_PHASE6_RESULTS.md.
-- Phase 3 fuzz campaigns and measured coverage remain **DEFERRED**. No external
-  security audit or release-readiness guarantee is claimed.
+- Phase 3 bounded verification is complete. No external security audit or
+  release-readiness guarantee is claimed. See the
+  [Phase 3 execution record](https://github.com/anothel/AnoSecureKit-Community/issues/9).
 
 The following preparation/verification entries are historical July evidence;
 current results are recorded separately in the Phase results documents.

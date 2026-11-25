@@ -35,7 +35,8 @@ Community maintenance resumed on 2026-11-15 under
 [docs/REVIVAL_PLAN.md](docs/REVIVAL_PLAN.md). PRs #1–#5 are merged: output
 security regressions, deterministic I/O fault handling, additive file verification
 APIs, shared-library export gates, and CLI password sources. Phase 6 assesses
-release readiness; Phase 3 fuzzing and coverage remain **DEFERRED**.
+release readiness. Phase 3 **bounded verification is complete**. See the
+[fuzz campaign and full-suite coverage results](docs/COVERAGE.md#phase-3-bounded-verification).
 
 Published baseline remains `v0.4.0`. Current source uses
 `project(... VERSION 0.4.1)`; this is an unpublished source version, not a

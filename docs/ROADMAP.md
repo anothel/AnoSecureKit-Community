@@ -10,8 +10,10 @@ must not carry a second task list. The active execution record is
 ## Current Direction
 
 PRs #1–#5 are merged. Phase 6 records release engineering and remaining risks.
-Phase 3 fuzzing and coverage remain DEFERRED. The next release version requires
-an explicit maintainer decision; current source 0.4.1 is unpublished.
+Phase 3 bounded verification is complete. See the
+[fuzz and coverage evidence](COVERAGE.md#phase-3-bounded-verification).
+The next release version requires an explicit maintainer decision. Public v0.4.0
+remains the published release and current source 0.4.1 is unpublished.
 Keep OpenSSL 3.x as the only shipped Community production provider, the external
 seam build-tree-only without fallback, and preserve public identities and v1 formats.
 
