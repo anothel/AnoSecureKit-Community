@@ -68,15 +68,20 @@ Acceptance: deterministic failure matrix for CLI and path APIs; no timing-only t
 Risk: fdopen/allocation failures and cleanup failure need explicit ownership checks;
       CLI and library durability guarantees differ.
 
-## Phase 3 — targeted fuzzing and coverage (deferred; separate PR)
+## Phase 3 — targeted fuzzing and coverage (bounded verification complete)
 
-Files: tests/fuzz/file_fuzz.cpp, fuzz_utils.hpp, CMakeLists.txt, .github/workflows/fuzz.yml.
-- [ ] Instrument library and harnesses with ASan/UBSan and coverage, use copied corpora.
-- [ ] Add bounded valid SKP1 cases exercising KDF/authentication without unbounded cost.
-- [ ] Target chunk boundaries, terminal records, packet state transitions and encodings;
-      minimize failures into regression fixtures. Report duration, seeds and coverage.
-Acceptance: all five harnesses smoke-pass, bounded campaigns and measured coverage
-      gaps documented. No claim that crash-free fuzzing proves security.
+- [x] Add an opt-in valid SKP1 verify-only harness alongside the five fast targets.
+      [PR #12](https://github.com/anothel/AnoSecureKit-Community/pull/12)
+- [x] Run six 60-second libFuzzer campaigns with copied synthetic corpora,
+      including the valid SKP1 lane with ASan and UBSan.
+      [B09 execution record](https://github.com/anothel/AnoSecureKit-Community/issues/9#issuecomment-7104544689)
+- [x] Measure full-suite line and branch coverage in hosted GCC Debug CI.
+      [PR #13](https://github.com/anothel/AnoSecureKit-Community/pull/13)
+
+See the [Phase 3 evidence](COVERAGE.md#phase-3-bounded-verification) for exact
+source, run and artifact identities. The campaign covers a finite time and corpus
+budget. Broader fuzz coverage, independent security review, current CodeQL alert
+review and release acceptance remain separate.
 
 ## Phase 4 — integrate parked v0.5.0 safely (separate API/ABI PRs)
 
@@ -118,7 +123,9 @@ PRs #1–#5 merged. Branch: `codex/revival-phase6-readiness`. Execute inline.
 - [x] Record evidence matrix and GO / NO-GO recommendation in
       [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
 
-Phase 3 fuzzing and coverage remain **DEFERRED**, excluded from Phase 6 execution.
+Phase 3 fuzzing and coverage were **DEFERRED** at Phase 6 closeout and were excluded
+from that execution. The later [bounded verification](COVERAGE.md#phase-3-bounded-verification)
+has its own evidence.
 Release version, support policy and risk acceptance require explicit maintainer
 choices. Publication/merge/tagging are not authorized; no external audit occurred.
 
@@ -127,7 +134,8 @@ choices. Publication/merge/tagging are not authorized; no external audit occurre
 Phase 1 results and limitations: [REVIVAL_PHASE1_RESULTS.md](REVIVAL_PHASE1_RESULTS.md).
 The tracked plan lives here because docs/superpowers/ is intentionally gitignored.
 Phase 2 execution and limitations: [REVIVAL_PHASE2_RESULTS.md](REVIVAL_PHASE2_RESULTS.md).
-Phase 3 remains explicitly deferred. Phase 4 execution is recorded in
+Phase 3 bounded verification is recorded in [COVERAGE.md](COVERAGE.md#phase-3-bounded-verification).
+Phase 4 execution is recorded in
 [REVIVAL_PHASE4_PLAN.md](REVIVAL_PHASE4_PLAN.md); Phase 5 results: [REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 6 evidence is in [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
 
 ## Phase 2 execution design — 2026-11-16
@@ -180,21 +188,22 @@ other source, with parsing completed before secret acquisition.
 
 Review focus: parse-before-read conflicts, stdin aliasing, exact binary input,
 empty/EOF/cancel/overflow behavior, terminal restoration and diagnostic leakage.
-Phase 3 remains deferred; no fuzz coverage completion is claimed.
+Phase 3 was deferred during Phase 5 execution.
 
 Phase 5 PR: https://github.com/anothel/AnoSecureKit-Community/pull/5. Implementation
 `c5219fe` plus test-only Windows newline correction `dd4c9d8` passed all 11 native
 validation jobs in run 44020814789; release skipped. Local complete CTest 134/134,
 provider parity, format 22.1.5, packages/consumers and document/boundary checks pass.
 Remaining limits, including native Windows interactive-console coverage, are in
-[REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md). Phase 3 remains deferred.
+[REVIVAL_PHASE5_RESULTS.md](REVIVAL_PHASE5_RESULTS.md).
 
 Phase 6 PR: https://github.com/anothel/AnoSecureKit-Community/pull/6.
 Validation commit a10689af7937576d95170a56eda71c2fe3b76f88 passed all 11 native
 jobs in run 44050791647; release skipped. Local preflight, static/shared CTest
 134/134, ordered parity, formatting, packages/consumers and ELF exports pass.
-Recommendation: NO-GO for publication; no version selected, current alert access
-blocked, platform gaps remain, Phase 3 fuzzing/coverage explicitly DEFERRED.
+Recommendation at that review: NO-GO for publication. No version had been
+selected, alert access was blocked, platform gaps remained and Phase 3
+fuzzing/coverage was DEFERRED.
 
 ## Platform validation execution design — 2026-11-17
 
@@ -215,9 +224,10 @@ Branch: `codex/revival-platform-validation`. Execute inline immediately per user
 
 Tests validate existing behavior first; fix only reproduced defects with a failing
 regression. Same-toolchain evidence is not a cross-compiler/STL/CRT ABI promise.
-Phase 3 fuzzing/coverage remains DEFERRED. Alert access restrictions remain binding;
-unavailable data is not cleared. Publication remains NO-GO pending separately
-resolved blockers and explicit maintainer authority to reconsider.
+Phase 3 fuzzing/coverage was DEFERRED during this platform validation. Alert
+access restrictions remain binding; unavailable data is not cleared.
+Publication remains NO-GO pending separately resolved blockers and explicit
+maintainer authority to reconsider.
 
 Platform results, exact immutable native runs, frozen binary hashes, corrected
 Windows LF environment and Apple ARM64 gate expectations, plus remaining limits:

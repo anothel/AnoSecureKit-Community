@@ -7,7 +7,8 @@ The canonical phased queue and execution record is [REVIVAL_PLAN.md](REVIVAL_PLA
 The 2026-11-15 maintenance instruction supersedes the historical frozen queue.
 
 - Phases 1–2: merged in PRs #1–#2; output security and deterministic I/O faults.
-- Phase 3: **DEFERRED** fuzz campaigns and measured coverage, including bounded SKP1.
+- Phase 3: **bounded verification complete**, including the opt-in valid SKP1
+  campaign. See the [fuzz and coverage evidence](COVERAGE.md#phase-3-bounded-verification).
 - Phase 4: merged in PRs #3–#4; additive verification APIs and shared ABI gates.
 - Phase 5: merged in PR #5; CLI password file/descriptor/prompt handling.
 - Phase 6: release engineering assessment in [REVIVAL_PHASE6_RESULTS.md](REVIVAL_PHASE6_RESULTS.md).
