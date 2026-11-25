@@ -30,13 +30,13 @@ Usage:
   anosecurekit encrypt (--text <text>|--in <path>) (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--out <path>]
   anosecurekit decrypt (--packet-hex <hex>|--packet-file <path>) (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--out <path>]
   anosecurekit seal-file --in <path|-> --out <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file --in <path|-> --out <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file --in <path|-> --out <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]
   anosecurekit seal-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]
   anosecurekit verify-file --in <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit verify-file --in <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]
   anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
   anosecurekit help [command]
 ```
@@ -130,8 +130,7 @@ Every CLI command that writes to a file creates a random temporary file with an
 operating-system exclusive open, writes and flushes that file, and commits it to
 the requested path only after the command succeeds. On POSIX systems, CLI output
 files are created with mode `0600`. Existing destinations are never overwritten.
-These protections do not apply to `--out -`, because stdout is owned by the
-caller.
+The caller owns stdout and any destination connected to it.
 If removing the temporary hard link fails after commit, the command reports an
 error even though the final file already exists. Persistent cleanup failure may
 also leave the private temporary file. Check output state before retrying; CLI
@@ -166,6 +165,19 @@ process exit code: 0 on success, 1 on failure. For `seal-file`, `open-file`,
 output to stdout. For verification commands, `--in -` reads the sealed file from
 stdin. At most one AAD option may be provided. The CLI supports explicit password prompts as described below; it does not expose
 password text arguments or environment-variable key loading.
+
+Use `--verified-stdout` once with `open-file --out -` or
+`open-file-password --out -` to withhold stdout until complete-file
+authentication and structural validation succeed. This works with a sealed
+file path or `--in -`. Without the flag, an open command may emit individually
+authenticated chunks before discovering a failure later in the file.
+
+Verified stdout requires Linux and a filesystem with `O_TMPFILE` support
+in `TMPDIR` (default `/tmp`), with space for the restored plaintext. The CLI
+uses an anonymous, private staging file and fails closed if it cannot create
+one. Windows and macOS reject the option. If stdout fails once delivery starts,
+the command reports an error and any delivered bytes remain with the caller.
+Releasing temporary storage does not guarantee physical erasure.
 
 `hmac-sha256` accepts an arbitrary strict hex key and either text or file input.
 `hkdf-sha256` accepts strict hex key material and salt, accepts `info` as either
