@@ -623,6 +623,12 @@ if(ANOSECUREKIT_BUILD_TESTS)
         $<TARGET_FILE:anosecurekit_cli>)
     set_tests_properties(Cli.SecretInput PROPERTIES TIMEOUT 180)
 
+    add_test(NAME Cli.VerifiedStdout
+      COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli/check_verified_stdout.py
+        $<TARGET_FILE:anosecurekit_cli>)
+    set_tests_properties(Cli.VerifiedStdout PROPERTIES TIMEOUT 180)
+
     if(WIN32)
       add_test(NAME Cli.WindowsConsole
         COMMAND ${Python3_EXECUTABLE}

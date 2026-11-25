@@ -224,13 +224,13 @@ set(expected_help [=[Usage:
   anosecurekit encrypt (--text <text>|--in <path>) (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--out <path>]
   anosecurekit decrypt (--packet-hex <hex>|--packet-file <path>) (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--out <path>]
   anosecurekit seal-file --in <path|-> --out <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file --in <path|-> --out <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file --in <path|-> --out <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]
   anosecurekit seal-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]
   anosecurekit verify-file --in <path|-> --key-hex <64-hex> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit verify-file --in <path|-> --key-file <path> [--aad-text <text>|--aad-hex <hex>]
   anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
-  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
+  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]
   anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]
   anosecurekit help [command]
 ]=])
@@ -251,10 +251,10 @@ set(expected_unwrap_key_help "Usage:\n  anosecurekit unwrap-key (--packet-hex <h
 set(expected_encrypt_help "Usage:\n  anosecurekit encrypt (--text <text>|--in <path>) (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--out <path>]\n")
 set(expected_decrypt_help "Usage:\n  anosecurekit decrypt (--packet-hex <hex>|--packet-file <path>) (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--out <path>]\n")
 set(expected_seal_file_help "Usage:\n  anosecurekit seal-file --in <path|-> --out <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>]\n")
-set(expected_open_file_help "Usage:\n  anosecurekit open-file --in <path|-> --out <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>]\n")
+set(expected_open_file_help "Usage:\n  anosecurekit open-file --in <path|-> --out <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]\n")
 set(expected_verify_file_help "Usage:\n  anosecurekit verify-file --in <path|-> (--key-hex <64-hex>|--key-file <path>) [--aad-text <text>|--aad-hex <hex>]\n")
 set(expected_seal_file_password_help "Usage:\n  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]\n")
-set(expected_open_file_password_help "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]\n")
+set(expected_open_file_password_help "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>] [--verified-stdout]\n")
 set(expected_verify_file_password_help "Usage:\n  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) [--aad-text <text>|--aad-hex <hex>]\n")
 
 run_cli(0 "${expected_help}")

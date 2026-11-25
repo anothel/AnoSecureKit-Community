@@ -9,6 +9,7 @@
 #include <charconv>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -34,6 +35,7 @@
 #include <windows.h>
 #else
 #include <fcntl.h>
+#include <signal.h>
 #include <termios.h>
 #include <unistd.h>
 #endif
@@ -71,11 +73,11 @@ void print_help()
 	          << "  anosecurekit seal-file --in <path|-> --out <path|-> --key-hex <64-hex> "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit open-file --in <path|-> --out <path|-> --key-hex <64-hex> "
-	             "[--aad-text <text>|--aad-hex <hex>]\n"
+	             "[--aad-text <text>|--aad-hex <hex>] [--verified-stdout]\n"
 	          << "  anosecurekit seal-file --in <path|-> --out <path|-> --key-file <path> "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit open-file --in <path|-> --out <path|-> --key-file <path> "
-	             "[--aad-text <text>|--aad-hex <hex>]\n"
+	             "[--aad-text <text>|--aad-hex <hex>] [--verified-stdout]\n"
 	          << "  anosecurekit verify-file --in <path|-> --key-hex <64-hex> "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit verify-file --in <path|-> --key-file <path> "
@@ -83,7 +85,7 @@ void print_help()
 	          << "  anosecurekit seal-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
-	             "[--aad-text <text>|--aad-hex <hex>]\n"
+	             "[--aad-text <text>|--aad-hex <hex>] [--verified-stdout]\n"
 	          << "  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	             "[--aad-text <text>|--aad-hex <hex>]\n"
 	          << "  anosecurekit help [command]\n";
@@ -180,7 +182,7 @@ std::string_view file_command_usage(std::string_view command)
 	if (command == "open-file")
 	{
 		return "Usage:\n  anosecurekit open-file --in <path|-> --out <path|-> (--key-hex <64-hex>|--key-file <path>) "
-		       "[--aad-text <text>|--aad-hex <hex>]";
+		       "[--aad-text <text>|--aad-hex <hex>] [--verified-stdout]";
 	}
 	return "Usage:\n  anosecurekit verify-file --in <path|-> (--key-hex <64-hex>|--key-file <path>) "
 	       "[--aad-text <text>|--aad-hex <hex>]";
@@ -196,7 +198,7 @@ std::string_view password_file_command_usage(std::string_view command)
 	if (command == "open-file-password")
 	{
 		return "Usage:\n  anosecurekit open-file-password --in <path|-> --out <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
-		       "[--aad-text <text>|--aad-hex <hex>]";
+		       "[--aad-text <text>|--aad-hex <hex>] [--verified-stdout]";
 	}
 	return "Usage:\n  anosecurekit verify-file-password --in <path|-> (--password-file <path>|--password-fd <n>|--password-prompt) "
 	       "[--aad-text <text>|--aad-hex <hex>]";
@@ -494,6 +496,7 @@ struct file_command_options
 	bool has_aad = false;
 	bool input_is_stdin = false;
 	bool output_is_stdout = false;
+	bool verified_stdout = false;
 };
 
 // Restore terminal modes on every normal return and exception, including cancellation.
@@ -639,6 +642,7 @@ struct password_file_command_options
 	bool has_aad = false;
 	bool input_is_stdin = false;
 	bool output_is_stdout = false;
+	bool verified_stdout = false;
 };
 
 struct wrap_key_options
@@ -698,20 +702,37 @@ bool is_standard_stream_marker(std::string_view value)
 	return value == "-";
 }
 
+void parse_verified_stdout(bool &enabled, bool is_open_command)
+{
+	if (!is_open_command)
+	{
+		throw std::runtime_error("--verified-stdout requires a file open command");
+	}
+	reject_duplicate(enabled, "--verified-stdout");
+	enabled = true;
+}
+
 file_command_options parse_file_command_options(int argc, char **argv)
 {
 	const std::string_view command = argv[1];
 	const bool requires_output = command != "verify-file";
-	if (argc < (requires_output ? 8 : 6) || ((argc - 2) % 2) != 0)
+	if (argc < (requires_output ? 8 : 6))
 	{
 		throw std::runtime_error(std::string(file_command_usage(argv[1])));
 	}
 
 	file_command_options options;
-	for (int index = 2; index < argc; index += 2)
+	for (int index = 2; index < argc; ++index)
 	{
 		const std::string_view option = argv[index];
-		const std::string_view value = argv[index + 1];
+		if (option == "--verified-stdout")
+		{
+			parse_verified_stdout(options.verified_stdout, command == "open-file");
+			continue;
+		}
+		if (++index == argc)
+			throw std::runtime_error(std::string(file_command_usage(command)));
+		const std::string_view value = argv[index];
 
 		if (option == "--in")
 		{
@@ -755,6 +776,11 @@ file_command_options parse_file_command_options(int argc, char **argv)
 		}
 	}
 
+	if (options.verified_stdout && !options.output_is_stdout)
+	{
+		throw std::runtime_error("--verified-stdout requires --out -");
+	}
+
 	if (!options.has_input || (requires_output && !options.has_output) || !options.has_key)
 	{
 		throw std::runtime_error(std::string(file_command_usage(argv[1])));
@@ -778,6 +804,11 @@ password_file_command_options parse_password_file_command_options(int argc, char
 	for (int index = 2; index < argc; ++index)
 	{
 		const std::string_view option = argv[index];
+		if (option == "--verified-stdout")
+		{
+			parse_verified_stdout(options.verified_stdout, command == "open-file-password");
+			continue;
+		}
 		if (option == "--password-prompt")
 		{
 			if (options.has_password)
@@ -829,6 +860,11 @@ password_file_command_options parse_password_file_command_options(int argc, char
 		{
 			throw std::runtime_error("unsupported password file option");
 		}
+	}
+
+	if (options.verified_stdout && !options.output_is_stdout)
+	{
+		throw std::runtime_error("--verified-stdout requires --out -");
 	}
 
 	if (!options.has_input || (requires_output && !options.has_output) || !options.has_password)
@@ -981,6 +1017,18 @@ exclusive_open_result try_open_cli_output_exclusive(const std::filesystem::path 
 #endif
 }
 
+#ifndef _WIN32
+ssize_t write_retrying_interrupts(int descriptor, const char *data, std::size_t size)
+{
+	ssize_t written;
+	do
+	{
+		written = ::write(descriptor, data, size);
+	} while (written == -1 && errno == EINTR);
+	return written;
+}
+#endif
+
 class exclusive_output_stream_buffer final : public std::streambuf
 {
 public:
@@ -1031,11 +1079,7 @@ protected:
 #else
 			const auto chunk = static_cast<std::size_t>(std::min<std::streamsize>(
 			    remaining, static_cast<std::streamsize>(std::numeric_limits<ssize_t>::max())));
-			const ssize_t written = ::write(descriptor_, data + total, chunk);
-			if (written == -1 && errno == EINTR)
-			{
-				continue;
-			}
+			const ssize_t written = write_retrying_interrupts(descriptor_, data + total, chunk);
 			if (written <= 0)
 			{
 				break;
@@ -1192,9 +1236,116 @@ void write_new_output_file(const std::filesystem::path &path, Writer writer)
 	}
 }
 
+#if defined(__linux__) && defined(O_TMPFILE)
+class ignore_broken_pipe
+{
+public:
+	ignore_broken_pipe()
+	{
+		struct sigaction action{};
+		action.sa_handler = SIG_IGN;
+		if (::sigemptyset(&action.sa_mask) == -1 || ::sigaction(SIGPIPE, &action, &previous_) == -1)
+		{
+			throw std::runtime_error("failed to configure verified stdout");
+		}
+	}
+
+	~ignore_broken_pipe()
+	{
+		(void)::sigaction(SIGPIPE, &previous_, nullptr);
+	}
+
+private:
+	struct sigaction previous_{};
+};
+
+void copy_staged_plaintext_to_stdout(int descriptor)
+{
+	const ignore_broken_pipe ignore_signal;
+	std::array<char, 64 * 1024> buffer;
+	for (;;)
+	{
+		const ssize_t count = ::read(descriptor, buffer.data(), buffer.size());
+		if (count == 0)
+		{
+			return;
+		}
+		if (count == -1)
+		{
+			if (errno == EINTR)
+			{
+				continue;
+			}
+			throw std::runtime_error("failed to read verified stdout staging file");
+		}
+		for (ssize_t offset = 0; offset < count;)
+		{
+			const ssize_t written = write_retrying_interrupts(
+			    STDOUT_FILENO, buffer.data() + offset, static_cast<std::size_t>(count - offset));
+			if (written <= 0)
+			{
+				throw std::runtime_error("failed to write stdout");
+			}
+			offset += written;
+		}
+	}
+}
+
+template <typename Operation>
+void run_verified_stdout(std::istream &input, Operation operation)
+{
+	const char *temp_dir = std::getenv("TMPDIR");
+	std::string directory = temp_dir && *temp_dir ? temp_dir : "/tmp";
+	// A trailing slash would make Linux follow a final directory symlink.
+	const auto last_component = directory.find_last_not_of('/');
+	directory.resize(last_component == std::string::npos ? 1 : last_component + 1);
+	// O_EXCL with O_TMPFILE prevents linking the inode into the filesystem.
+	const int descriptor = ::open(directory.c_str(), O_TMPFILE | O_EXCL | O_RDWR | O_CLOEXEC | O_NOFOLLOW, 0600);
+	if (descriptor == -1)
+	{
+		throw std::runtime_error("failed to create verified stdout staging file");
+	}
+
+	exclusive_output_stream_buffer stage(descriptor);
+	std::ostream output(&stage);
+	operation(input, output);
+	// The stdio-backed cin can report a failed read as EOF. Verify that
+	// the trailing-data check actually reached the end of stdin.
+	if (&input == &std::cin && std::ferror(stdin))
+	{
+		throw std::runtime_error("failed to read input file");
+	}
+
+	// The open operation returned only after authenticating the final record
+	// and checking for trailing data. Check staging before releasing anything.
+	output.flush();
+	if (!output || ::lseek(descriptor, 0, SEEK_SET) == -1)
+	{
+		throw std::runtime_error("failed to prepare verified stdout staging file");
+	}
+	copy_staged_plaintext_to_stdout(descriptor);
+	if (!stage.close())
+	{
+		throw std::runtime_error("failed to close verified stdout staging file");
+	}
+}
+#endif
+
 template <typename Options, typename Operation>
 void run_streaming_file_command(const Options &options, Operation operation)
 {
+#if defined(__linux__) && defined(O_TMPFILE)
+	// Test stdout before opening any file that could reuse a closed descriptor.
+	if (options.verified_stdout && ::fcntl(STDOUT_FILENO, F_GETFD) == -1)
+	{
+		throw std::runtime_error("failed to write stdout");
+	}
+#else
+	if (options.verified_stdout)
+	{
+		throw std::runtime_error("verified stdout staging is unsupported on this platform");
+	}
+#endif
 	if (options.input_is_stdin)
 	{
 		set_stdin_binary();
@@ -1217,6 +1368,14 @@ void run_streaming_file_command(const Options &options, Operation operation)
 			input_file = open_cli_input_file(options.input);
 			input = &input_file;
 		}
+
+#if defined(__linux__) && defined(O_TMPFILE)
+		if (options.verified_stdout)
+		{
+			run_verified_stdout(*input, operation);
+			return;
+		}
+#endif
 
 		std::ostream *output = &std::cout;
 		if (!options.output_is_stdout)

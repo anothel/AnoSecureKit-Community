@@ -60,18 +60,33 @@ bool directory(int fd)
 } // namespace
 extern "C" int open(const char *path, int flags, ...)
 {
-	// All callers under test create with 0600. Preserve arbitrary callers' mode.
+	const bool anonymous = (flags & O_TMPFILE) == O_TMPFILE;
 	mode_t mode = 0;
-	if (flags & O_CREAT)
+	if ((flags & O_CREAT) || anonymous)
 	{
 		va_list args;
 		va_start(args, flags);
 		mode = va_arg(args, int);
 		va_end(args);
 	}
-	if (hit((flags & O_CREAT) ? "open" : "directory-open", owned(path)))
+	if (hit(anonymous ? "stage-open" : ((flags & O_CREAT) ? "open" : "directory-open"), owned(path)))
 		return -1;
-	return next<int (*)(const char *, int, ...)>("open")(path, flags, mode);
+	const int fd = next<int (*)(const char *, int, ...)>("open")(path, flags, mode);
+	if (fd >= 0 && anonymous && hit("stage-inspect", owned(path)))
+	{
+		struct stat st{};
+		const bool secure = ::fstat(fd, &st) == 0 && S_ISREG(st.st_mode) &&
+		                    (st.st_mode & 07777) == 0600 && st.st_nlink == 0 &&
+		                    ::fcntl(fd, F_GETFD) == FD_CLOEXEC &&
+		                    (flags & (O_EXCL | O_NOFOLLOW)) == (O_EXCL | O_NOFOLLOW);
+		if (!secure)
+		{
+			::syscall(SYS_close, fd);
+			errno = EIO;
+			return -1;
+		}
+	}
+	return fd;
 }
 extern "C" FILE *fopen(const char *path, const char *mode)
 {
@@ -106,6 +121,15 @@ extern "C" ssize_t write(int fd, const void *data, size_t size)
 {
 	if (hit("write", descriptor(fd)))
 		return -1;
+	if (fd == STDOUT_FILENO && !std::strcmp(setting("ASK_IO_FAULT"), "stdout-partial"))
+	{
+		static bool wrote_prefix = false;
+		if (hit("stdout-partial", wrote_prefix))
+			return -1;
+		if (size > 3)
+			size = 3;
+		wrote_prefix = true;
+	}
 	if (hit("write-eintr", descriptor(fd)))
 	{
 		errno = EINTR;

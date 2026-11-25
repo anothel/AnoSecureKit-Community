@@ -30,14 +30,17 @@ class FileIoFaults(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.sealed[suffix] = target
 
-    def run_process(self, args, fault=None):
+    def run_process(self, args, fault=None, stage=None):
         env = dict(os.environ)
+        if stage is not None:
+            env["TMPDIR"] = str(stage)
+        uses_stdin = "--in" in args and args[args.index("--in") + 1] == "-"
         if fault:
             env.update(LD_PRELOAD=HOOKS, ASK_IO_ROOT=str(self.root),
                        ASK_IO_MARKER=str(self.marker), ASK_IO_FAULT=fault,
-                       ASK_IO_STDIN="1" if "-" in args else "")
+                       ASK_IO_STDIN="1" if uses_stdin else "")
         data = None
-        if "-" in args:
+        if uses_stdin:
             source = self.sealed["-password" if "--password-file" in args else ""] if str(args[1]).startswith("open") else self.input
             data = source.read_bytes()
         return subprocess.run([DRIVER, *map(str, args)], env=env, input=data,
@@ -118,6 +121,38 @@ class FileIoFaults(unittest.TestCase):
                             check = self.run_process(["open" + suffix, self.output, verified, "unused"])
                             self.assertEqual(check.returncode, 0, check.stderr)
                             self.assertEqual(verified.read_bytes(), self.input.read_bytes())
+
+    def test_verified_stdout_staging_faults(self):
+        payload = self.input.read_bytes()
+        expectations = {
+            "stage-open": (1, b"", b"failed to create verified stdout staging file\n"),
+            "write": (1, b"", b"File write failed\n"),
+            "fsync": (1, b"", b"failed to prepare verified stdout staging file\n"),
+            "close": (1, payload, b"failed to close verified stdout staging file\n"),
+            "short-write": (0, payload, b""),
+            "write-eintr": (0, payload, b""),
+            "stage-inspect": (0, payload, b""),
+            "stdout-partial": (1, payload[:3], b"failed to write stdout\n"),
+        }
+        stage = self.root / "stage"
+        stage.mkdir()
+        for suffix, packet in self.sealed.items():
+            credentials = (["--password-file", self.password] if suffix else
+                           ["--key-hex", self.key])
+            for fault, expected in expectations.items():
+                with self.subTest(suffix=suffix, fault=fault):
+                    self.clean()
+                    args = ["cli", "open-file" + suffix, "--in", packet,
+                            "--out", "-", "--verified-stdout", *credentials]
+                    # The inspect hook checks effective permissions under a permissive umask.
+                    prior_umask = os.umask(0)
+                    try:
+                        result = self.run_process(args, fault, stage=stage)
+                    finally:
+                        os.umask(prior_umask)
+                    self.assertTrue(self.marker.exists(), result.stderr)
+                    self.assertEqual((result.returncode, result.stdout, result.stderr), expected)
+                    self.assertEqual(list(stage.iterdir()), [])
 
     def test_existing_destination_preserved(self):
         for kind, args in self.routes():

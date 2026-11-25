@@ -103,7 +103,23 @@ CLI file commands inherit the same distinction:
 
 - path output uses an operating-system exclusive temporary-file create, uses
   mode `0600` on POSIX, refuses overwrite, and commits after success
-- `--out -` writes to stdout and cannot be rolled back
+- Default `--out -` can deliver individually authenticated records before the
+  final record and end of input establish complete-file authenticity.
+- With `--verified-stdout` and `--out -`, `open-file` and
+  `open-file-password` decrypt the input once into private staging. They begin
+  copying plaintext to stdout only after the final record authenticates and
+  the file passes structural validation, including the check for trailing bytes.
+  The copy uses a fixed-size buffer. A staging read, cleanup, or stdout error
+  during or after delivery cannot roll back any stdout bytes already accepted.
+
+Verified stdout requires a Linux filesystem that supports anonymous
+`O_TMPFILE` files in `TMPDIR` (default `/tmp`). The CLI creates the staging
+inode with mode `0600` (subject to umask) and prevents linking it by name.
+It retains the descriptor through authentication and delivery. Closing the
+descriptor or exiting releases the file. Use a trusted filesystem with room
+for the plaintext. Staging cleanup does not guarantee physical erasure.
+The option fails closed on Windows, macOS, and Linux filesystems without
+the required support.
 
 This describes the unpublished maintenance snapshot on `main`. Published
 v0.4.0 generic CLI output can create key or plaintext files with mode `0644`
