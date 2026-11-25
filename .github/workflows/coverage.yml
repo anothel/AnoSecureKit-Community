@@ -49,12 +49,13 @@ jobs:
       - name: Test and generate coverage
         run: cmake --build build-coverage --target coverage-report -j2
 
+      - name: Validate coverage report
+        run: python3 .github/scripts/validate_coverage_report.py build-coverage/coverage
+
       - name: Upload observational coverage artifacts
         uses: actions/upload-artifact@v7
         with:
           name: anosecurekit-coverage-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            build-coverage/coverage/anosecurekit.html
-            build-coverage/coverage/coverage.xml
+          path: build-coverage/coverage/
           if-no-files-found: error
           retention-days: 7
