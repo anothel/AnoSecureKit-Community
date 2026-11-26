@@ -30,7 +30,7 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t *data, std::size_t size
 	}
 	const auto packet = anosecurekit::fuzz::raw_or_decoded_fixture(data, size);
 	if (packet.size() < 64 || packet.size() > 4096 || packet[0] != std::byte{'S'} ||
-		packet[1] != std::byte{'K'} || packet[2] != std::byte{'P'} || packet[3] != std::byte{'1'})
+	    packet[1] != std::byte{'K'} || packet[2] != std::byte{'P'} || packet[3] != std::byte{'1'})
 	{
 		return 0;
 	}
