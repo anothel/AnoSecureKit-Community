@@ -3,14 +3,6 @@ name: Fuzz
 
 on:
   workflow_dispatch:
-    inputs:
-      skp1:
-        description: Run the bounded SKP1 sanitizer lane
-        type: boolean
-        default: false
-  pull_request:
-    branches: [main]
-    types: [opened, reopened, synchronize, edited]
   schedule:
     - cron: "37 11 * * 2"
 
@@ -19,7 +11,6 @@ permissions:
 
 jobs:
   fuzz:
-    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.skp1) }}
     name: ubuntu-latest clang scheduled fuzz
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -73,73 +64,4 @@ jobs:
         with:
           name: fuzz-artifacts-${{ github.sha }}
           path: fuzz-artifacts/
-          retention-days: 7
-
-  skp1:
-    if: >-
-      ${{ (github.event_name == 'workflow_dispatch' && inputs.skp1) ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- run-skp1-fuzz -->')) }}
-    name: ubuntu-latest Clang SKP1 sanitizer fuzz
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      ASAN_OPTIONS: detect_leaks=1
-      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          persist-credentials: false
-
-      - name: Install Linux dependencies
-        run: sudo apt-get update && sudo apt-get install -y clang libssl-dev ninja-build
-
-      - name: Configure CMake
-        env:
-          CXX: clang++
-        run: >
-          cmake -S . -B build-fuzz-skp1 -G Ninja
-          -DCMAKE_BUILD_TYPE=RelWithDebInfo
-          -DANOSECUREKIT_BUILD_FUZZ=ON
-          -DANOSECUREKIT_FUZZ_VALID_SKP1=ON
-          -DANOSECUREKIT_BUILD_TESTS=OFF
-          -DANOSECUREKIT_BUILD_CLI=OFF
-          -DANOSECUREKIT_INSTALL_CLI=OFF
-
-      - name: Verify SKP1 known vector and modified tag
-        run: cmake --build build-fuzz-skp1 --verbose --target fuzz-skp1-valid-smoke
-
-      - name: Bounded SKP1 mutation campaign
-        shell: bash
-        run: |
-          set -euo pipefail
-          corpus=build-fuzz-skp1/skp1-corpus
-          artifacts=fuzz-skp1-artifacts
-          fixture=tests/fixtures/skp1-known-password-file.hex
-          mkdir -p "$corpus" "$artifacts"
-          cp "$fixture" "$corpus/"
-          python3 - "$fixture" "$corpus/skp1-known-password-file.bin" <<'PY'
-          import sys
-          from pathlib import Path
-
-          Path(sys.argv[2]).write_bytes(bytes.fromhex(Path(sys.argv[1]).read_text()))
-          PY
-          clang++ --version > "$artifacts/compiler.txt"
-          printf 'sha=%s\n' "$(git rev-parse HEAD)" | tee "$artifacts/run.txt"
-          cmd=(build-fuzz-skp1/anosecurekit_fuzz_skp1_valid
-            -runs=1000 -max_total_time=30 -max_len=4096 -timeout=5 -rss_limit_mb=1024
-            -artifact_prefix="$artifacts/" "$corpus")
-          printf '%q ' "${cmd[@]}" > "$artifacts/command.txt"
-          printf '\n' >> "$artifacts/command.txt"
-          "${cmd[@]}" 2>&1 | tee "$artifacts/skp1.log"
-
-      - name: Upload SKP1 failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: fuzz-skp1-artifacts-${{ github.event.pull_request.head.sha || github.sha }}
-          path: fuzz-skp1-artifacts/
-          if-no-files-found: ignore
           retention-days: 7

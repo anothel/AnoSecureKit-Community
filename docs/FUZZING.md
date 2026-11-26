@@ -78,13 +78,13 @@ Failure artifacts are uploaded for seven days under `fuzz-artifacts`. They are
 limited to target logs, command lines, compiler version, commit SHA, and
 libFuzzer crash artifacts emitted through `-artifact_prefix`.
 
-To run the separate SKP1 job, select `skp1` when dispatching the Fuzz workflow,
-or add `<!-- run-skp1-fuzz -->` to the body of a pull request targeting `main`.
-The job uses the selected commit or pull request head and runs the known-vector
-smoke before mutating a private copy of the fixture in hex and binary forms.
-The campaign is capped at 1,000 executions or 30 seconds, with 4,096-byte
-inputs, a 5-second per-input timeout, and a 1,024 MiB RSS limit. The job has a
-10-minute timeout. Failure evidence is retained for seven days.
+To opt into the SKP1 job in `.github/workflows/anosecurekit-ci.yml`, include
+`<!-- run-skp1-fuzz -->` in the body when opening a pull request targeting
+`main` or pushing its next commit. The job checks out the pull request head
+and runs the known-vector smoke before mutating copies of the fixture in hex
+and binary forms. The libFuzzer budgets are 1,000 executions and 30 seconds,
+with 4,096-byte inputs, a 5-second per-input timeout, and a 1,024 MiB RSS limit.
+The job has a 10-minute timeout. Failure evidence is retained for seven days.
 
 ## Corpus Policy
 
