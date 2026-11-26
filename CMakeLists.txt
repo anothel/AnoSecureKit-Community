@@ -407,11 +407,42 @@ if(ANOSECUREKIT_BUILD_FUZZ)
   anosecurekit_add_fuzz(anosecurekit_fuzz_skt1 tests/fuzz/skt1_fuzz.cpp)
   anosecurekit_add_fuzz(anosecurekit_fuzz_file tests/fuzz/file_fuzz.cpp)
   if(ANOSECUREKIT_FUZZ_VALID_SKP1)
-    anosecurekit_add_fuzz(anosecurekit_fuzz_skp1_valid tests/fuzz/skp1_valid_fuzz.cpp)
+    if(_anosecurekit_external_backend)
+      message(FATAL_ERROR "ANOSECUREKIT_FUZZ_VALID_SKP1=ON requires the Community OpenSSL backend")
+    endif()
+
+    # Compile the entire Community source set into a private fuzz-only archive.
+    get_target_property(_skp1_sources anosecurekit SOURCES)
+    get_target_property(_skp1_definitions anosecurekit COMPILE_DEFINITIONS)
+    list(REMOVE_ITEM _skp1_definitions ANOSECUREKIT_SHARED)
+    set(_skp1_sanitizers -fsanitize=address,undefined)
+    set(_skp1_compile_options ${_anosecurekit_compile_options} ${_skp1_sanitizers}
+      -fno-omit-frame-pointer -fno-sanitize-recover=undefined)
+
+    add_library(anosecurekit_skp1_fuzz_library STATIC EXCLUDE_FROM_ALL ${_skp1_sources})
+    target_compile_features(anosecurekit_skp1_fuzz_library PUBLIC cxx_std_20)
+    target_compile_definitions(anosecurekit_skp1_fuzz_library PRIVATE ${_skp1_definitions})
+    target_include_directories(anosecurekit_skp1_fuzz_library
+      PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_compile_options(anosecurekit_skp1_fuzz_library PRIVATE ${_skp1_compile_options} -fsanitize=fuzzer-no-link)
+    target_link_libraries(anosecurekit_skp1_fuzz_library PRIVATE OpenSSL::Crypto)
+
+    add_executable(anosecurekit_fuzz_skp1_valid tests/fuzz/skp1_valid_fuzz.cpp)
+    add_executable(anosecurekit_skp1_valid_smoke tests/fuzz/skp1_valid_smoke.cpp)
+    foreach(_skp1_target IN ITEMS anosecurekit_fuzz_skp1_valid anosecurekit_skp1_valid_smoke)
+      target_link_libraries(${_skp1_target} PRIVATE anosecurekit_skp1_fuzz_library)
+      target_compile_options(${_skp1_target} PRIVATE ${_skp1_compile_options})
+      target_link_options(${_skp1_target} PRIVATE ${_skp1_sanitizers})
+    endforeach()
+    target_compile_options(anosecurekit_fuzz_skp1_valid PRIVATE -fsanitize=fuzzer)
+    target_link_options(anosecurekit_fuzz_skp1_valid PRIVATE -fsanitize=fuzzer)
+
+    set(_skp1_fixture ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/skp1-known-password-file.hex)
     add_custom_target(fuzz-skp1-valid-smoke
-      COMMAND $<TARGET_FILE:anosecurekit_fuzz_skp1_valid> -runs=1
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/skp1-known-password-file.hex
-      DEPENDS anosecurekit_fuzz_skp1_valid
+      COMMAND $<TARGET_FILE:anosecurekit_skp1_valid_smoke> ${_skp1_fixture}
+      COMMAND $<TARGET_FILE:anosecurekit_fuzz_skp1_valid> -runs=1 ${_skp1_fixture}
+      DEPENDS anosecurekit_skp1_valid_smoke anosecurekit_fuzz_skp1_valid
       USES_TERMINAL)
   endif()
 

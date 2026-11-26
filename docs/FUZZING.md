@@ -33,41 +33,58 @@ build-fuzz/anosecurekit_fuzz_file tests/fixtures tests/fuzz/corpus
 
 The regular `anosecurekit_fuzz_file` intentionally skips complete `SKP1`
 headers to keep its high-throughput parser campaign bounded. For actual SKP1
-KDF and authenticated-record paths, build a **separate, opt-in** fuzz target:
+KDF and authenticated-record paths, configure a separate Clang build with the
+Community OpenSSL backend:
 
 ```sh
 cmake -S . -B build-fuzz-skp1 -G Ninja \
   -DANOSECUREKIT_BUILD_FUZZ=ON \
   -DANOSECUREKIT_FUZZ_VALID_SKP1=ON \
   -DANOSECUREKIT_BUILD_TESTS=OFF \
-  -DCMAKE_CXX_COMPILER=clang++
+  -DANOSECUREKIT_BUILD_CLI=OFF \
+  -DANOSECUREKIT_INSTALL_CLI=OFF \
+  -DCMAKE_CXX_COMPILER=clang++ \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build build-fuzz-skp1 --target fuzz-skp1-valid-smoke
 
 mkdir -p build-fuzz-skp1/skp1-corpus
 cp tests/fixtures/skp1-known-password-file.hex build-fuzz-skp1/skp1-corpus/
 build-fuzz-skp1/anosecurekit_fuzz_skp1_valid \
-  -runs=1000 -max_len=4096 -timeout=5 -rss_limit_mb=1024 \
+  -runs=1000 -max_total_time=30 -max_len=4096 -timeout=5 -rss_limit_mb=1024 \
   build-fuzz-skp1/skp1-corpus
 ```
 
-This lane uses the **synthetic** committed SKP1 compatibility fixture and
-its documented password/AAD to reach real scrypt and authentication, via the
-verify-only API (no plaintext output). Its bounded input size and explicit
-runtime budget are necessary because even valid-looking SKP1 records can
-trigger the fixed-cost scrypt KDF. The target is not included in the default
-`fuzz-smoke` or weekly workflow; enabling it does not grant a release or
-security-clearance claim. Save crashes/sanitizer output and exact SHA/flags,
-not random generated corpora, passwords or decrypted payloads.
+The standalone smoke executable must authenticate the committed synthetic
+SKP1 vector through end of input, open it to the exact expected plaintext in
+memory, and report `authentication_failed` for a copy with a modified final
+tag. The smoke target also executes the fixed fixture in the mutation harness.
+The mutation harness uses the verify-only API and accepts authentication and
+structural rejection as ordinary fuzz outcomes.
+
+Both executables use a private static archive built from the complete Community
+library source list. Clang instruments the archive and both executables with
+ASan and UBSan. The archive also carries libFuzzer coverage instrumentation.
+The system OpenSSL library is a separate dependency. The instrumented archive
+is used only by the SKP1 test executables and is excluded from packaging.
 
 ## GitHub Scheduled Fuzzing
 
 `.github/workflows/fuzz.yml` runs weekly and on manual dispatch. The scheduled
 job builds the optional libFuzzer targets, runs `fuzz-smoke` first, then runs
-each fuzz target with `-max_total_time=60`. The job has `timeout-minutes: 30`.
+the five default targets with `-max_total_time=60` each. The job has
+`timeout-minutes: 30`.
 
 Failure artifacts are uploaded for seven days under `fuzz-artifacts`. They are
 limited to target logs, command lines, compiler version, commit SHA, and
 libFuzzer crash artifacts emitted through `-artifact_prefix`.
+
+To run the separate SKP1 job, select `skp1` when dispatching the Fuzz workflow,
+or add `<!-- run-skp1-fuzz -->` to the body of a pull request targeting `main`.
+The job uses the selected commit or pull request head and runs the known-vector
+smoke before mutating a private copy of the fixture in hex and binary forms.
+The campaign is capped at 1,000 executions or 30 seconds, with 4,096-byte
+inputs, a 5-second per-input timeout, and a 1,024 MiB RSS limit. The job has a
+10-minute timeout. Failure evidence is retained for seven days.
 
 ## Corpus Policy
 
